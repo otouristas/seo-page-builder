@@ -1,5 +1,5 @@
-import { Link, type LinkProps } from "@tanstack/react-router";
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import { createLink, type LinkComponent } from "@tanstack/react-router";
+import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant =
@@ -58,24 +58,30 @@ export function Button({ variant, size, className, leading, trailing, children, 
   );
 }
 
-type ButtonLinkProps = LinkProps & {
+type StyleProps = {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  className?: string;
   leading?: ReactNode;
   trailing?: ReactNode;
-  children?: ReactNode;
 };
 
-export function ButtonLink({ variant, size, className, leading, trailing, children, ...rest }: ButtonLinkProps) {
+const BasicButtonLink = forwardRef<HTMLAnchorElement, AnchorHTMLAttributes<HTMLAnchorElement> & StyleProps>(function BasicButtonLink(
+  { variant, size, className, leading, trailing, children, ...rest },
+  ref,
+) {
   return (
-    <Link className={buttonStyles({ variant, size, className })} {...rest}>
+    <a ref={ref} className={buttonStyles({ variant, size, className })} {...rest}>
       {leading}
       {children}
       {trailing}
-    </Link>
+    </a>
   );
-}
+});
+
+const CreatedButtonLink = createLink(BasicButtonLink);
+
+/** Route-aware button link: typed `to`, `search`, `params` plus button styling props. */
+export const ButtonLink: LinkComponent<typeof BasicButtonLink> = (props) => <CreatedButtonLink preload="intent" {...props} />;
 
 type ButtonAnchorProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   variant?: ButtonVariant;

@@ -20,6 +20,15 @@ export type Database = {
 };
 
 let dbPromise: Promise<Kysely<Database>> | null = null;
+
+/** Close database handles on SIGTERM/SIGINT so the process can exit cleanly (PGLite keeps the loop alive). */
+function onShutdown(close: () => Promise<unknown>) {
+  const handler = () => {
+    close().catch(() => undefined).finally(() => setTimeout(() => process.exit(0), 50));
+  };
+  process.once("SIGTERM", handler);
+  process.once("SIGINT", handler);
+}
 let dialectPromise: Promise<Dialect> | null = null;
 
 export function dbMode(): "postgres" | "pglite" {
@@ -33,13 +42,16 @@ export function getDialect(): Promise<Dialect> {
       const url = env("DATABASE_URL");
       if (url) {
         const { Pool } = await import("pg");
-        return new PostgresDialect({ pool: new Pool({ connectionString: url, max: 5 }) });
+        const pool = new Pool({ connectionString: url, max: 5 });
+        onShutdown(() => pool.end());
+        return new PostgresDialect({ pool });
       }
       const { PGlite } = await import("@electric-sql/pglite");
       const { PGliteDialect } = await import("./pglite-dialect");
       const dir = env("PGLITE_DIR") ?? path.resolve(process.cwd(), ".data/pglite");
       await mkdir(dir, { recursive: true });
       const client = await PGlite.create(dir);
+      onShutdown(() => client.close());
       return new PGliteDialect(client);
     })();
   }
