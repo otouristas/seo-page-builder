@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 import { Container } from "@/components/patterns";
 import { getLiveStats, type LiveStats } from "@/server/stats";
 import { formatCompact } from "@/lib/utils";
-
-const PRODUCT = [
-  { value: "12", label: "on-page checks", hint: "weighted, with fix copy" },
-  { value: "10", label: "SERP slots per scene", hint: "plus AI Overview, snippet, PAA" },
-  { value: "8", label: "live lookups / day", hint: "DataForSEO, signed in" },
-  { value: "5", label: "play pillars", hint: "on-page · content · technical · intent · authority" },
-  { value: "1", label: "drop to import GSC", hint: "CSV or TSV export" },
-];
+import { PRODUCT_INDICATORS as PRODUCT } from "@/lib/marketing/indicators";
 
 export function Indicators() {
   const [stats, setStats] = useState<LiveStats | null>(null);

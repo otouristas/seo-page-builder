@@ -2,6 +2,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { AppTab } from "@/lib/seo/types";
 import { normalizeUrl } from "@/lib/utils";
+import { readMarketPref } from "@/lib/marketing/market-pref";
 import { TABS, useLab } from "@/store/lab";
 import { getSessionInfo } from "@/server/session";
 import { getLiveQuota } from "@/server/live-serp";
@@ -42,11 +43,14 @@ function Shell() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Boot from the URL: ?url= runs a lab, ?demo=1 loads the demo, ?tab= selects a tab.
+  // Boot from the URL: ?url= runs a lab, ?demo=1 loads the demo, ?tab= selects a tab,
+  // ?market= (or the GR · US switch in the site header) picks the market.
   useEffect(() => {
     if (booted.current) return;
     booted.current = true;
     if (search.tab) lab.setTab(search.tab);
+    const market = search.market ?? readMarketPref();
+    if (market && !lab.analysis) lab.setMarket(market);
     const url = search.url ? normalizeUrl(search.url) : null;
     if (url && (url !== lab.url || !lab.analysis)) void lab.run(url);
     else if (search.demo && !lab.analysis) lab.loadDemo();
