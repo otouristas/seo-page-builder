@@ -1,14 +1,15 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { PRODUCT_NAV } from "@/lib/marketing/links";
-import { PILLARS, PRODUCT_ICONS, type Pillar } from "@/lib/marketing/nav";
-import { PRODUCT_INDICATORS } from "@/lib/marketing/indicators";
+import { PILLARS, PRODUCT_ICONS } from "@/lib/marketing/nav";
+import { useMarketPref } from "@/lib/marketing/market-pref";
 import { Logo } from "./logo";
+import { MarketSwitch } from "./market-switch";
 import { MobileMenu } from "./mobile-menu";
 
-/** Which landing section is in view, so the matching pillar lights up while scrolling. */
+/** Which landing section is in view, so the matching nav item lights up while scrolling. */
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string | null>(null);
   useEffect(() => {
@@ -30,29 +31,14 @@ function useActiveSection(ids: string[]) {
 
 type Tone = "ink" | "paper";
 
-function PillarBody({ p, active, paper, chevron }: { p: Pillar; active: boolean; paper: boolean; chevron?: boolean }) {
-  return (
-    <>
-      <span className={cn("font-mono text-[10px] tracking-[0.22em]", active ? (paper ? "text-signal-700" : "text-signal") : paper ? "text-paper-muted/70" : "text-fg-subtle")}>{p.index}</span>
-      <span className="inline-flex items-center gap-1.5 text-[14px] font-medium leading-none">
-        {p.label}
-        {chevron && <ChevronDown className="size-3.5 transition-transform duration-200 group-hover/menu:rotate-180" aria-hidden />}
-      </span>
-      <span
-        className={cn("absolute inset-x-0 top-0 h-[3px] origin-left bg-signal transition-transform duration-300 ease-fluid", active ? "scale-x-100" : "scale-x-0")}
-        aria-hidden
-      />
-    </>
-  );
-}
-
 /**
- * Pillar header: every item is a full-height column separated by hairlines, numbered like an index,
- * with a lime bar on the pillar whose section is in view. The CTA is a solid lime pillar at the edge.
+ * Floating pill header: a glass capsule detached from the top edge with the brand, the nav,
+ * a GR · US market switch, and round icon buttons. Sticky, so it stays with the reader.
  */
 export function SiteHeader({ tone = "ink" }: { tone?: Tone }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [market, setMarket] = useMarketPref();
   const paper = tone === "paper";
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const section = useActiveSection(PILLARS.map((p) => p.section));
@@ -60,58 +46,61 @@ export function SiteHeader({ tone = "ink" }: { tone?: Tone }) {
   const activeId = routeActive ?? (pathname === "/" ? section : null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const hairline = paper ? "border-ink-900/10" : "border-white/8";
-  const pillar = cn(
-    "group relative flex h-full shrink-0 flex-col justify-center gap-1 whitespace-nowrap border-l px-5 transition-colors xl:px-6",
-    hairline,
-    paper ? "text-paper-muted hover:bg-ink-900/4 hover:text-ink-900" : "text-fg-muted hover:bg-white/4 hover:text-fg",
+  const navItem = cn(
+    "relative inline-flex h-10 items-center gap-2 rounded-full px-3.5 text-[14px] font-medium whitespace-nowrap transition-colors",
+    paper ? "text-paper-muted hover:bg-ink-900/5 hover:text-ink-900" : "text-fg-muted hover:bg-white/6 hover:text-fg",
   );
-  const pillarActive = paper ? "text-ink-900" : "text-fg";
+  const navActive = paper ? "bg-ink-900/6 text-ink-900" : "bg-white/8 text-fg";
+  const dot = (active: boolean) => <span className={cn("size-1.5 rounded-full transition-colors", active ? "bg-signal" : "bg-transparent")} aria-hidden />;
 
   return (
-    <header className={cn("sticky top-0 z-40 border-b transition-[background-color,box-shadow] duration-300", hairline, scrolled && (paper ? "glass-paper shadow-paper" : "glass"))}>
-      <div className="flex h-[72px] items-stretch">
-        <div className="flex items-center px-5 sm:px-8">
-          <Logo tone={tone} />
-        </div>
+    <div className="sticky top-0 z-40 px-3 pt-3 sm:px-5 sm:pt-4">
+      <header
+        className={cn(
+          "mx-auto flex h-14 max-w-7xl items-center gap-2 rounded-full border pl-4 pr-2 transition-[background-color,box-shadow,border-color] duration-300",
+          paper
+            ? cn("border-ink-900/10 bg-white/75 backdrop-blur-xl", scrolled && "bg-white/90 shadow-paper")
+            : cn("border-white/10 bg-ink-900/55 backdrop-blur-xl", scrolled && "border-white/14 bg-ink-900/80 shadow-stage"),
+        )}
+      >
+        <Logo tone={tone} />
 
-        <nav className="hidden items-stretch lg:flex" aria-label="Primary">
+        <nav className="ml-3 hidden items-center gap-0.5 lg:flex" aria-label="Primary">
           {PILLARS.map((p) => {
             const active = activeId === p.id;
             if (p.id === "product") {
               return (
-                <div key={p.id} className="group/menu relative flex items-stretch">
-                  <Link to={p.to} hash={p.hash} className={cn(pillar, active && pillarActive)} aria-haspopup="true" aria-current={active ? "location" : undefined}>
-                    <PillarBody p={p} active={active} paper={paper} chevron />
+                <div key={p.id} className="group/menu relative">
+                  <Link to={p.to} hash={p.hash} className={cn(navItem, active && navActive)} aria-haspopup="true" aria-current={active ? "location" : undefined}>
+                    {dot(active)}
+                    {p.label}
+                    <ChevronDown className="size-3.5 transition-transform duration-200 group-hover/menu:rotate-180" aria-hidden />
                   </Link>
-                  <div className="invisible absolute left-0 top-full pt-2 opacity-0 transition-[opacity,visibility] duration-150 group-hover/menu:visible group-hover/menu:opacity-100 group-focus-within/menu:visible group-focus-within/menu:opacity-100">
-                    <div className="w-[580px] rounded-2xl bg-ink-900 p-2 shadow-stage ring-hairline">
+                  <div className="invisible absolute left-0 top-full pt-3 opacity-0 transition-[opacity,visibility] duration-150 group-hover/menu:visible group-hover/menu:opacity-100 group-focus-within/menu:visible group-focus-within/menu:opacity-100">
+                    <div className="w-[580px] rounded-3xl bg-ink-900 p-2 shadow-stage ring-hairline">
                       <div className="grid grid-cols-2 gap-1">
-                        {PRODUCT_NAV.map((item, i) => {
+                        {PRODUCT_NAV.map((item) => {
                           const Icon = PRODUCT_ICONS[item.tab];
                           return (
-                            <Link key={item.tab} to="/app" search={{ tab: item.tab, demo: true }} className="flex gap-3 rounded-xl p-3 transition-colors hover:bg-white/5">
-                              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-ink-800 text-signal ring-hairline">
+                            <Link key={item.tab} to="/app" search={{ tab: item.tab, demo: true }} className="flex gap-3 rounded-2xl p-3 transition-colors hover:bg-white/5">
+                              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-signal/15 text-signal ring-1 ring-inset ring-signal/25">
                                 <Icon className="size-4" />
                               </span>
                               <span>
-                                <span className="flex items-center gap-2 text-[14px] font-medium text-fg">
-                                  {item.label}
-                                  <span className="font-mono text-[10px] text-fg-subtle">0{i + 1}</span>
-                                </span>
+                                <span className="block text-[14px] font-medium text-fg">{item.label}</span>
                                 <span className="block text-[12px] leading-snug text-fg-muted">{item.description}</span>
                               </span>
                             </Link>
                           );
                         })}
                       </div>
-                      <div className="mt-1 flex items-center justify-between rounded-xl bg-ink-800/70 px-3 py-2 text-[12px] text-fg-muted">
+                      <div className="mt-1 flex items-center justify-between rounded-2xl bg-ink-800/70 px-3 py-2 text-[12px] text-fg-muted">
                         Every tab works as a guest. Sign in for GSC persistence and live SERP.
                         <Link to="/app" search={{ demo: true }} className="inline-flex items-center gap-1 font-medium text-signal">
                           Open the lab <ArrowRight className="size-3" />
@@ -123,42 +112,36 @@ export function SiteHeader({ tone = "ink" }: { tone?: Tone }) {
               );
             }
             return (
-              <Link key={p.id} to={p.to} hash={p.hash} className={cn(pillar, active && pillarActive)} aria-current={active ? "location" : undefined}>
-                <PillarBody p={p} active={active} paper={paper} />
+              <Link key={p.id} to={p.to} hash={p.hash} className={cn(navItem, active && navActive)} aria-current={active ? "location" : undefined}>
+                {dot(active)}
+                {p.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className={cn("hidden min-w-0 flex-1 items-center justify-end gap-6 overflow-hidden border-l px-6 lg:flex", hairline)} aria-label="Product indicators">
-          {PRODUCT_INDICATORS.slice(0, 4).map((p) => (
-            <span key={p.label} className={cn("hidden whitespace-nowrap font-mono text-[11px] tracking-wide 2xl:inline", paper ? "text-paper-muted" : "text-fg-subtle")}>
-              <span className={cn("font-semibold tabular", paper ? "text-ink-900" : "text-fg")}>{p.value}</span> {p.label}
-            </span>
-          ))}
+        <div className="ml-auto flex items-center gap-1.5">
+          <MarketSwitch market={market} onChange={setMarket} paper={paper} />
+          <Link to="/login" className={cn(navItem, "hidden lg:inline-flex")}>
+            Sign in
+          </Link>
+          <Link to="/app" className="hidden h-10 items-center gap-2 rounded-full bg-signal px-4 text-[14px] font-semibold text-ink-900 transition-colors hover:bg-signal-600 lg:inline-flex">
+            Try it free <ArrowRight className="size-4" aria-hidden />
+          </Link>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className={cn("grid size-10 place-items-center rounded-full border transition-colors lg:hidden", paper ? "border-ink-900/15 text-ink-900 hover:bg-ink-900/5" : "border-white/15 text-fg hover:bg-white/8")}
+            aria-label="Open menu"
+            aria-expanded={open}
+            aria-haspopup="dialog"
+          >
+            <Menu className="size-5" />
+          </button>
         </div>
+      </header>
 
-        <Link to="/login" className={cn(pillar, "hidden shrink-0 items-center whitespace-nowrap lg:flex")}>
-          <span className="text-[14px] font-medium leading-none">Sign in</span>
-        </Link>
-        <Link to="/app" className="hidden shrink-0 items-center gap-2 whitespace-nowrap bg-signal px-7 text-[14px] font-semibold text-ink-900 transition-colors hover:bg-signal-600 lg:flex">
-          Try it free <ArrowRight className="size-4" aria-hidden />
-        </Link>
-
-        <div className="flex-1 lg:hidden" />
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className={cn("grid w-[72px] place-items-center border-l lg:hidden", hairline, paper ? "text-ink-900 hover:bg-ink-900/4" : "text-fg hover:bg-white/5")}
-          aria-label="Open menu"
-          aria-expanded={open}
-          aria-haspopup="dialog"
-        >
-          {open ? <X className="size-6" /> : <Menu className="size-6" />}
-        </button>
-      </div>
-
-      <MobileMenu open={open} onClose={() => setOpen(false)} />
-    </header>
+      <MobileMenu open={open} onClose={() => setOpen(false)} market={market} onMarket={setMarket} />
+    </div>
   );
 }
