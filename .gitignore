@@ -11,4 +11,5 @@ screenshots
 .node_modules.lock
 .data
 .nitro
+.netlify
 .scratch

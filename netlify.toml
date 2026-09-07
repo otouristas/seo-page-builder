@@ -1,0 +1,8 @@
+# Netlify build settings. Nitro emits the SSR function to .netlify/functions-internal
+# and the static assets to dist/ when it detects the Netlify build environment.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

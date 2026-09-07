@@ -35,6 +35,11 @@ export function dbMode(): "postgres" | "pglite" {
   return env("DATABASE_URL") ? "postgres" : "pglite";
 }
 
+/** Serverless hosts have a read-only filesystem, so the embedded PGLite database cannot run there. */
+function isServerless(): boolean {
+  return Boolean(env("NETLIFY") || env("VERCEL") || env("AWS_LAMBDA_FUNCTION_NAME"));
+}
+
 /** The Kysely dialect shared by the app tables and Better Auth. */
 export function getDialect(): Promise<Dialect> {
   if (!dialectPromise) {
@@ -46,7 +51,12 @@ export function getDialect(): Promise<Dialect> {
         onShutdown(() => pool.end());
         return new PostgresDialect({ pool });
       }
-      const { PGlite } = await import("@electric-sql/pglite");
+      if (isServerless()) {
+        throw new Error("DATABASE_URL is not set; persistence is disabled on serverless hosts. Callers fail soft.");
+      }
+      // Non-analyzable specifier: keeps the WASM-heavy package out of serverless function bundles.
+      const spec = "@electric-sql/pglite";
+      const { PGlite } = (await import(/* @vite-ignore */ spec)) as typeof import("@electric-sql/pglite");
       const { PGliteDialect } = await import("./pglite-dialect");
       const dir = env("PGLITE_DIR") ?? path.resolve(process.cwd(), ".data/pglite");
       await mkdir(dir, { recursive: true });
