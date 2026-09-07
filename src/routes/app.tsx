@@ -11,7 +11,7 @@ export const Route = createFileRoute("/app")({
     url: typeof s.url === "string" && s.url ? s.url : undefined,
     tab: TABS.includes(s.tab as AppTab) ? (s.tab as AppTab) : undefined,
     kw: typeof s.kw === "string" && s.kw ? s.kw : undefined,
-    demo: s.demo === true || s.demo === "true" || s.demo === "1" ? true : undefined,
+    demo: s.demo === true || s.demo === 1 || s.demo === "true" || s.demo === "1" ? true : undefined,
   }),
   head: () => ({ meta: [{ title: "Rankframe Lab — audit, SERP scene, plays" }, { name: "robots", content: "noindex" }] }),
   component: AppPage,

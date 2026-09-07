@@ -7,6 +7,8 @@ import { coachReply } from "@/lib/seo/coach";
 import { demoSnapshot } from "@/lib/seo/demo";
 import { buildAnalysis } from "@/lib/seo/analysis";
 import { analyzeUrl } from "@/server/analyze";
+import type { SessionInfo } from "@/server/session";
+import type { SeoSnapshot } from "@/lib/seo/types";
 
 export type Device = "desktop" | "mobile";
 export type Status = "idle" | "loading" | "ready" | "error";
@@ -52,7 +54,11 @@ type LabState = {
   quota: { used: number; limit: number } | null;
   liveStatus: "idle" | "loading" | "error";
   liveError: string | null;
+  session: SessionInfo | null;
 
+  setSession: (s: SessionInfo | null) => void;
+  /** Edit snapshot fields (title, meta) and rebuild scores, niches and plays. Applied plays are kept by id. */
+  updateSnapshot: (patch: Partial<Pick<SeoSnapshot, "title" | "metaDescription">>) => void;
   setUrl: (url: string) => void;
   setTab: (tab: AppTab) => void;
   setDevice: (d: Device) => void;
@@ -100,7 +106,31 @@ export const useLab = create<LabState>((set, get) => ({
   quota: null,
   liveStatus: "idle",
   liveError: null,
+  session: null,
 
+  setSession: (session) => set({ session }),
+  updateSnapshot: (patch) =>
+    set((s) => {
+      if (!s.analysis) return {};
+      const snapshot: SeoSnapshot = { ...s.analysis.snapshot, ...patch };
+      snapshot.titleChars = snapshot.title.length;
+      snapshot.descriptionChars = snapshot.metaDescription.length;
+      const rebuilt = buildAnalysis(snapshot, s.analysis.market);
+      // Keep staged niches that the automatic extraction wouldn't recreate.
+      const audit = buildAudit(snapshot);
+      const score = auditScore(audit);
+      const extra = s.analysis.niches
+        .filter((n) => n.source && n.source !== "headings" && !rebuilt.niches.some((r) => r.keyword === n.keyword))
+        .map((n) => buildNiche(n.keyword, { snapshot, audit, score, market: s.analysis!.market }, n.source));
+      const niches = [...rebuilt.niches, ...extra];
+      const applied: Record<string, string[]> = {};
+      for (const n of niches) {
+        const prev = s.applied[n.id] ?? [];
+        applied[n.id] = prev.filter((id) => n.plays.some((p) => p.id === id));
+      }
+      const activeNicheId = niches.some((n) => n.id === s.activeNicheId) ? s.activeNicheId : (niches[0]?.id ?? null);
+      return { analysis: { ...rebuilt, niches }, applied, activeNicheId, live: {} };
+    }),
   setUrl: (url) => set({ url }),
   setTab: (tab) => set({ tab }),
   setDevice: (device) => set({ device }),

@@ -53,7 +53,7 @@ export function NicheRail({ niche, scene, gscRow, live, liveStatus, liveError, q
         <div>
           <div className="font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">Modeled position</div>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="font-display text-4xl font-semibold tracking-tight tabular">{rankLabel(to)}</span>
+            <span data-testid="modeled-rank" className="font-display text-4xl font-semibold tracking-tight tabular">{rankLabel(to)}</span>
             {delta !== 0 && (
               <span className={cn("inline-flex items-center gap-0.5 text-[13px] font-medium tabular", delta > 0 ? "text-signal" : "text-danger")}>
                 <TrendingUp className="size-3.5" /> {delta > 0 ? `+${delta}` : delta}
@@ -67,20 +67,23 @@ export function NicheRail({ niche, scene, gscRow, live, liveStatus, liveError, q
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-center gap-3 rounded-2xl bg-ink-900/60 p-3 ring-hairline">
-          <RadialGauge value={niche.difficulty} size={64} stroke={6} tone="peri" />
-          <div>
+      <div className="grid gap-3">
+        <div className="flex items-center gap-4 rounded-2xl bg-ink-900/60 p-3 ring-hairline">
+          <RadialGauge value={niche.difficulty} size={60} stroke={6} tone="peri" />
+          <div className="min-w-0">
             <div className="font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">Difficulty</div>
-            <div className="text-[12px] text-fg-muted">{niche.difficulty >= 70 ? "Contested" : niche.difficulty >= 45 ? "Winnable" : "Open"}</div>
+            <div className="text-[14px] font-medium">{niche.difficulty >= 70 ? "Contested" : niche.difficulty >= 45 ? "Winnable" : "Open"}</div>
+            <div className="text-[11px] text-fg-muted">shorter, commercial phrases score higher</div>
           </div>
         </div>
-        <div className="rounded-2xl bg-ink-900/60 p-3 ring-hairline">
-          <div className="font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">Est. clicks / mo</div>
-          <div className="mt-1 font-display text-2xl font-semibold tracking-tight tabular">{formatNumber(clicksAt(impressions, to))}</div>
-          <div className="text-[11px] text-fg-muted">
-            {Math.round(ctrAt(to) * 100)}% CTR at {rankLabel(to)}
-            {gscRow ? "" : " · assumes 1k impr."}
+        <div className="flex items-center gap-4 rounded-2xl bg-ink-900/60 p-3 ring-hairline">
+          <div className="min-w-0 flex-1">
+            <div className="font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">Est. clicks / month</div>
+            <div className="font-display text-2xl font-semibold tracking-tight tabular">{formatNumber(clicksAt(impressions, to))}</div>
+            <div className="text-[11px] text-fg-muted">
+              {Math.round(ctrAt(to) * 100)}% CTR at {rankLabel(to)}
+              {gscRow ? ` · ${formatNumber(gscRow.impressions)} impr. (GSC)` : " · assumes 1k impressions"}
+            </div>
           </div>
         </div>
       </div>

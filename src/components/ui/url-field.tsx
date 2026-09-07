@@ -13,6 +13,8 @@ type Props = {
   chips?: string[];
   className?: string;
   autoFocus?: boolean;
+  /** Optional element rendered between the input and the button (e.g. keyboard hint). */
+  hint?: React.ReactNode;
 };
 
 /** URL entry with validation, sample chips and a signal CTA. Shared by hero, CTA band and the lab. */
@@ -27,6 +29,7 @@ export function UrlField({
   chips,
   className,
   autoFocus,
+  hint,
 }: Props) {
   const [value, setValue] = useState(initial);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +47,7 @@ export function UrlField({
 
   const big = size === "lg";
   return (
-    <div className={className}>
+    <div className={cn("relative", className)}>
       <form
         onSubmit={submit}
         className={cn(
@@ -76,6 +79,7 @@ export function UrlField({
             big ? "h-12 text-[16px]" : "h-9 text-[14px]",
           )}
         />
+        {hint}
         <button
           type="submit"
           disabled={loading}
@@ -91,7 +95,7 @@ export function UrlField({
         </button>
       </form>
       {error ? (
-        <p role="alert" className="mt-2 px-2 text-[13px] text-danger">
+        <p role="alert" className={cn("text-[13px] text-danger", big ? "mt-2 px-2" : "absolute left-3 top-full z-30 mt-1.5 rounded-lg bg-ink-950 px-3 py-1.5 shadow-card ring-hairline")}>
           {error}
         </p>
       ) : chips?.length ? (

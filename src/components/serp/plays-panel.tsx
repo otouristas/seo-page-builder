@@ -37,6 +37,7 @@ export function PlayRow({ play, applied, onToggle, compact }: { play: Play; appl
         <button
           type="button"
           role="checkbox"
+          data-testid="play-toggle"
           aria-checked={applied}
           aria-label={applied ? `Undo ${play.title}` : `Apply ${play.title}`}
           onClick={onToggle}
