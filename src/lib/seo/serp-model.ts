@@ -81,6 +81,11 @@ function cap(s: string) {
   return s.replace(/\b\w/g, (m) => m.toUpperCase());
 }
 
+/** Keyword without a leading "best"/"top", for templates that add their own superlative. */
+function core(kw: string) {
+  return kw.replace(/^(best|top|the best)\s+/i, "");
+}
+
 const TITLES: Record<Style, ((kw: string, name: string) => string)[]> = {
   guide: [
     (kw) => `${cap(kw)}: The Complete Guide (2026)`,
@@ -89,8 +94,8 @@ const TITLES: Record<Style, ((kw: string, name: string) => string)[]> = {
   ],
   encyclopedia: [(kw) => `${cap(kw)} - Wikipedia`],
   review: [
-    (kw) => `The 10 Best ${cap(kw)} of 2026 (Tested & Ranked)`,
-    (kw, n) => `Best ${cap(kw)}: Top Picks Compared | ${n}`,
+    (kw) => `The 10 Best ${cap(core(kw))} of 2026 (Tested & Ranked)`,
+    (kw, n) => `Best ${cap(core(kw))}: Top Picks Compared | ${n}`,
     (kw, n) => `${cap(kw)} Reviews 2026: Pros, Cons & Pricing - ${n}`,
   ],
   marketplace: [
@@ -100,7 +105,7 @@ const TITLES: Record<Style, ((kw: string, name: string) => string)[]> = {
   ],
   brand: [(kw, n) => `${n} - ${cap(kw)}`, (kw, n) => `${cap(kw)} | ${n}`],
   forum: [
-    (kw) => `What's the best ${kw} right now? Honest answers`,
+    (kw) => `What's the best ${core(kw)} right now? Honest answers`,
     (kw) => `${cap(kw)} - is it worth it? (2026 thread)`,
   ],
   news: [(kw, n) => `${cap(kw)} in 2026: What's Changing | ${n}`, (kw, n) => `${n}: Everything About ${cap(kw)}`],
@@ -135,16 +140,16 @@ const PAA: Record<SearchIntent, ((kw: string) => string)[]> = {
     (kw) => `Is ${kw} worth it in 2026?`,
   ],
   commercial: [
-    (kw) => `What is the best ${kw}?`,
-    (kw) => `How much does ${kw} cost?`,
-    (kw) => `Which ${kw} is best for small business?`,
-    (kw) => `What should I look for in ${kw}?`,
+    (kw) => `What is the best ${core(kw)}?`,
+    (kw) => `How much does ${core(kw)} cost?`,
+    (kw) => `Which ${core(kw)} is best for small business?`,
+    (kw) => `What should I look for in ${core(kw)}?`,
   ],
   transactional: [
-    (kw) => `Where can I buy ${kw}?`,
-    (kw) => `How much is ${kw}?`,
-    (kw) => `Is there a discount on ${kw}?`,
-    (kw) => `What is the cheapest ${kw}?`,
+    (kw) => `Where can I buy ${core(kw)}?`,
+    (kw) => `How much is ${core(kw)}?`,
+    (kw) => `Is there a discount on ${core(kw)}?`,
+    (kw) => `What is the cheapest ${core(kw)}?`,
   ],
   navigational: [
     (kw) => `Is ${kw} free?`,
