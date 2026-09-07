@@ -11,3 +11,4 @@ screenshots
 .node_modules.lock
 .data
 .nitro
+.scratch
