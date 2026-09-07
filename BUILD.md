@@ -90,6 +90,18 @@ npm run screenshots  # BASE_URL=http://localhost:3000 node scripts/screenshots.m
 
 Vercel: standard Nitro deployment. Set `DATABASE_URL` in production; PGLite is for dev and previews. `@electric-sql/pglite` and `pg` are externalized from the server bundle (see `vite.config.ts`).
 
+### Netlify
+
+`netlify.toml` pins the build: command `npm run build`, publish directory **`dist`**, Node 22. Inside a Netlify build, Nitro switches to its `netlify` preset (pinned in `vite.config.ts` via the `NETLIFY` env var): the SSR function lands in `.netlify/functions-internal/main.mjs`, the deploy manifest in `.netlify/deploy/v1/config.json`, and static assets in `dist/`. If the site was created before this file existed, check that Netlify's publish directory is `dist` and that the production branch is the one carrying this code.
+
+Environment variables to set in Netlify (Site configuration → Environment variables):
+
+- `DATABASE_URL` — required for sign-in, saved Search Console data, live-lookup quotas and the landing counters. Serverless functions have a read-only filesystem, so the embedded PGLite fallback is disabled there; without a database the site runs in guest mode (analysis, scenes, plays, coach all work) and `/api/auth/*` answers 503.
+- `VITE_AUTH_ENABLED`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` (the site URL), `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, optionally `TWITTER_CLIENT_ID` / `TWITTER_CLIENT_SECRET`. Add `https://<site>/api/auth/callback/google` as an authorized redirect URI in the Google client.
+- `DATAFORSEO_LOGIN` / `DATAFORSEO_PASSWORD` for live page-one lookups.
+
+Local dry run of the Netlify build: `NETLIFY=true npm run build`, then inspect `dist/` and `.netlify/`.
+
 ## What would make GSC "real"
 
 A separate OAuth client with the Search Console API scope (`https://www.googleapis.com/auth/webmasters.readonly`). The Google sign-in used for accounts does not carry it.

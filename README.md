@@ -18,3 +18,5 @@ npm run dev              # http://localhost:3000
 | `/pricing`, `/case-studies/:slug`, `/privacy`, `/terms` | Supporting pages |
 
 Scripts: `npm run build` (Vite + Nitro to `.output/`), `npm start`, `npm run typecheck`, `npm run screenshots` (Playwright captures of every route).
+
+Deploying: Netlify is configured by `netlify.toml` (publish `dist`); set `DATABASE_URL` and the auth variables in the site's environment. Details in [BUILD.md](./BUILD.md#netlify).
