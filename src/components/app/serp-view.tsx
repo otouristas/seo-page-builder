@@ -68,7 +68,7 @@ export function SerpView({ onTab }: { onTab: (t: AppTab) => void }) {
         <button type="button" onClick={() => onTab("keywords")} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-dashed border-white/15 px-3 py-1.5 text-[13px] text-fg-muted hover:border-white/30 hover:text-fg">
           <Plus className="size-3.5" /> Stage keyword
         </button>
-        <div className="ml-auto flex shrink-0 items-center gap-3 pl-3">
+        <div className="sticky right-0 ml-auto flex shrink-0 items-center gap-3 bg-ink-900 pl-3 shadow-[-12px_0_12px_-6px_rgb(10_15_30)]">
           <label className="inline-flex items-center gap-2 text-[12px] text-fg-muted">
             <Columns2 className="size-4" />
             <span className="hidden sm:inline">Compare</span>
