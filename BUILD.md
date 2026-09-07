@@ -1,69 +1,95 @@
-# Rankframe — τι χτίστηκε και ποιο είναι το goal
-
-Στόχος upload: [octolens/seo-page-builder](https://github.com/octolens/seo-page-builder)  
-Γράφτηκε εδώ: [otouristas/seo-page-builder](https://github.com/otouristas/seo-page-builder)
-
-Το connected GitHub (`otouristas`) έχει μόνο **read** στο org `octolens`. Create/push στο org έδωσε 403. Για να κάτσει ο κώδικας στο octolens repo χρειάζεται write στο org (invite `otouristas` ή reconnect GitHub με org admin).
+# Rankframe — build notes
 
 ## Goal
 
-Εργαλείο SEO όπου ο χρήστης βάζει **οποιοδήποτε δημόσιο URL**, γίνεται fetch του on-page, και βλέπει μια **σκηνή Google SERP** για keyword niches. Αριστερά plays («κάνε αυτό για να ανέβεις»), δεξιά coach. Τα plays μετακινούν live τη θέση στη σκηνή.
+A tool where a user pastes **any public URL**, the page is fetched and audited, and a **Google-like SERP scene** is staged for its best keyword niches. Plays on the left ("do this to move up"), a coach on the right, and the plays move the modeled position live. Presented as a full SaaS: pillar header, indicators, case studies, pricing, footer, sign-in.
 
-Δεν είναι εγγύηση κατάταξης. Είναι lab: audit + επίδειξη + κινήσεις.
+Not a ranking guarantee. A lab: audit + demonstration + moves.
 
-Ζητήθηκε επίσης πλήρες SaaS presentation (header, indicators, case studies, CTAs, footer), **Sign in with Google**, Search Console, και **DataForSEO** με όρια.
+## What exists
 
-## Τι υπάρχει σήμερα
+### Marketing (`/`)
+- Sticky pillar header: Product (mega-menu into each lab tab), Proof, Case studies, Pricing; **Sign in** and **Try it free**; mobile sheet and sticky CTA bar.
+- Hero with URL entry and an animated SERP where "your page" climbs as plays light up.
+- Indicators (12 checks, 10 slots, 8 live lookups/day, 5 pillars, 1-drop GSC import) plus **live counters** from real product events (hidden until there is data).
+- Logo strip of the public pages used in case studies (labeled as subjects, not customers).
+- Feature bento, how-it-works, an **interactive live demo** running the real stage on a modeled snapshot of stripe.com/payments.
+- Three case studies (Stripe, Ahrefs Blog, Skroutz) with before/after stages at `/case-studies/:slug`. Modeled snapshots, produced by the same engine as the lab.
+- Testimonial slots ship as **placeholders flagged "Sample"** (`src/lib/marketing/testimonials.ts`). Replace with attributed quotes and set `placeholder: false`.
+- Pricing (Free / Pro / Team, EUR), FAQ, CTA band, footer, privacy and terms.
 
-### Marketing
-- Landing `/` με pillar header: Product, Proof, Case studies, Pricing
-- Hero με πεδίο URL → ανοίγει το lab
-- Indicators (12 on-page checks, 10 SERP slots, 8 DataForSEO/μέρα, GSC export)
-- Case studies σε δημόσιες σελίδες (Stripe, Ahrefs Blog, Skroutz) — labeled ως modeled, όχι fake client ROI
-- Pricing / limits και footer
-- CTA: Sign in with Google + Open lab
+### Lab (`/app`)
+- **Overview**: on-page and technical gauges, best modeled position, click estimate, trajectory chart per scene, quick wins, Google-style snippet preview, snapshot facts.
+- **SERP Lab**: scene pills, plays grouped by pillar, Google-like stage (AI Overview, featured snippet, People also ask, ten organic slots, animated "you" card), niche rail (modeled position, sparkline, difficulty, CTR-based click estimate, live pull), desktop/mobile frame, before/after compare.
+- **Audit**: 12 weighted checks with fix copy; snippet editor with pixel meters that re-runs checks and re-models every scene.
+- **Keywords**: stage any query; suggestions from the page's headings.
+- **Search Console**: drag-drop CSV/TSV import (English or Greek headers), striking-distance (8–20) and CTR-opportunity filters, stage a query as a scene, save to account when signed in.
+- **Coach**: rule-based answers from the analysis, active scene, applied plays and GSC rows. No LLM.
+- Keyboard: `⌘K` focuses the URL, `1–6` switch tabs. Share copies a deep link.
 
-### Lab `/app`
-- Overview: on-page score, technical score, modeled rank chart
-- SERP lab: Google-like αποτελέσματα + plays που αλλάζουν θέση
-- Audit: Pass/Fix checks από το πραγματικό HTML
-- Keywords: οποιοδήποτε query στήνει νέα σκηνή
-- Search Console: import CSV/TSV (Query, Clicks, Impressions, CTR, Position)
-- Coach: συζήτηση πάνω στο ενεργό niche
+### Data — real vs modeled
 
-### Δεδομένα — τι είναι real και τι όχι
-
-| Πηγή | Κατάσταση |
+| Source | Status |
 |---|---|
-| Δημόσιο HTML fetch | Real. Title, meta, H1–H3, OG, schema, word count, images, links |
-| Sign in with Google | Real Better Auth μέσω Grok broker. Ανοίγει workspace account |
-| GSC properties via OAuth | **Δεν γίνεται.** Το Google login δεν έχει `webmasters` scope. Τα queries μπαίνουν μόνο από GSC export |
-| GSC export | Real αρχείο. Signed-in χρήστης το αποθηκεύει στη βάση (`gsc_rows`) |
-| DataForSEO live SERP | Κλήση `serp/google/organic/live/regular` όταν υπάρχουν `DATAFORSEO_LOGIN` + `DATAFORSEO_PASSWORD`. Όριο **8 / user / ημέρα** |
-| Θέση χωρίς GSC / DataForSEO | Modeled από on-page σήματα. Δεν είναι live Google rank |
+| Public HTML fetch | **Real.** Title, meta, canonical, robots, lang, H1–H3, OG, JSON-LD types, word count, images/alt, links, viewport. 8 s timeout, 1.5 MB cap. Loopback/private hosts blocked unless `ALLOW_PRIVATE_URLS=true`. |
+| Audit score | **Real** checks on the fetched HTML, weighted. |
+| Keyword niches | **Modeled** from headings: n-gram extraction, intent by trigger words and page bias, difficulty from phrase shape and intent. Deterministic per URL + keyword + market. |
+| SERP competitors | **Modeled** from curated pools per intent and market (GR / US) with templated titles. |
+| Position | **Modeled**: `distance = (100 − score)/100 × 0.55 + difficulty/100 × 0.65`; each play subtracts `impact × pillar weight × 0.12`; `rank = 1 + round(distance × 9)`, beyond 1.0 = page two. |
+| Live page one | **Real** via DataForSEO `serp/google/organic/live/regular` when `DATAFORSEO_LOGIN` + `DATAFORSEO_PASSWORD` are set. Signed-in users, **8 / user / day**. Your slot inside live results stays modeled. |
+| Sign in | **Real** Better Auth (Google, X). Sessions in Postgres or embedded PGLite. |
+| GSC | Import from an export file. Google's Search Console API is not connected (the sign-in has no `webmasters` scope). Signed-in users persist rows in `gsc_rows`. |
+| Counters | **Real** rows in `lab_events`, never seeded. |
 
-### Auth & persistence
-- `VITE_AUTH_ENABLED` on
-- Routes: `/login`, `/api/auth/*`
-- Tables: Better Auth schema + `gsc_rows` + `dataforseo_usage`
-- Guest μπορεί να ανοίξει το lab. GSC persist και DataForSEO quota θέλουν session
+## Stack
 
-### Stack
-TanStack Start, React, Tailwind v4, Zustand, Recharts, Better Auth (Google + X), Postgres / PGLite.
+TanStack Start + Router, Vite 8, React 19, TypeScript, Tailwind CSS v4 (`@theme` tokens in `src/styles/app.css`), Zustand, Recharts, Motion, lucide, cheerio, Better Auth, Kysely on `pg` or `@electric-sql/pglite` (own dialect in `src/lib/db/pglite-dialect.ts`), self-hosted fonts (Bricolage Grotesque, Inter, JetBrains Mono), Nitro for the server build, Playwright for screenshots.
 
-## Τι λείπει για «αληθινό GSC»
-Για properties από την Google χρειάζεται ξεχωριστό OAuth client με Search Console API (`https://www.googleapis.com/auth/webmasters.readonly`). Αυτό δεν το δίνει το Grok Google sign-in.
+Design direction "Ink & Signal": navy ink shell, electric lime accent, periwinkle secondary, off-white paper bands on marketing pages, white Google-styled stage. Patterns: dot grid, grid lines, aurora glows, grain.
 
-## Env (server only, όχι στο client)
+## Layout
+
 ```
-DATAFORSEO_LOGIN=
-DATAFORSEO_PASSWORD=
-DATABASE_URL=          # στο preview πέφτει σε PGLite
+src/routes/            file routes (+ /api/auth/$ for Better Auth)
+src/components/marketing  landing sections, header, footer, legal
+src/components/serp    stage, plays panel, niche rail, compare, hero climb
+src/components/app     shell, sidebar, topbar, views, coach, states
+src/components/ui|patterns|charts   primitives, backgrounds, charts
+src/lib/seo            engine: audit, fetch-page, niches, serp-model, plays, rank-model, ctr-curve, scene, coach, demo, case-studies
+src/server             server functions: analyze, session, stats, gsc, live-serp
+src/lib/db             Kysely + migrations runner + PGLite dialect
+src/lib/auth           Better Auth server + client
+migrations/            0001 auth, 0002 gsc_rows + dataforseo_usage, 0003 lab_events
 ```
 
-## Τοπικό τρέξιμο
+## Environment
+
+```
+VITE_AUTH_ENABLED=true          # client flag
+BETTER_AUTH_SECRET=             # required for sign-in
+BETTER_AUTH_URL=                # e.g. https://rankframe.app
+GOOGLE_CLIENT_ID= / GOOGLE_CLIENT_SECRET=
+TWITTER_CLIENT_ID= / TWITTER_CLIENT_SECRET=
+DATABASE_URL=                   # Postgres; unset → PGLite in ./.data/pglite
+DATAFORSEO_LOGIN= / DATAFORSEO_PASSWORD=
+ALLOW_PRIVATE_URLS=true         # local testing only
+```
+
+Migrations in `migrations/*.sql` are idempotent and run on first DB access (both Postgres and PGLite).
+
+## Run, build, deploy
+
 ```
 npm install
-npm run dev
+npm run dev          # http://localhost:3000
+npm run typecheck
+npm run build        # .output/ (Nitro node-server preset)
+npm start            # node .output/server/index.mjs
+npm run screenshots  # BASE_URL=http://localhost:3000 node scripts/screenshots.mjs
 ```
-Landing: `/` · Lab: `/app` · Login: `/login`
+
+Vercel: standard Nitro deployment. Set `DATABASE_URL` in production; PGLite is for dev and previews. `@electric-sql/pglite` and `pg` are externalized from the server bundle (see `vite.config.ts`).
+
+## What would make GSC "real"
+
+A separate OAuth client with the Search Console API scope (`https://www.googleapis.com/auth/webmasters.readonly`). The Google sign-in used for accounts does not carry it.

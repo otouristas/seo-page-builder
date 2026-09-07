@@ -1,5 +1,6 @@
 import { env } from "@/lib/env.server";
-import type { SerpResult } from "./types";
+import type { Market, SerpResult } from "./types";
+import { MARKETS } from "./markets";
 
 export const DATAFORSEO_DAILY_LIMIT = 8;
 
@@ -15,11 +16,12 @@ type DfsItem = {
   description?: string;
 };
 
-export async function fetchDataForSeoOrganic(keyword: string): Promise<SerpResult[]> {
+export async function fetchDataForSeoOrganic(keyword: string, market: Market = "gr"): Promise<SerpResult[]> {
   const login = env("DATAFORSEO_LOGIN");
   const password = env("DATAFORSEO_PASSWORD");
   if (!login || !password) return [];
 
+  const info = MARKETS[market];
   const token = Buffer.from(`${login}:${password}`).toString("base64");
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 12000);
@@ -34,8 +36,8 @@ export async function fetchDataForSeoOrganic(keyword: string): Promise<SerpResul
       body: JSON.stringify([
         {
           keyword,
-          location_code: 2356,
-          language_code: "el",
+          location_code: info.locationCode,
+          language_code: info.languageCode,
           depth: 10,
         },
       ]),
@@ -61,8 +63,9 @@ export async function fetchDataForSeoOrganic(keyword: string): Promise<SerpResul
         url: item.url,
         title: item.title.slice(0, 72),
         snippet: (item.description ?? "").slice(0, 170),
+        hint: "Live result from Google via DataForSEO.",
       });
-      if (out.length >= 8) break;
+      if (out.length >= 9) break;
     }
     return out;
   } catch {

@@ -1,0 +1,48 @@
+{
+  "name": "rankframe",
+  "private": true,
+  "type": "module",
+  "version": "0.2.0",
+  "description": "Rankframe — SEO lab: paste a URL, see where it lands on a Google-like SERP, run the plays that move it.",
+  "scripts": {
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "screenshots": "node scripts/screenshots.mjs"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@tanstack/react-router": "^1.170.33",
+    "@tanstack/react-start": "^1.168.50",
+    "better-auth": "^1.7.3",
+    "cheerio": "^1.2.0",
+    "clsx": "^2.1.1",
+    "kysely": "^0.29.5",
+    "lucide-react": "^1.42.0",
+    "motion": "^13.2.0",
+    "pg": "^8.23.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "recharts": "^3.10.1",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.3",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^22",
+    "@types/pg": "^8",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.1.1",
+    "nitro": "3.0.260903-beta",
+    "typescript": "~5.9.3",
+    "vite": "^8.2.2"
+  }
+}
