@@ -48,4 +48,4 @@ Read [SETUP.md](docs/SETUP.md) for provider configuration and deployment, [ARCHI
 
 RankSushi uses **Vercel only** for previews, production deployments and rollback. The Next.js rebuild was merged into `main` through [PR #4](https://github.com/otouristas/seo-page-builder/pull/4). The original TanStack Start / Better Auth source remains on `archive/rankframe-baseline` at `c498f40a5db320f427218f748a81c7eca6c0db22` for reference.
 
-Review the [Vercel preview](https://ranksushi-9sgrgondh-otouristas-projects.vercel.app). Hosted provider setup and acceptance checks remain required before a live-sales release; see `PROJECT_STATE.md`.
+Review the [Vercel preview](https://ranksushi-ezvgcam78-otouristas-projects.vercel.app), with all 19 deployed route checks passing. Hosted provider setup and acceptance checks remain required before a live-sales release; see `PROJECT_STATE.md`.
