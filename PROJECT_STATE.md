@@ -35,7 +35,7 @@ Updated: 9 September 2026. Domain: **ranksushi.com**. Operator: **Touristas Tech
 - Screenshots, final PDF fixture, Lighthouse JSON and deployed route evidence live in `artifacts/qa/`. Provider configuration status is separately recorded in `artifacts/provider-validation.json`.
 - DataForSEO account authentication passes the no-cost user-data endpoint. Two actual adapter calls returned 9 organic listings, 4 related questions and one keyword-demand record; their provider-reported total cost was **$0.01412**. See `artifacts/qa/dataforseo-live-research.json`. This is provider/adapter verification, not hosted account/job acceptance. The SERP Studio capture adds one actual Google lookup at **$0.002**, returning 9 organic listings and 4 related questions at `2026-09-08T21:32:33.297Z`. The public, credential-free fixture is `src/lib/studio/recorded-scene.json`.
 
-GitHub Actions could not start its runner: GitHub reports that the account is locked due to a billing issue (reconfirmed on run `34280501099`). This is a CI account blocker, not a passing CI run. Local checks and Vercel builds passed; rerun the workflow after the account issue is resolved.
+GitHub Actions could not start its runner: GitHub reports that the account is locked due to a billing issue (reconfirmed on SERP Studio run `34282521346`). This is a CI account blocker, not a passing CI run. Local checks and Vercel builds passed; rerun the workflow after the account issue is resolved.
 
 ## Hosted setup remains required
 
@@ -53,6 +53,13 @@ Vercel project: `otouristas-projects/ranksushi`, connected to `otouristas/seo-pa
 
 Prior learning/research preview: https://ranksushi-ezvgcam78-otouristas-projects.vercel.app, built from application commit `30fcafd2fde42ef185db7d5299b9bfdb37718058`. It is Ready; **all 19 deployed checks pass**, including new learning/blog/help pages, Markdown/checklist responses, RSS, llms.txt, both sitemaps, API 401 and account-page redirect. Preview protection remains enabled. Evidence: `artifacts/qa/deployed-learning-preview.json`.
 
-After the owner's merge, Vercel automatically deployed https://ranksushi-be82t4i51-otouristas-projects.vercel.app and assigned it to https://ranksushi.vercel.app. The deployment is Ready and **all 19 production route checks pass**; see `artifacts/qa/deployed-learning-production.json`. Earlier baseline preview/production evidence remains in `deployed-preview-routes.json` and `deployed-routes.json`; those files describe earlier deployments, not the current alias.
+After the PR #5 merge, Vercel automatically deployed https://ranksushi-be82t4i51-otouristas-projects.vercel.app and assigned it to https://ranksushi.vercel.app. The deployment is Ready and **all 19 production route checks pass**; see `artifacts/qa/deployed-learning-production.json`. Earlier baseline preview/production evidence remains in `deployed-preview-routes.json` and `deployed-routes.json`; those files describe earlier deployments, not the current alias.
 
 GitHub exposed a legacy automatic deployment connection during the first follow-up push. To enforce Vercel-only delivery, the repository `otouristas/seo-page-builder` was unlinked from the old host's project through its signed-in settings. The UI confirms **Current repository: Not linked**. No old project/deployment was deleted, no DNS changed, and Vercel remains connected. See `artifacts/qa/vercel-only-connection.json`.
+
+
+## SERP Studio review deployment
+
+PR #7: https://github.com/otouristas/seo-page-builder/pull/7. Application commit `2aaafbf562d727cd206999dfc427f910bcd8618d` is deployed as a **Ready Vercel preview** at https://ranksushi-70o4sl5vm-otouristas-projects.vercel.app. All **19 deployed route checks pass**, including the new interactive homepage, the nine actual organic positions and recorded-evidence disclosure in `/demo`, public metadata, discovery resources and private-route denial. See `artifacts/qa/deployed-studio-preview.json`. Preview protection remains enabled. No production promotion was performed for this feature; the owner controls the PR merge.
+
+The current local production server remains available at http://localhost:3100/demo. The studio preview is immediately editable; it cannot publish a website change. Manual scene drafts are exported from the current browser session, while generated Content Studio drafts retain their existing persistent version history. Account-based live research/recheck jobs still require the hosted setup described above.
