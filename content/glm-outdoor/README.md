@@ -17,9 +17,27 @@ Written from the content briefs in `GLM_Outdoor_Blog_Content_Briefs_1.xlsx` (dat
 4. Article 4, 2–4 weeks after that.
 5. Review the whole cluster in Google Search Console after 8–12 weeks and refresh Article 1 from query data.
 
-## File format
+## Deliverables
 
-Each file opens with a YAML front-matter block carrying the SEO fields (meta title, meta description, slug, primary and secondary keywords, schema recommendation, internal links to include, image brief with ALT text). The article body follows in Markdown: H1, H2 sections roughly every 200–250 words, a visible FAQ block with H3 questions, and a closing CTA section with the internal links.
+The Word documents in `docx/` are the deliverables:
+
+- `docx/GLM Article 1 - Retractable Glass Roof Systems.docx`
+- `docx/GLM Article 2 - Angled Pergolas for Irregular Plans.docx`
+- `docx/GLM Article 3 - ZIP Screens for Pergolas.docx`
+- `docx/GLM Article 4 - Pergola Louvers Explained.docx`
+
+Page one of each document carries the SEO metadata (meta title and description with character counts, slug, keywords, publish order, schema recommendation), the internal links to include and the image brief. The article itself starts on page two, formatted with Word heading styles so it pastes cleanly into a CMS.
+
+The `.md` files are the editable source. To regenerate the Word files after editing them:
+
+```
+python3 scripts/glm/md_to_json.py content/glm-outdoor content/glm-outdoor/docx/articles.json
+NODE_PATH=<dir containing node_modules/docx> node scripts/glm/build_docx.cjs content/glm-outdoor/docx/articles.json content/glm-outdoor/docx
+```
+
+## Source file format
+
+Each `.md` file opens with a YAML front-matter block carrying the SEO fields (meta title, meta description, slug, primary and secondary keywords, schema recommendation, internal links to include, image brief with ALT text). The article body follows in Markdown: H1, H2 sections roughly every 200–250 words, a visible FAQ block with H3 questions, and a closing CTA section with the internal links.
 
 Paste the body into the CMS and use the front matter for the SEO and schema fields. FAQ blocks are written to be rendered on the page so FAQPage markup can be applied; drop the markup if the FAQs are hidden.
 
