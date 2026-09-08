@@ -28,6 +28,8 @@ Connect an Inngest app to `/api/inngest`, set `INNGEST_EVENT_KEY` and `INNGEST_S
 
 Add `FIRECRAWL_API_KEY` and `FIRECRAWL_WEBHOOK_SECRET`. Set the same signing secret in the Firecrawl account. Hosted crawl submissions include `/api/webhooks/firecrawl`; the handler expects `x-firecrawl-signature` HMAC-SHA256. Validate the actual account signing configuration and a signed callback before calling this operational. Verify a partial crawl, robots-blocked page, crawl cancellation and a changed-page recheck. The free single-page tool fetches bounded HTTP HTML directly and needs the database/rate salt, not paid rendering credits.
 
+`npm run verify:providers` checks Firecrawl account authentication through `GET /v2/team/credit-usage` without consuming crawl credits or logging the returned balance. A passing account check does not establish that durable crawls, rechecks or webhook delivery are operational.
+
 Enable PageSpeed Insights API and supply `PAGESPEED_API_KEY`.
 
 DataForSEO uses the account's API login and API password in server-only `DATAFORSEO_LOGIN` / `DATAFORSEO_PASSWORD`. They are configured in ignored local environment storage and as sensitive Preview/Production variables in Vercel. Do not use the website-login password, publish the credentials or put them under `NEXT_PUBLIC_*`. Rotate the password that was shared in chat and update both Vercel environments and local storage; deploy again to apply an environment change.

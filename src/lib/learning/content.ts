@@ -629,6 +629,148 @@ export const HELP_ARTICLES: LearningArticle[] = [
     action: { label: "Open the free audit", href: "/tools/seo-audit" },
   },
   {
+    slug: "fix-prompts",
+    title: "Copy a prompt. Make a useful fix.",
+    category: "Working on a page",
+    description:
+      "Turn a finding into instructions for your website editor, an AI assistant, or a developer. Know what to change and how to check it.",
+    summary:
+      "Open Help me fix this beside a finding. Choose how you work, copy the instructions, review the proposed change, and recheck the live page after you publish it.",
+    updated,
+    tags: [
+      "prompt",
+      "copy",
+      "instructions",
+      "ChatGPT",
+      "Claude",
+      "Codex",
+      "Cursor",
+      "developer",
+      "title",
+      "description",
+      "canonical",
+      "robots",
+      "fix",
+    ],
+    sections: [
+      {
+        id: "choose",
+        title: "Choose the way you work",
+        paragraphs: [
+          "You do not need to write a prompt from scratch. Open an audit finding, an opportunity, or a move in SERP Studio and choose Help me fix this. The instructions include the affected page and the evidence already available in that screen.",
+        ],
+        items: [
+          "Website editor: plain steps and the field or setting to look for. If your platform is unknown, the instructions ask rather than invent a menu path.",
+          "AI assistant: a prompt for ChatGPT, Claude, Codex or Cursor, with evidence, proposed wording where available, and checks to perform.",
+          "Developer: a brief describing the scope, owning template or setting, acceptance checks and rollback considerations.",
+        ],
+      },
+      {
+        id: "copy",
+        title: "Copy it and take the next step",
+        paragraphs: [
+          "Use Copy instructions, Copy fix prompt or Copy handoff. The arrow beside the button opens more options, including Markdown download and Copy & open ChatGPT or Claude. Paste the copied text into the assistant yourself and review it before submitting.",
+          "RankSushi does not send your prompt to an assistant automatically. There is no MCP connection behind these buttons. In an AI coding tool, open your own project and paste the brief there. Do not add passwords or private access links.",
+        ],
+      },
+      {
+        id: "review",
+        title: "Review before changing your website",
+        paragraphs: [
+          "An unknown result means that more evidence is needed. A passed or not-applicable check is not a request to make a change. Some canonicals, indexing exclusions, decorative images and short pages are intentional.",
+          "Ask the assistant or developer to show the smallest useful change. Confirm names, claims, destinations and settings against your business and website. Save a backup or a version you can restore before publishing.",
+        ],
+      },
+      {
+        id: "verify",
+        title: "Check what actually changed",
+        paragraphs: [
+          "Publish the reviewed change through your website editor or normal release process. Return to the project and recheck the page. Read the new evidence and confirm that it matches the intended change.",
+          "Copying a prompt or ticking a documentation checklist does not mark a finding verified. Search positions can only be compared using fresh search evidence; a changed title preview is not a measured ranking improvement.",
+        ],
+      },
+    ],
+    checklist: [
+      "Open the finding and read its evidence",
+      "Choose website editor, AI assistant or developer",
+      "Copy the instructions and review the proposed change",
+      "Publish through your usual website workflow",
+      "Recheck and inspect the new evidence",
+    ],
+    related: [
+      "/help/drafts-and-rechecks",
+      "/learn/technical-triage",
+      "/help/serp-studio",
+    ],
+    action: { label: "Try a fix in SERP Studio", href: "/demo" },
+  },
+  {
+    slug: "serp-studio",
+    title: "Work on your page in SERP Studio",
+    category: "Working on a page",
+    description:
+      "Explore returned Google results for a keyword, inspect page evidence, try a change and take it into your website workflow.",
+    summary:
+      "Start with one keyword and one page. Inspect the returned results, choose a suggested move, and try the wording in the page preview. Copy the fix instructions or export your draft when ready.",
+    updated,
+    tags: [
+      "serp",
+      "studio",
+      "keyword",
+      "Google",
+      "ranking",
+      "preview",
+      "snapshot",
+    ],
+    sections: [
+      {
+        id: "stage",
+        title: "Bring a search into focus",
+        paragraphs: [
+          "In your project, enter a plain search phrase and a page on the project website. Review the market and allowance, then start a live lookup. Account-based lookups require configured providers, background jobs and available allowance.",
+          "The public walkthrough contains recorded, real Google results and a public page fetch. Its label and observation dates distinguish it from a fresh account lookup. It does not run a paid search when you interact with it.",
+        ],
+      },
+      {
+        id: "inspect",
+        title: "Read the clues before making a move",
+        paragraphs: [
+          "Select a returned result to inspect its title and snippet evidence. Query words are highlighted to help you compare the wording. These clues do not explain every reason a page ranks, and a result card is not a full competitor-page crawl.",
+          "If your exact page or its declared canonical is missing from the returned set, the studio says not observed. It does not invent a lower position. Snapshot comparisons preserve the query, country, language and device.",
+        ],
+      },
+      {
+        id: "edit",
+        title: "Try the wording, then take it with you",
+        paragraphs: [
+          "Choose a title, description, heading or answer move. Edit the wording and compare Current page with My draft. On smaller screens a preview also appears beside the editor. A related question can open the answer draft while keeping the question visible.",
+          "Use Help me fix this for copyable instructions, or export the draft as Markdown. Manual studio drafts belong to the current browser session; export them before leaving. Content Studio provides persistent revisions for its generated drafts.",
+        ],
+      },
+      {
+        id: "recheck",
+        title: "Separate the preview from the live result",
+        paragraphs: [
+          "Review and publish the change through your own website workflow. A page recheck can confirm whether the approved wording is present in new page evidence. A separate search refresh supplies a new ranking observation.",
+          "Draft previews update as you type. They do not publish a change, rerank Google results or guarantee a traffic outcome.",
+        ],
+      },
+    ],
+    checklist: [
+      "Confirm the query, page and market",
+      "Inspect the returned results and source date",
+      "Try one relevant change in the preview",
+      "Copy instructions or export the reviewed draft",
+      "Publish, recheck the page and compare fresh observations",
+    ],
+    related: [
+      "/help/fix-prompts",
+      "/help/dataforseo-research",
+      "/learn/measure-before-after",
+    ],
+    action: { label: "Open the SERP Studio walkthrough", href: "/demo" },
+  },
+  {
     slug: "google-login-and-search-console",
     title: "Google sign-in and Search Console are separate",
     category: "Connections",
@@ -786,7 +928,7 @@ export const HELP_ARTICLES: LearningArticle[] = [
           "A fetched title: observed page evidence.",
           "A suggested priority: an interpretation of evidence and effort.",
           "An AI provider answer: a dated sample with its prompt and model.",
-          "The demo workspace: illustrative examples, not customer results.",
+          "The demo workspace: labeled examples; SERP Studio uses recorded real public evidence.",
         ],
       },
       {

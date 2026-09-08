@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-08T21:21:26.152Z",
+  "checkedAt": "2026-09-08T22:09:56.881Z",
   "results": [
     {
       "provider": "Supabase schema",
@@ -18,10 +18,16 @@
       "state": "unconfigured"
     },
     {
+      "provider": "Firecrawl account",
+      "state": "read-only connection verified",
+      "http": 200,
+      "checkedAt": "2026-09-08T22:09:56.500Z"
+    },
+    {
       "provider": "DataForSEO account",
       "state": "read-only connection verified",
       "http": 200,
-      "checkedAt": "2026-09-08T21:21:26.151Z"
+      "checkedAt": "2026-09-08T22:09:56.881Z"
     },
     {
       "provider": "Firecrawl crawl",

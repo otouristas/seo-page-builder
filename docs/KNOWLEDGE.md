@@ -1,6 +1,6 @@
 # The RankSushi knowledge layer
 
-RankSushi now has one versioned editorial registry in `src/lib/learning/content.ts`: six practical SEO/AEO/GEO guides, three blog posts and eight help articles. Each record supplies HTML, search/filter metadata, Markdown, a downloadable checklist, sources, related reads and sitemap entries. Blog records also supply RSS. Change the record instead of maintaining separate copies.
+RankSushi now has one versioned editorial registry in `src/lib/learning/content.ts`: six practical SEO/AEO/GEO guides, three blog posts and ten help articles. Each record supplies HTML, search/filter metadata, Markdown, a downloadable checklist, sources, related reads and sitemap entries. Blog records also supply RSS. Change the record instead of maintaining separate copies.
 
 ## Provenance
 
@@ -32,3 +32,12 @@ These are proposals, not delivered features:
 4. **Release annotations.** Tie an exported draft and verified live change to dated Search Console comparisons, preserving other changes that could explain the result. Report associations rather than claiming causation.
 
 Prioritize validated hosted accounts/jobs and the existing evidence workflow before expanding provider scope. "All the data" should mean relevant, traceable data with explicit limits, not automatic bulk calls across every billable API.
+
+
+## Actionable help and copying
+
+Help pages and SEO field-guide articles now use the three-column handbook shell. Search covers all sixteen help/guide articles; blogs retain the editorial reading layout. Every article still exports the same Markdown and checklist from its registry record.
+
+`src/lib/fixes/recipes.ts` defines fifteen contextual instruction recipes covering every emitted audit key through explicit aliases. `src/lib/fixes/prompts.ts` turns the selected finding and its dated evidence into editor instructions, an AI prompt or a developer handoff. Unknown observations request investigation; passed and not-applicable results discourage unnecessary changes. The SERP Studio prompt includes the currently edited field, and page fix plans exclude successful checks. Prompt generation is local and makes no paid provider request.
+
+Copy actions support Markdown, instructions, clipboard recovery and links that open an assistant for the user to paste into. They do not send prompts, provision MCP, publish website changes or mark findings verified. Documentation checkboxes track the current visit only. Prompt URL entry is optional and is not saved; credentials, common access-query parameters and fragments are stripped from the copied URL. No private account data is exposed through public docs.

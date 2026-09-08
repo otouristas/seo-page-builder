@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { Badge } from "../ui";
+import { FixKit } from "../fix-kit";
 import Link from "next/link";
 import { guideForFinding } from "@/lib/learning/guide-links";
 import type { AuditFinding } from "@/lib/types";
@@ -123,6 +124,17 @@ export function Finding({ finding }: { finding: AuditFinding }) {
         {guide.label}
         <ArrowUpRight size={13} aria-hidden="true" />
       </Link>
+      <FixKit
+        context={{
+          key: f.id,
+          title: f.title,
+          url: f.evidence.url,
+          detail: f.detail,
+          recommendation: f.recommendation,
+          status: f.status,
+          evidence: f.evidence,
+        }}
+      />
       <div className="finding-evidence">
         {f.evidence.source} · {f.evidence.status} ·{" "}
         {new Date(f.evidence.observedAt).toLocaleString("en-US")}

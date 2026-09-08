@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { LearningArticlePage } from "@/components/learning";
+import { DocsArticle } from "@/components/docs";
 import { COLLECTIONS, getArticle } from "@/lib/learning/content";
 import { pageMetadata } from "@/lib/metadata";
 export const dynamicParams = false;
@@ -31,5 +31,5 @@ export default async function Page({
   const { slug } = await params;
   const a = getArticle("help", slug);
   if (!a) notFound();
-  return <LearningArticlePage collection="help" article={a} />;
+  return <DocsArticle collection="help" article={a} />;
 }

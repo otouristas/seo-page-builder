@@ -51,9 +51,9 @@ test("pill navigation and full-screen mobile menu preserve access and focus", as
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   await expect(opener).toBeFocused();
-  expect(await page.evaluate(() => document.body.style.overflow)).not.toBe(
-    "hidden",
-  );
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.overflow))
+    .not.toBe("hidden");
   await opener.click();
   await dialog.getByRole("link", { name: /Help center/ }).click();
   await expect(page).toHaveURL(/\/help$/);
@@ -155,7 +155,7 @@ test("every public sitemap URL and Markdown export is complete and canonical", a
   const links = [
     ...index.matchAll(/\]\((https:\/\/ranksushi\.com[^)]*\/index\.md)\)/g),
   ];
-  expect(links.length).toBe(17);
+  expect(links.length).toBe(19);
   for (const [, url] of links) {
     expect((await request.get(new URL(url).pathname)).status()).toBe(200);
   }

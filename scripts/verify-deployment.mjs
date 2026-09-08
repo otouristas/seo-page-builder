@@ -20,6 +20,8 @@ const routes = [
   ["/blog/llms-txt-without-the-myths", 200],
   ["/help", 200],
   ["/help/dataforseo-research", 200],
+  ["/help/fix-prompts", 200],
+  ["/help/serp-studio", 200],
   ["/llms.txt", 200],
   ["/feed.xml", 200],
   ["/sitemap", 200],
@@ -71,6 +73,14 @@ for (let start = 0; start < routes.length; start += 4) {
           result.canonical ===
             `https://ranksushi.com${path === "/" ? "" : path}` &&
           !!result.heading;
+      }
+      if (path === "/help" || path === "/help/fix-prompts") {
+        result.docsLayout =
+          html(".docs-sidebar").length === 1 &&
+          html(".docs-right").length === 1;
+        result.passed = result.passed && result.docsLayout;
+        if (path === "/help/fix-prompts")
+          result.passed = result.passed && html(".copy-actions").length >= 2;
       }
       if (path === "/demo") {
         result.heading = html("main h1").text().replace(/\s+/g, " ").trim();
