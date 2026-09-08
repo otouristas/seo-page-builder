@@ -28,7 +28,13 @@ Connect an Inngest app to `/api/inngest`, set `INNGEST_EVENT_KEY` and `INNGEST_S
 
 Add `FIRECRAWL_API_KEY` and `FIRECRAWL_WEBHOOK_SECRET`. Set the same signing secret in the Firecrawl account. Hosted crawl submissions include `/api/webhooks/firecrawl`; the handler expects `x-firecrawl-signature` HMAC-SHA256. Validate the actual account signing configuration and a signed callback before calling this operational. Verify a partial crawl, robots-blocked page, crawl cancellation and a changed-page recheck. The free single-page tool fetches bounded HTTP HTML directly and needs the database/rate salt, not paid rendering credits.
 
-Enable PageSpeed Insights API and supply `PAGESPEED_API_KEY`. Add `DATAFORSEO_LOGIN` / `DATAFORSEO_PASSWORD` for live organic SERP evidence. The current DataForSEO market mapping explicitly supports twelve markets; unsupported markets return a precise error rather than silently substituting another location.
+Enable PageSpeed Insights API and supply `PAGESPEED_API_KEY`.
+
+DataForSEO uses the account's API login and API password in server-only `DATAFORSEO_LOGIN` / `DATAFORSEO_PASSWORD`. They are configured in ignored local environment storage and as sensitive Preview/Production variables in Vercel. Do not use the website-login password, publish the credentials or put them under `NEXT_PUBLIC_*`. Rotate the password that was shared in chat and update both Vercel environments and local storage; deploy again to apply an environment change.
+
+The Search Console screen offers two separately requested research modes: a desktop Google results snapshot and a one-keyword Labs demand estimate. Each consumes one lookup from the same workspace research allowance. The API supports twelve mapped markets; unsupported markets and advanced price-multiplier operators fail before quota reservation. Keyword demand accepts at most 80 characters and ten words. The adapters preserve missing values, provider status, source, market, time and returned costs; HTTP 200 alone does not establish success.
+
+Account authentication and both actual research adapters have been verified. See `artifacts/qa/dataforseo-live-research.json` and [COST_MODEL.md](COST_MODEL.md). Hosted workspace execution still needs the Supabase service secret/schema and Inngest configuration, then an authenticated end-to-end lookup. The demo never makes paid requests. No automatic bulk collection, backlink crawl, competitor-gap lookup or other DataForSEO API was enabled.
 
 ## 4. AI
 
@@ -52,9 +58,9 @@ Verify a domain in Resend and configure SPF/DKIM and the chosen sender, such as 
 
 Set server/client Sentry DSNs. The event scrubber removes personal fields, credentials, URLs with query strings and share tokens. No session replay or content-bearing analytics is enabled. Test a sanitized error and delivery failure.
 
-## 7. Vercel and rollback
+## 7. Vercel-only deployment and rollback
 
-The Vercel project is `ranksushi` under `otouristas-projects`. Public canonicals always use `https://ranksushi.com`; preview callbacks use the deployment origin when `NEXT_PUBLIC_SITE_URL` is unset. Set that variable to `https://ranksushi.com` only for production. Use exact preview origins in Supabase/Google allowlists for auth tests. Never put secret keys under `NEXT_PUBLIC_*`.
+Use **Vercel only** for every hosted RankSushi environment. The project is `ranksushi` under `otouristas-projects`, connected to the GitHub repository. Public canonicals always use `https://ranksushi.com`; preview callbacks use the deployment origin when `NEXT_PUBLIC_SITE_URL` is unset. Production currently uses `NEXT_PUBLIC_SITE_URL=https://ranksushi.vercel.app`. Change it to `https://ranksushi.com` when the custom domain is connected and its callbacks validated. While testing on the default Vercel alias, allow that exact origin's Supabase and Google callbacks; also use exact preview origins in the allowlists. Never put secret keys under `NEXT_PUBLIC_*`.
 
 ```sh
 npm ci
@@ -64,4 +70,4 @@ npx vercel link --project ranksushi --scope otouristas-projects
 npx vercel deploy --scope otouristas-projects
 ```
 
-A preview is not a production cutover. Verify deployed public routes, protected APIs, exports, auth and provider callbacks; use `vercel curl` to retain preview protection. Set the production domain/DNS and deploy production only after the remaining setup is confirmed and validated. Preserve the current Netlify deployment. For rollback, leave DNS on the existing deployment or promote a previously verified Vercel deployment. The source baseline remains at `c498f40a5db320f427218f748a81c7eca6c0db22` on `archive/rankframe-baseline`; create a separate checkout to inspect it instead of resetting this rebuild.
+A successful deployment does not certify live provider flows. Verify deployed public routes, protected APIs, exports, auth and provider callbacks; use `vercel curl` to retain preview protection. Connect the production domain/DNS and enable live sales only after the remaining setup is confirmed and validated. Roll back by promoting a previously verified deployment within this Vercel project. Keep schema changes compatible with the deployment being restored; a deployment rollback does not reverse database migrations. The original source remains at `c498f40a5db320f427218f748a81c7eca6c0db22` on `archive/rankframe-baseline` for reference; create a separate checkout to inspect it instead of resetting this rebuild.

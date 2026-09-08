@@ -22,6 +22,10 @@ GSC authorization is separate from account login. State, PKCE, cookie, user and 
 
 Drafts record their returned model, supplied evidence URLs and confirmation requests. All content is reviewable with versioned edits and exports. Crawled text is untrusted data in model instructions. Readiness criteria do not predict citation or rankings. AI visibility records exact prompts, provider/model, timestamp, market, answer, citations and literal brand mentions. These are sampled API responses, not consumer-product share of voice. DataForSEO competitors are actual returned organic results.
 
+The public learning registry supplies six guides, three blog posts and eight help articles, plus HTML/Markdown/checklist exports, RSS and `llms.txt`. Draft preparation selects up to three versioned editorial methods separately from page evidence and retains their references in draft metadata. Audit findings link to matching methods. See [KNOWLEDGE.md](KNOWLEDGE.md) for provenance and editorial updates.
+
+DataForSEO research reuses the durable `serp` job kind with an explicit mode, defaulting old requests to live SERP. One requested mode is one allowance reservation and one provider receipt: either a bounded Google advanced snapshot or a one-keyword Labs overview. Returned estimates and paid-search competition never masquerade as the project's measured traffic. Provider-level and task-level status must both succeed. Research output and CSV retain source, observation time and market; only the owner can retrieve saved jobs.
+
 ## Durable work and recovery
 
 Inngest handles bounded jobs, retries, workspace concurrency, cancellation, a persisted dispatch outbox, daily/weekly schedules, hourly Stripe reconciliation and requested notices. A provider receipt is claimed before a billable request. A saved response is reused. If a timeout leaves the outcome uncertain, that billable operation is not automatically replayed. Its reservation is retained for operator reconciliation. Confirmed auth/rate-limit rejection can retry. Credentials are never included in events.

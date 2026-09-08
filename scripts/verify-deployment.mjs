@@ -4,6 +4,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { load } from "cheerio";
 const exec = promisify(execFile);
 const deployment = process.argv[2];
+const outputPath = process.argv[3] || "artifacts/qa/deployed-routes.json";
 if (!deployment || !new URL(deployment).hostname.endsWith(".vercel.app"))
   throw new Error("Provide the verified Vercel deployment URL.");
 const routes = [
@@ -11,6 +12,17 @@ const routes = [
   ["/demo", 200],
   ["/features/website-audits", 200],
   ["/tools/metadata-preview", 200],
+  ["/learn", 200],
+  ["/learn/answer-ready-content", 200],
+  ["/learn/answer-ready-content/index.md", 200],
+  ["/learn/answer-ready-content/checklist.md", 200],
+  ["/blog", 200],
+  ["/blog/llms-txt-without-the-myths", 200],
+  ["/help", 200],
+  ["/help/dataforseo-research", 200],
+  ["/llms.txt", 200],
+  ["/feed.xml", 200],
+  ["/sitemap", 200],
   ["/api/health", 200],
   ["/api/projects", 401],
   ["/app", 307],
@@ -46,7 +58,9 @@ for (let start = 0; start < routes.length; start += 4) {
       if (
         path === "/" ||
         path.startsWith("/features/") ||
-        path.startsWith("/tools/")
+        path.startsWith("/tools/") ||
+        (/^\/(learn|blog|help|sitemap)(\/|$)/.test(path) &&
+          !path.endsWith(".md"))
       ) {
         result.title = html("title").text();
         result.canonical = html("link[rel=canonical]").attr("href");
@@ -61,6 +75,18 @@ for (let start = 0; start < routes.length; start += 4) {
       if (path === "/api/health")
         result.passed =
           result.passed && JSON.parse(body).service === "RankSushi";
+      if (path === "/llms.txt")
+        result.passed =
+          result.passed &&
+          body.startsWith("# RankSushi") &&
+          body.includes("/learn/answer-ready-content/index.md");
+      if (path.endsWith(".md"))
+        result.passed =
+          result.passed &&
+          body.includes("Make your page easier to understand and cite");
+      if (path === "/feed.xml")
+        result.passed =
+          result.passed && load(body, { xml: true })("item").length === 3;
       return result;
     }),
   );
@@ -76,7 +102,7 @@ for (let start = 0; start < routes.length; start += 4) {
 }
 mkdirSync("artifacts/qa", { recursive: true });
 writeFileSync(
-  "artifacts/qa/deployed-routes.json",
+  outputPath,
   JSON.stringify(
     { deployment, checkedAt: new Date().toISOString(), checks },
     null,

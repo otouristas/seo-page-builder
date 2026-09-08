@@ -1,18 +1,11 @@
 import type { MetadataRoute } from "next";
-import { ARTICLES, FEATURES, TOOL_PAGES } from "@/lib/content";
+import { publicPages } from "@/lib/public-pages";
 import { CANONICAL_URL } from "@/lib/utils";
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    "",
-    "/features",
-    "/pricing",
-    "/tools",
-    ...Object.keys(ARTICLES).map((k) => `/${k}`),
-    ...Object.keys(FEATURES).map((k) => `/features/${k}`),
-    ...Object.keys(TOOL_PAGES).map((k) => `/tools/${k}`),
-  ].map((path) => ({
-    url: `${CANONICAL_URL}${path}`,
-    changeFrequency: path === "" ? "weekly" : "monthly",
-    priority: path === "" ? 1 : path.startsWith("/features/") ? 0.8 : 0.6,
+  return publicPages().map((p) => ({
+    url: `${CANONICAL_URL}${p.path === "/" ? "" : p.path}`,
+    ...(p.updated ? { lastModified: p.updated } : {}),
+    changeFrequency: p.path === "/" ? "weekly" : "monthly",
+    priority: p.path === "/" ? 1 : p.path.startsWith("/features/") ? 0.8 : 0.6,
   }));
 }

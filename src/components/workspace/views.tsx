@@ -28,6 +28,7 @@ import { PLANS, PAID_PLANS } from "@/lib/plans";
 import { summarizeGsc, type GscRow } from "@/lib/seo/gsc";
 import { displayDate, toCsv, escapeHtml } from "@/lib/utils";
 import { PerformanceChart } from "./chart";
+import { ResearchPanel } from "./research-panel";
 import {
   Finding,
   Notice,
@@ -892,6 +893,7 @@ export function SearchConsole(ctx: WorkspaceContext) {
         Final data is imported through a conservative three-day delay; it is not
         real time.
       </Notice>
+      <ResearchPanel ctx={ctx} />
       <div className="section-subheading">
         <h2>Queries with context</h2>
         <div className="toolbar">
@@ -922,7 +924,12 @@ export function SearchConsole(ctx: WorkspaceContext) {
           </Button>
         </div>
       </div>
-      <div className="panel table-wrap">
+      <div
+        className="panel table-wrap"
+        role="region"
+        tabIndex={0}
+        aria-label="Search Console query table"
+      >
         <table className="data-table">
           <caption className="sr-only">
             {data.sample ? "Illustrative " : ""}Search Console detailed records
@@ -1168,9 +1175,9 @@ export function ContentStudio(ctx: WorkspaceContext) {
               />
             </div>
             <p className="small-note">
-              Uses your latest saved page evidence. Unsupported claims are
-              flagged for your confirmation. Review all content before
-              publishing.
+              Uses your latest saved page evidence and the SEO kitchen’s
+              editorial guidance. Unsupported claims are flagged for your
+              confirmation. Review all content before publishing.
             </p>
             {error && (
               <p className="form-error" role="alert">
@@ -1278,6 +1285,29 @@ function DraftEditor({
             </a>
           ))}
         </p>
+      )}
+      {!!draft.metadata?.guidanceSources?.length && (
+        <div className="notice">
+          <strong>Editorial guidance used</strong>
+          <ul>
+            {draft.metadata.guidanceSources.map((g) => (
+              <li key={g.slug}>
+                <Link
+                  href={`/learn/${g.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {g.title}
+                </Link>{" "}
+                · version {g.version}
+              </li>
+            ))}
+          </ul>
+          <p className="small-note">
+            Methods used to prepare this draft; your page snapshots remain the
+            business evidence.
+          </p>
+        </div>
       )}
       {!!draft.metadata?.needsConfirmation?.length && (
         <Notice>
@@ -1544,7 +1574,9 @@ export function AIVisibility(ctx: WorkspaceContext) {
           title="Google SERP evidence"
           note="An on-demand look at organic search results."
         >
-          <SerpForm ctx={ctx} />
+          <SmallLink href={`${ctx.base}/search-console#market-research`}>
+            Open search research
+          </SmallLink>
           <Notice>
             Google does not require special AI markup. Relevant structured data
             must match what people can see on the page. There is no separate
@@ -1612,57 +1644,6 @@ export function AIVisibility(ctx: WorkspaceContext) {
           Run a prompt to see the answer and its returned sources here. Try the
           same prompt later to compare observations.
         </EmptyState>
-      )}
-    </>
-  );
-}
-function SerpForm({ ctx }: { ctx: WorkspaceContext }) {
-  const [query, setQuery] = useState(""),
-    [busy, setBusy] = useState(false);
-  const latest = ctx.data.jobs.find(
-    (j) => j.kind === "serp" && j.status === "completed",
-  );
-  return (
-    <>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setBusy(true);
-          try {
-            await ctx.run({ kind: "serp", query });
-          } catch (e) {
-            ctx.notify((e as Error).message);
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        <div className="field">
-          <label htmlFor="serp-query">Search query</label>
-          <input
-            id="serp-query"
-            minLength={2}
-            maxLength={200}
-            required
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="A query that matters to your business"
-          />
-        </div>
-        <Button busy={busy} variant="secondary">
-          <Search size={14} />
-          Look up results · 1 lookup
-        </Button>
-      </form>
-      {latest?.output && (
-        <details style={{ marginTop: 20 }}>
-          <summary>
-            Latest SERP evidence · {displayDate(latest.created_at)}
-          </summary>
-          <pre className="code-output">
-            {JSON.stringify(latest.output, null, 2)}
-          </pre>
-        </details>
       )}
     </>
   );
@@ -2205,7 +2186,11 @@ function Connections({ ctx }: { ctx: WorkspaceContext }) {
           "Perplexity",
           "A second provider for sampled API answers.",
         ],
-        ["serp", "DataForSEO", "On-demand Google organic search evidence."],
+        [
+          "serp",
+          "DataForSEO",
+          "Live Google listings and keyword-demand estimates.",
+        ],
         [
           "pagespeed",
           "Google PageSpeed",

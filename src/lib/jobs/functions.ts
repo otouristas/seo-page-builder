@@ -25,7 +25,7 @@ import {
   dateWindow,
   saveGscOpportunities,
 } from "../integrations/gsc";
-import { fetchSerp } from "../integrations/serp";
+import { fetchResearch } from "../integrations/serp";
 import { pageSpeed } from "../integrations/pagespeed";
 import { buildReport, reportPdf, reportCsv } from "../server/reports";
 import { sendEmail } from "../integrations/resend";
@@ -384,6 +384,7 @@ export const runJob = inngest.createFunction(
               model: result.model,
               evidenceUrls: result.evidenceUrls,
               needsConfirmation: result.needsConfirmation,
+              guidanceSources: result.guidanceSources,
             },
           }),
         );
@@ -392,6 +393,7 @@ export const runJob = inngest.createFunction(
           model: result.model,
           evidenceUrls: result.evidenceUrls,
           needsConfirmation: result.needsConfirmation,
+          guidanceSources: result.guidanceSources,
         };
       });
       used = 1;
@@ -462,9 +464,20 @@ export const runJob = inngest.createFunction(
       };
     } else if (input.kind === "serp") {
       output = await step.run("google-serp-evidence", async () => {
-        await stage(job.id, "Retrieving Google search evidence", true);
+        await stage(
+          job.id,
+          input.mode === "keywords"
+            ? "Retrieving keyword database estimates"
+            : "Retrieving live Google results",
+          true,
+        );
         return providerOnce(job.id, "serp", () =>
-          fetchSerp(input.query, project.country, project.language),
+          fetchResearch(
+            input.query,
+            project.country,
+            project.language,
+            input.mode ?? "serp",
+          ),
         );
       });
       used = 1;

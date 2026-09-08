@@ -2,6 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { inngest } from "./client";
+import { ordinaryQuery, RESEARCH_LOCATIONS } from "../research";
 import { adminClient } from "../supabase/server";
 import { requireWriteAccess } from "../server/auth";
 import { checked } from "../server/http";
@@ -42,7 +43,26 @@ export const jobInput = z.discriminatedUnion("kind", [
     provider: z.enum(["openai", "perplexity"]),
     prompt: z.string().min(10).max(1000),
   }),
-  z.object({ kind: z.literal("serp"), query: z.string().min(2).max(200) }),
+  z
+    .object({
+      kind: z.literal("serp"),
+      query: z
+        .string()
+        .trim()
+        .min(2)
+        .max(200)
+        .refine(
+          ordinaryQuery,
+          "Use a plain search phrase; advanced operators are not enabled.",
+        ),
+      mode: z.enum(["serp", "keywords"]).default("serp"),
+    })
+    .refine(
+      (v) =>
+        v.mode !== "keywords" ||
+        (v.query.length <= 80 && v.query.split(/\s+/).length <= 10),
+      "Keyword demand accepts up to 80 characters and 10 words.",
+    ),
   z.object({
     kind: z.literal("report"),
     title: z.string().max(100).default("Fresh findings report"),
@@ -56,6 +76,11 @@ export async function enqueueJob(
   input: JobInput,
   idempotencyKey?: string,
 ) {
+  if (input.kind === "serp" && !RESEARCH_LOCATIONS[project.country])
+    throw new AppError(
+      "Research is not yet available for this project country.",
+      400,
+    );
   const db = adminClient();
   if (!process.env.INNGEST_EVENT_KEY && process.env.INNGEST_DEV !== "1")
     throw new AppError(

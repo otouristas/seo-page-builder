@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     images: ["/opengraph-image"],
   },
   twitter: { card: "summary_large_image" },
+  alternates: { types: { "application/rss+xml": "/feed.xml" } },
   icons: { icon: "/favicon.svg" },
 };
 export const viewport: Viewport = { themeColor: "#F7F7EF" };
