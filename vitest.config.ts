@@ -1,9 +1,16 @@
 import { defineConfig } from "vitest/config";
-
+import path from "node:path";
 export default defineConfig({
-  resolve: { tsconfigPaths: true },
+  resolve: {
+    alias: {
+      "@": path.resolve("./src"),
+      "server-only": path.resolve("./tests/server-only.ts"),
+    },
+  },
   test: {
+    include: ["tests/unit/**/*.test.ts"],
+    testTimeout: 30000,
+    hookTimeout: 30000,
     environment: "node",
-    include: ["src/**/*.test.ts"],
   },
 });

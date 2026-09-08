@@ -1,22 +1,47 @@
-# Rankframe
+# RankSushi
 
-An SEO lab. Paste any public URL, get a weighted on-page audit, and watch a Google-like results page where **plays** (concrete changes) move your modeled position. It is a lab, not a ranking guarantee: positions are modeled and labeled as such; live page-one results come from DataForSEO.
+Useful insights, served fresh. A Next.js SaaS from **Touristas Technologies** for **ranksushi.com**. Support: **anotherseoguru@gmail.com**.
 
-Full notes on what's real, what's modeled, and how it's built: [BUILD.md](./BUILD.md).
+Connect a website → discover opportunities → prepare a reviewed draft → recheck the live page → measure observed performance.
 
+## Run
+
+Requires Node 24 and npm. Dependencies are exactly pinned in `package-lock.json`.
+
+```sh
+npm ci
+cp .env.example .env.local
+npm run dev
 ```
-npm install
-cp .env.example .env     # optional: auth, database, DataForSEO
-npm run dev              # http://localhost:3000
+
+Visit http://localhost:3100. `/demo` is explicitly illustrative and works without provider credentials. `/tools/metadata-preview` and `/tools/structured-data` run locally. Real accounts, the free audit, saved projects and jobs require the Supabase migration and server secret. Missing configuration produces a recovery state rather than invented results.
+
+For an isolated complete database/auth/storage/job test:
+
+```sh
+npx supabase start --exclude studio,realtime,edge-runtime,logflare,vector,supavisor,imgproxy
+npm run dev:local
+# In another terminal:
+npx inngest-cli@latest dev --no-discovery -u http://localhost:3100/api/inngest
+# In a third terminal:
+LOCAL_SUPABASE_TEST=1 PLAYWRIGHT_BASE_URL=http://localhost:3100 npx playwright test local-services --project desktop
 ```
 
-| Route | What |
-|---|---|
-| `/` | Marketing site: hero, proof, product, live demo, case studies, pricing, FAQ |
-| `/app` | The lab. `?url=` runs a page, `?demo=1` loads the modeled demo, `?tab=`, `?kw=`, `?market=`, `?plays=` deep-link |
-| `/login` | Sign in with Google or X (Better Auth), or continue as a guest |
-| `/pricing`, `/case-studies/:slug`, `/privacy`, `/terms` | Supporting pages |
+The local project is `ranksushi-local`, with independent ports 56321–56328. `dev:local` reads only this local stack's credentials into process memory. It never overwrites the configured hosted Supabase project. Local mail is captured by Mailpit; integration tests send nothing to external recipients and use no paid AI or payment services.
 
-Scripts: `npm run build` (Vite + Nitro to `.output/`), `npm start`, `npm run typecheck`, `npm test`, `npm run screenshots` (Playwright captures of every route).
+## Check
 
-Deploying: Netlify is configured by `netlify.toml` (publish `dist`); set `DATABASE_URL` and the auth variables in the site's environment. Details in [BUILD.md](./BUILD.md#netlify).
+```sh
+npm run check                # TypeScript, ESLint, 61 meaningful unit/SQL checks
+npm run build               # Stop dev first; it shares .next
+npm start
+PLAYWRIGHT_BASE_URL=http://localhost:3100 npm run test:e2e
+npm run check:setup          # Presence only, no values printed
+npm run verify:providers     # Read-only checks, no purchases or AI calls
+```
+
+Read [SETUP.md](docs/SETUP.md) for provider configuration and deployment, [ARCHITECTURE.md](docs/ARCHITECTURE.md) for boundaries and recovery, [COST_MODEL.md](docs/COST_MODEL.md) for live-sale gating, and [PROJECT_STATE.md](PROJECT_STATE.md) for verified versus remaining work.
+
+## Baseline and release
+
+This replaces the TanStack Start / Better Auth application on `codex/ranksushi-rebuild`. The original main commit `c498f40a5db320f427218f748a81c7eca6c0db22` is preserved on `archive/rankframe-baseline`. Keep the existing Netlify deployment available until the Vercel application and all real provider flows have passed acceptance. The feature branch is not a production cutover.

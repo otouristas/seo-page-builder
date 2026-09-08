@@ -1,0 +1,63 @@
+{
+  "deployment": "https://ranksushi-b8eca14tz-otouristas-projects.vercel.app",
+  "checkedAt": "2026-09-08T20:49:43.381Z",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "RankSushi — Less SEO overwhelm. More found you.",
+      "canonical": "https://ranksushi.com",
+      "heading": "Less SEO overwhelm.More “found you.”"
+    },
+    {
+      "path": "/demo",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/features/website-audits",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Website audits that explain the next step | RankSushi",
+      "canonical": "https://ranksushi.com/features/website-audits",
+      "heading": "Website audits that explain the next step"
+    },
+    {
+      "path": "/tools/metadata-preview",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Search metadata preview | RankSushi",
+      "canonical": "https://ranksushi.com/tools/metadata-preview",
+      "heading": "Search metadata preview"
+    },
+    {
+      "path": "/api/health",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/api/projects",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "path": "/app",
+      "status": 307,
+      "expected": 307,
+      "passed": true
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    }
+  ]
+}
