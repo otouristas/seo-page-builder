@@ -8,7 +8,7 @@ import { CANONICAL_URL } from "@/lib/utils";
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_URL),
   title: {
-    default: "RankSushi — Less SEO overwhelm. More found you.",
+    default: "RankSushi — SEO audits, clear fixes & content tools",
     template: "%s | RankSushi",
   },
   description:

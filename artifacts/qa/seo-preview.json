@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-09-08T22:27:36.718Z",
+  "base": "http://localhost:3100",
+  "mode": "preview-quality",
+  "passed": true,
+  "launchReady": false,
+  "launchBlockers": [
+    "Canonical domain purchase/connection remains pending the owner’s launch decision.",
+    "Search Console ownership and baseline are not verified."
+  ],
+  "resourceFailures": [],
+  "checks": [
+    {
+      "path": "/",
+      "title": "RankSushi — SEO audits, clear fixes & content tools",
+      "canonical": "https://ranksushi.com",
+      "schemaCount": 1,
+      "failures": []
+    },
+    {
+      "path": "/tools/seo-audit",
+      "title": "Free single-page SEO audit | RankSushi",
+      "canonical": "https://ranksushi.com/tools/seo-audit",
+      "schemaCount": 0,
+      "failures": []
+    },
+    {
+      "path": "/tools/metadata-preview",
+      "title": "Search metadata preview | RankSushi",
+      "canonical": "https://ranksushi.com/tools/metadata-preview",
+      "schemaCount": 0,
+      "failures": []
+    },
+    {
+      "path": "/tools/structured-data",
+      "title": "Structured-data checker | RankSushi",
+      "canonical": "https://ranksushi.com/tools/structured-data",
+      "schemaCount": 0,
+      "failures": []
+    },
+    {
+      "path": "/features/website-audits",
+      "title": "Website audits that explain the next step | RankSushi",
+      "canonical": "https://ranksushi.com/features/website-audits",
+      "schemaCount": 0,
+      "failures": []
+    },
+    {
+      "path": "/features/ai-visibility",
+      "title": "AI visibility, with evidence and context | RankSushi",
+      "canonical": "https://ranksushi.com/features/ai-visibility",
+      "schemaCount": 0,
+      "failures": []
+    },
+    {
+      "path": "/learn/seo-evidence-library",
+      "title": "The SEO evidence library | RankSushi",
+      "canonical": "https://ranksushi.com/learn/seo-evidence-library",
+      "schemaCount": 1,
+      "failures": []
+    },
+    {
+      "path": "/learn/original-evidence-content",
+      "title": "Write the page only your business can write | RankSushi",
+      "canonical": "https://ranksushi.com/learn/original-evidence-content",
+      "schemaCount": 1,
+      "failures": []
+    }
+  ],
+  "note": "These checks inspect implementation. They do not establish indexing, rankings, field performance or provider readiness."
+}

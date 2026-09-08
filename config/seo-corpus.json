@@ -1,0 +1,142 @@
+{
+  "version": "2026-09-09.2",
+  "originalTask": {
+    "title": "SEO Corpus Review",
+    "id": "6a8861d7edb08191ba448355136ee22c",
+    "conversationId": "6a885ffc-4ad0-83eb-a751-f8dfa97e1143",
+    "sourceUrl": "https://chatgpt.com/share/6aa088ed-c8f0-83eb-980f-616edd1fb769",
+    "prompt": "Continue reviewing the next unread SEO materials from Ahrefs Blog SEO categories, Semrush Blog SEO categories and original SEO research/case studies, and Google Search Central documentation. Read source pages, extract only durable reusable SEO rules, workflows, edge cases, experiments and case-study evidence that are not already captured. Update the persistent SEO Skill Library/memory with genuinely new findings, clearly separating Google requirements/guidance from vendor observations, correlations and case studies. Avoid duplicate findings. Report concise progress with the most important newly learned items and source citations.",
+    "schedule": {
+      "frequency": "daily",
+      "plannedRuns": 14,
+      "startsLocal": "2026-08-22T08:00:00",
+      "timeZone": null,
+      "timeZoneNote": "The recovered schedule did not specify a timezone.",
+      "timingMode": "flexible_schedule"
+    },
+    "statusInSnapshot": "paused",
+    "statusObservedAt": "2026-09-01T05:51:44.066Z",
+    "pauseReason": "Updates had not been viewed",
+    "liveStatusVerified": false
+  },
+  "execution": {
+    "enabled": false,
+    "note": "Reference configuration only. No scheduler has been created or resumed."
+  },
+  "storage": {
+    "driveDocumentUrl": "https://docs.google.com/document/d/1m6T70fB1tpZ_GEJj3pNTSAqGHJQJ-dlKeIFHX0GwTeY/edit",
+    "driveCoverage": "August 22 only; six findings",
+    "reports": "knowledge/seo-corpus/reviews",
+    "manifest": "knowledge/seo-corpus/manifest.json",
+    "activeRules": "src/lib/knowledge/corpus.ts",
+    "frameworkNote": "20 topics recovered from conversation. No standalone historical SKILL files found."
+  },
+  "reviewPolicy": {
+    "primarySources": ["developers.google.com", "ahrefs.com", "semrush.com"],
+    "evidenceOrder": [
+      "Applicable Google guidance",
+      "Direct site observations",
+      "Controlled experiments",
+      "Longitudinal studies",
+      "Cross-sectional correlations",
+      "Editorial hypotheses"
+    ],
+    "require": [
+      "Source URL and observation date",
+      "Evidence classification",
+      "Site applicability",
+      "Duplicate check against rule ID",
+      "Review before enabling runtime guidance"
+    ],
+    "never": [
+      "Convert a correlation into a Google requirement",
+      "Import private customer context into public guidance",
+      "Treat a patent as a confirmed ranking factor",
+      "Promise positions or citations",
+      "Automatically publish content"
+    ],
+    "maxRulesPerDraft": 4
+  },
+  "topics": [
+    {
+      "id": "keyword-research",
+      "name": "Keyword research"
+    },
+    {
+      "id": "search-intent",
+      "name": "Search intent"
+    },
+    {
+      "id": "keyword-mapping",
+      "name": "Keyword mapping"
+    },
+    {
+      "id": "content-gaps",
+      "name": "Content gaps"
+    },
+    {
+      "id": "content-value",
+      "name": "Content value"
+    },
+    {
+      "id": "on-page",
+      "name": "On-page SEO and CTR"
+    },
+    {
+      "id": "technical-audits",
+      "name": "Technical audits"
+    },
+    {
+      "id": "indexation",
+      "name": "Indexation"
+    },
+    {
+      "id": "sitemaps",
+      "name": "Sitemaps"
+    },
+    {
+      "id": "javascript",
+      "name": "JavaScript SEO"
+    },
+    {
+      "id": "internal-links",
+      "name": "Internal links"
+    },
+    {
+      "id": "redirects",
+      "name": "Redirects and migrations"
+    },
+    {
+      "id": "international",
+      "name": "International SEO"
+    },
+    {
+      "id": "link-building",
+      "name": "Link building and digital PR"
+    },
+    {
+      "id": "local-seo",
+      "name": "Local SEO"
+    },
+    {
+      "id": "aeo-geo",
+      "name": "AEO and GEO"
+    },
+    {
+      "id": "traffic-drops",
+      "name": "Traffic drops"
+    },
+    {
+      "id": "case-studies",
+      "name": "Case study evaluation"
+    },
+    {
+      "id": "reporting",
+      "name": "Reporting"
+    },
+    {
+      "id": "evidence-review",
+      "name": "Evidence review"
+    }
+  ]
+}

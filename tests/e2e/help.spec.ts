@@ -36,7 +36,7 @@ test("the handbook supports task navigation, keyboard search and mobile topics",
     dialog.getByText("No answer for that phrase yet."),
   ).toBeVisible();
   await dialog.getByRole("button", { name: "Show all answers" }).click();
-  await expect(dialog.getByRole("link")).toHaveCount(16);
+  await expect(dialog.getByRole("link")).toHaveCount(18);
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   const axe = await new AxeBuilder({ page })

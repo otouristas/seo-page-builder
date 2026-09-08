@@ -147,6 +147,13 @@ export const ARTICLES: Record<string, PublicArticle> = {
     lead: "Useful insights should come with receipts. Here is what we measure, what we infer, and where a human needs to take a closer look.",
     sections: [
       {
+        title: "A working evidence library",
+        paragraphs: [
+          "Our SEO evidence library turns reviewed Google guidance, vendor research and practical workflows into source-linked methods. Applicable methods feed copyable fix briefs and Content Studio drafts. Every method keeps its evidence classification; research about other websites is not proof about yours.",
+          "The library is a curated selection from eleven dated research reviews. Historical notes stay separate from product guidance. Our public handbook includes the methods, original-evidence brief and Markdown exports so you can inspect the reasoning behind a recommendation.",
+        ],
+      },
+      {
         title: "Three labels, three kinds of evidence",
         paragraphs: [
           "Measured observations come from a source at a recorded time: a fetched page, a rendered crawl, Search Console, or a performance test. Inferences are interpretations drawn from that evidence. Samples show a bounded observation or an illustrative product example.",

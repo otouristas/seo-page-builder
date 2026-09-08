@@ -1,6 +1,7 @@
 import { GUIDES, articleSources } from "./content";
 import type { DraftKind, PageSnapshot } from "../types";
-export const KNOWLEDGE_VERSION = "2026-09-09.1";
+import { CORPUS_VERSION } from "../knowledge/corpus";
+export const KNOWLEDGE_VERSION = CORPUS_VERSION;
 export type GuidanceReference = {
   slug: string;
   title: string;

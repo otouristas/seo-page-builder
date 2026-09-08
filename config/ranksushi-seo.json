@@ -1,0 +1,128 @@
+{
+  "version": "2026-09-09.1",
+  "brand": "RankSushi",
+  "legalName": "Touristas Technologies",
+  "supportEmail": "anotherseoguru@gmail.com",
+  "canonicalOrigin": "https://ranksushi.com",
+  "previewOrigin": "https://ranksushi.vercel.app",
+  "hosting": "vercel",
+  "language": "en",
+  "market": "global",
+  "launch": {
+    "domainStatus": "purchase-pending",
+    "ownerDecisionDate": "2026-09-09",
+    "searchConsoleProperty": "sc-domain:ranksushi.com",
+    "searchConsoleVerified": false,
+    "note": "The owner will buy the domain later. No purchase, DNS change, indexing submission or paid research is triggered by this configuration."
+  },
+  "measurement": {
+    "baseline": "not-established",
+    "comparison": "latest complete 28 days versus preceding 28 days",
+    "dimensions": ["query", "page", "country", "device", "searchType"],
+    "outcomes": [
+      "Search Console clicks",
+      "Search Console impressions",
+      "observed query/page position",
+      "completed free audits",
+      "saved first projects"
+    ],
+    "never": [
+      "Forecast positions as guaranteed",
+      "Combine detail rows with aggregate totals",
+      "Treat a recheck as proof of traffic causation",
+      "Present sampled API answers as consumer-platform rankings"
+    ]
+  },
+  "targets": [
+    {
+      "path": "/",
+      "intent": "Choose SEO software with actionable fixes",
+      "candidateQueries": [
+        "actionable SEO software",
+        "SEO software for small businesses"
+      ],
+      "queryEvidence": "editorial hypothesis; demand unmeasured",
+      "originalValue": "Editable SERP demonstration with recorded evidence and explicit limitations",
+      "nextStep": "Complete a free page audit",
+      "rules": ["read-or-do", "serp-demand"]
+    },
+    {
+      "path": "/tools/seo-audit",
+      "intent": "Check a page and understand how to fix it",
+      "candidateQueries": [
+        "free SEO page audit",
+        "SEO checker with fix instructions"
+      ],
+      "queryEvidence": "editorial hypothesis; demand unmeasured",
+      "originalValue": "Actual fetched-page findings and copyable contextual fix briefs",
+      "nextStep": "Review a finding and save the project",
+      "rules": ["evidence-handoff", "robots-context"]
+    },
+    {
+      "path": "/tools/metadata-preview",
+      "intent": "Prepare a title and description",
+      "candidateQueries": ["SEO title and description preview"],
+      "queryEvidence": "editorial hypothesis; demand unmeasured",
+      "originalValue": "Editable preview with contextual guidance and export",
+      "nextStep": "Inspect the page’s existing metadata",
+      "rules": ["read-or-do", "claim-led-review"]
+    },
+    {
+      "path": "/tools/structured-data",
+      "intent": "Check JSON-LD and review visible facts",
+      "candidateQueries": ["review schema validator", "JSON-LD validator"],
+      "queryEvidence": "editorial hypothesis; demand unmeasured",
+      "originalValue": "Syntax, selected fields, visible-text alignment and review-subject checks",
+      "nextStep": "Review a specific schema issue",
+      "rules": ["review-subject", "review-trust"]
+    },
+    {
+      "path": "/features/website-audits",
+      "intent": "Evaluate an audit-to-fix workflow",
+      "candidateQueries": ["SEO audit recommendations software"],
+      "queryEvidence": "editorial hypothesis; demand unmeasured",
+      "originalValue": "Explain the evidence to draft to recheck workflow with inspectable examples",
+      "nextStep": "Audit one page",
+      "rules": ["evidence-handoff"]
+    },
+    {
+      "path": "/features/ai-visibility",
+      "intent": "Understand and compare AI visibility checks",
+      "candidateQueries": ["AI visibility monitoring", "AI citation tracking"],
+      "queryEvidence": "editorial hypothesis; demand unmeasured",
+      "originalValue": "Separate readiness, sampled answers, citations and mentions",
+      "nextStep": "Read the methodology and test conditions",
+      "rules": ["sample-conditions", "separate-outcomes"]
+    },
+    {
+      "path": "/learn/seo-evidence-library",
+      "intent": "Check which SEO advice has supporting evidence",
+      "candidateQueries": ["evidence based SEO", "SEO fix prompts"],
+      "queryEvidence": "editorial hypothesis; demand unmeasured",
+      "originalValue": "Classified, cited methods with copyable implementation briefs",
+      "nextStep": "Use a method on an observed finding",
+      "rules": ["correlation-boundary", "evidence-handoff"]
+    },
+    {
+      "path": "/learn/original-evidence-content",
+      "intent": "Prepare distinctive, evidence-supported content",
+      "candidateQueries": [
+        "information gain content brief",
+        "original SEO content examples"
+      ],
+      "queryEvidence": "editorial hypothesis; demand unmeasured",
+      "originalValue": "A proof-first brief with specific RankSushi product examples",
+      "nextStep": "Write a brief with a verifiable original contribution",
+      "rules": ["original-evidence", "claim-led-review"]
+    }
+  ],
+  "nextActions": [
+    "Owner purchases ranksushi.com when ready.",
+    "Connect and verify the domain in Vercel, confirm TLS and one canonical host.",
+    "Run check:seo-launch against the canonical origin; resolve every blocker.",
+    "Verify Search Console ownership and submit the sitemap.",
+    "Record an initial baseline; validate candidate queries with GSC or an explicitly requested bounded provider lookup.",
+    "Improve the highest-value existing page before adding another URL for the same intent.",
+    "Review complete comparison periods and publish only attributable, consented results."
+  ]
+}

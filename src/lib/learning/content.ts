@@ -1,3 +1,5 @@
+import { CORPUS_ARTICLES } from "../knowledge/articles";
+import { CORPUS_SOURCES } from "../knowledge/corpus";
 export type LearningSection = {
   id: string;
   title: string;
@@ -19,6 +21,7 @@ export type LearningArticle = {
   tags: string[];
 };
 export const SOURCES: Record<string, { title: string; url: string }> = {
+  ...CORPUS_SOURCES,
   helpful: {
     title: "Google: Creating helpful, reliable content",
     url: "https://developers.google.com/search/docs/fundamentals/creating-helpful-content",
@@ -51,6 +54,7 @@ export const SOURCES: Record<string, { title: string; url: string }> = {
 };
 const updated = "2026-09-09";
 export const GUIDES: LearningArticle[] = [
+  ...CORPUS_ARTICLES,
   {
     slug: "search-intent-content-map",
     title: "Turn keywords into a useful content map",

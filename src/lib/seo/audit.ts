@@ -69,7 +69,14 @@ export function parseSnapshot(
     text('[rel="author"], [itemprop="author"]') ||
     null;
   const robots = [
-    attr('meta[name="robots"]', "content"),
+    ...$("meta")
+      .toArray()
+      .filter((node) =>
+        ["robots", "googlebot"].includes(
+          ($(node).attr("name") || "").toLowerCase(),
+        ),
+      )
+      .map((node) => $(node).attr("content") || ""),
     options.robotsHeader || "",
   ]
     .filter(Boolean)
@@ -188,7 +195,7 @@ export function parseSnapshot(
       : "No canonical link was observed.",
     "Confirm the preferred URL before changing canonicals. An alternate canonical can be intentional.",
   );
-  const noindex = /\bnoindex\b/i.test(robots);
+  const noindex = /\b(noindex|none)\b/i.test(robots);
   add(
     "robots",
     "Search indexing preference",

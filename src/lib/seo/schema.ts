@@ -10,6 +10,8 @@ export type SchemaValidation = {
   note: string;
 };
 const recommendations: Record<string, string[]> = {
+  Review: ["reviewRating", "author"],
+  AggregateRating: ["ratingValue"],
   Article: ["headline", "author", "datePublished"],
   NewsArticle: ["headline", "author", "datePublished"],
   BlogPosting: ["headline", "author", "datePublished"],
@@ -44,13 +46,17 @@ export function validateStructuredData(
     });
     return result;
   }
-  const queue: { node: unknown; path: string; depth: number }[] = [
-    { node: data, path: "$", depth: 0 },
-  ];
+  const queue: {
+    node: unknown;
+    path: string;
+    depth: number;
+    relation?: string;
+    parent?: Record<string, unknown>;
+  }[] = [{ node: data, path: "$", depth: 0 }];
   let visited = 0;
   const visible = visibleText.toLowerCase().replace(/\s+/g, " ").trim();
   while (queue.length && visited++ < 1000) {
-    const { node, path, depth } = queue.shift()!;
+    const { node, path, depth, relation, parent } = queue.shift()!;
     if (depth > 20) {
       result.issues.push({
         level: "review",
@@ -61,7 +67,13 @@ export function validateStructuredData(
     }
     if (Array.isArray(node)) {
       node.forEach((n, i) =>
-        queue.push({ node: n, path: `${path}[${i}]`, depth: depth + 1 }),
+        queue.push({
+          node: n,
+          path: `${path}[${i}]`,
+          depth: depth + 1,
+          relation,
+          parent,
+        }),
       );
       continue;
     }
@@ -72,6 +84,56 @@ export function validateStructuredData(
       : object["@type"]
         ? [object["@type"]]
         : [];
+    if (types.some((type) => type === "Review" || type === "AggregateRating")) {
+      const nested =
+        (relation === "review" && types.includes("Review")) ||
+        (relation === "aggregateRating" && types.includes("AggregateRating"));
+      if (nested && parent) {
+        if (object.itemReviewed !== undefined)
+          result.issues.push({
+            level: "review",
+            path: `${path}.itemReviewed`,
+            message:
+              "This rating or review is nested under its subject. Google’s review snippet guidance says to omit itemReviewed here and use the parent entity, avoiding an ambiguous subject.",
+          });
+        if (!parent.name && !parent["@id"])
+          result.issues.push({
+            level: "review",
+            path,
+            message:
+              "The parent reviewed entity has no name or reference. Confirm the named subject of this nested review.",
+          });
+      } else if (!object.itemReviewed) {
+        result.issues.push({
+          level: "review",
+          path: `${path}.itemReviewed`,
+          message:
+            "A standalone rating or review needs an identifiable itemReviewed. Link it to the actual reviewed entity.",
+        });
+      }
+      const subject = nested ? parent : object.itemReviewed;
+      if (subject && typeof subject === "object") {
+        const rawType = (subject as Record<string, unknown>)["@type"];
+        const subjectTypes = Array.isArray(rawType) ? rawType : [rawType];
+        if (
+          subjectTypes.some(
+            (type) => type === "Organization" || type === "LocalBusiness",
+          )
+        )
+          result.issues.push({
+            level: "review",
+            path,
+            message:
+              "Confirm who controls these business reviews. Self-serving Organization or LocalBusiness reviews are not eligible for Google review stars, including embedded third-party widgets. Ownership has not been established by this check.",
+          });
+      }
+      result.issues.push({
+        level: "info",
+        path,
+        message:
+          "Confirm review provenance, visible supporting content and any incentive disclosure. These facts cannot be verified from JSON alone.",
+      });
+    }
     for (const type of types) {
       if (typeof type !== "string") continue;
       result.types.push(type);
@@ -107,7 +169,13 @@ export function validateStructuredData(
             "This value was not matched in the supplied visible content. Confirm it is accurate and visible where required.",
         });
       if (value && typeof value === "object")
-        queue.push({ node: value, path: `${path}.${key}`, depth: depth + 1 });
+        queue.push({
+          node: value,
+          path: `${path}.${key}`,
+          depth: depth + 1,
+          relation: key,
+          parent: object,
+        });
     }
   }
   result.types = [...new Set(result.types)];
