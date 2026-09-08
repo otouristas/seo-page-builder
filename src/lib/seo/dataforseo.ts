@@ -16,7 +16,7 @@ type DfsItem = {
   description?: string;
 };
 
-export async function fetchDataForSeoOrganic(keyword: string, market: Market = "gr"): Promise<SerpResult[]> {
+export async function fetchDataForSeoOrganic(keyword: string, market: Market = "us"): Promise<SerpResult[]> {
   const login = env("DATAFORSEO_LOGIN");
   const password = env("DATAFORSEO_PASSWORD");
   if (!login || !password) return [];

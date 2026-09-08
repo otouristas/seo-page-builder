@@ -59,3 +59,21 @@ export function normalizeUrl(raw: string): string | null {
     return null;
   }
 }
+
+/** Host + pathname, ignoring www, trailing slash, query and hash. */
+export function canonicalKey(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, "").toLowerCase();
+    const path = (u.pathname.replace(/\/$/, "") || "").toLowerCase();
+    return `${host}${path}`;
+  } catch {
+    return null;
+  }
+}
+
+export function urlsMatch(a: string, b: string): boolean {
+  const ka = canonicalKey(a);
+  const kb = canonicalKey(b);
+  return Boolean(ka && kb && ka === kb);
+}

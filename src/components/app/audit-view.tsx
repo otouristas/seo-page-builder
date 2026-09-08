@@ -16,7 +16,7 @@ const GROUP_LABEL: Record<AuditGroup, string> = { "on-page": "On-page", content:
 export function AuditView({ onTab }: { onTab: (t: AppTab) => void }) {
   const lab = useLab();
   const analysis = lab.analysis!;
-  const audit = buildAudit(analysis.snapshot);
+  const audit = buildAudit(analysis.snapshot, analysis.market);
   const [filter, setFilter] = useState<Filter>("all");
   const [open, setOpen] = useState<string | null>(null);
   const failing = audit.filter((c) => !c.pass);
@@ -62,7 +62,7 @@ export function AuditView({ onTab }: { onTab: (t: AppTab) => void }) {
       <Card>
         <CardHeader className="flex-wrap">
           <div>
-            <CardTitle>12 weighted checks</CardTitle>
+            <CardTitle>{audit.length} weighted checks</CardTitle>
             <div className="text-[12px] text-fg-muted">Read from the real HTML. Weight shows how much each check moves the score.</div>
           </div>
           <div className="flex flex-wrap gap-1.5">

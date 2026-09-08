@@ -12,7 +12,7 @@ export const fetchLiveSerp = createServerFn({ method: "POST" })
   .inputValidator((raw: { keyword: string; market?: string }) => {
     const keyword = String(raw?.keyword ?? "").trim().slice(0, 120);
     if (!keyword) throw new Error("Keyword is required");
-    const market: Market = isMarket(raw.market) ? raw.market : "gr";
+    const market: Market = isMarket(raw.market) ? raw.market : "us";
     return { keyword, market };
   })
   .handler(async ({ data }): Promise<LiveSerpResult> => {

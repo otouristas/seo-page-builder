@@ -6,7 +6,7 @@ import { rankLabel } from "./rank-model";
 
 /** Pure: snapshot in, full analysis out. Used by the server function and by the offline demo. */
 export function buildAnalysis(snapshot: SeoSnapshot, market: Market): Analysis {
-  const audit = buildAudit(snapshot);
+  const audit = buildAudit(snapshot, market);
   const score = auditScore(audit);
   const technicalScore = groupScore(audit, "technical");
   const niches = buildNiches({ snapshot, audit, score, market });

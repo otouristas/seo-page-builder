@@ -1,4 +1,6 @@
-import type { SeoSnapshot } from "./types";
+import type { Market, SeoSnapshot } from "./types";
+import { hreflangCoversMarket, langMatchesMarket, languageOf } from "./markets";
+import { urlsMatch } from "../utils";
 
 export type AuditGroup = "on-page" | "content" | "technical";
 
@@ -13,8 +15,17 @@ export type AuditCheck = {
   group: AuditGroup;
 };
 
-export function buildAudit(s: SeoSnapshot): AuditCheck[] {
+export function buildAudit(s: SeoSnapshot, market: Market = "us"): AuditCheck[] {
   const altRatio = s.imagesTotal ? s.imagesWithAlt / s.imagesTotal : 1;
+  const mainWords = s.wordCountMain || s.wordCount;
+  const canonicalOk = Boolean(s.canonical) && urlsMatch(s.canonical!, s.finalUrl || s.url);
+  const robotsText = [s.robots, s.xRobots].filter(Boolean).join("; ");
+  const indexable = !robotsText || !/noindex/i.test(robotsText);
+  const langState = langMatchesMarket(s.lang, market);
+  const langPass = langState !== "mismatch";
+  const hreflangOk = hreflangCoversMarket(s.hreflang ?? [], market);
+  const wantLang = languageOf(market);
+
   return [
     {
       id: "title",
@@ -45,19 +56,19 @@ export function buildAudit(s: SeoSnapshot): AuditCheck[] {
     },
     {
       id: "words",
-      label: "Content depth (600+ words)",
-      detail: `${s.wordCount} words`,
-      fix: "Add sections that answer the questions people ask about this topic. Aim for 900+ useful words.",
-      pass: s.wordCount >= 600,
+      label: "Main content depth (600+ words)",
+      detail: `${mainWords} words in main content` + (s.wordCount && s.wordCount !== mainWords ? ` (${s.wordCount} including chrome)` : ""),
+      fix: "Add sections that answer the questions people ask about this topic. Aim for 900+ useful words outside nav and footer.",
+      pass: mainWords >= 600,
       weight: 12,
       group: "content",
     },
     {
       id: "canonical",
-      label: "Canonical URL set",
-      detail: s.canonical ?? "Missing",
-      fix: "Add <link rel=\"canonical\"> pointing to the preferred URL of this page.",
-      pass: Boolean(s.canonical),
+      label: "Canonical matches this URL",
+      detail: s.canonical ? (canonicalOk ? s.canonical : `Points elsewhere: ${s.canonical}`) : "Missing",
+      fix: "Add <link rel=\"canonical\"> pointing at this page's preferred URL, not a duplicate or parameter variant.",
+      pass: canonicalOk,
       weight: 8,
       group: "technical",
     },
@@ -109,10 +120,33 @@ export function buildAudit(s: SeoSnapshot): AuditCheck[] {
     {
       id: "robots",
       label: "Indexable (no noindex)",
-      detail: s.robots ?? "Not set (indexable)",
+      detail: robotsText || "Not set (indexable)",
       fix: "Remove noindex from the robots meta tag or the X-Robots-Tag header.",
-      pass: !s.robots || !/noindex/i.test(s.robots),
+      pass: indexable,
       weight: 10,
+      group: "technical",
+    },
+    {
+      id: "lang",
+      label: "html lang matches market",
+      detail:
+        langState === "match"
+          ? `${s.lang} matches ${market.toUpperCase()} (${wantLang})`
+          : langState === "missing"
+            ? `Not set · ${market.toUpperCase()} expects ${wantLang}`
+            : `${s.lang} vs ${market.toUpperCase()} (${wantLang})`,
+      fix: `Set <html lang="${wantLang}"> (or a regional tag like ${wantLang}-*) so the selected market and the page language agree.`,
+      pass: langPass,
+      weight: 5,
+      group: "technical",
+    },
+    {
+      id: "hreflang",
+      label: "Hreflang covers this market",
+      detail: s.hreflang?.length ? s.hreflang.slice(0, 8).join(", ") : "None (single-locale page)",
+      fix: `Add <link rel="alternate" hreflang="${wantLang}"> (or x-default) if this URL is part of a language cluster.`,
+      pass: hreflangOk,
+      weight: 4,
       group: "technical",
     },
     {

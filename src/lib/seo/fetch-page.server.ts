@@ -57,7 +57,11 @@ export async function fetchSnapshot(url: string): Promise<SeoSnapshot> {
     if (!res.ok) throw new FetchError(`The page answered with HTTP ${res.status}.`);
     if (type && !/html|xml/i.test(type)) throw new FetchError(`Not an HTML page (${type.split(";")[0]}).`);
     const body = await readCapped(res);
-    return parseSnapshot(body.text, url, res.url || url, body.truncated ? "partial" : "live");
+    const xRobots = res.headers.get("x-robots-tag");
+    return parseSnapshot(body.text, url, res.url || url, body.truncated ? "partial" : "live", {
+      status: res.status,
+      xRobots: xRobots ? xRobots.trim() : null,
+    });
   } catch (err) {
     if (err instanceof FetchError) throw err;
     const name = (err as { name?: string })?.name;
@@ -89,6 +93,7 @@ export function parseSnapshot(
   url: string,
   finalUrl: string,
   source: SeoSnapshot["source"],
+  extras: { status?: number; xRobots?: string | null } = {},
 ): SeoSnapshot {
   const $ = cheerio.load(html);
   const clean = (s: string | undefined | null) => (s ?? "").replace(/\s+/g, " ").trim();
@@ -112,6 +117,11 @@ export function parseSnapshot(
   }
   const robots = clean($('meta[name="robots"]').attr("content")) || null;
   const lang = clean($("html").attr("lang")) || null;
+  const hreflang: string[] = [];
+  $('link[rel="alternate"][hreflang]').each((_, el) => {
+    const v = clean($(el).attr("hreflang")).toLowerCase();
+    if (v && !hreflang.includes(v)) hreflang.push(v);
+  });
 
   const schemaTypes = new Set<string>();
   $('script[type="application/ld+json"]').each((_, el) => {
@@ -121,6 +131,12 @@ export function parseSnapshot(
       /* ignore malformed JSON-LD */
     }
   });
+
+  const $main = cheerio.load($.html());
+  $main("script, style, noscript, template, svg, header, nav, footer, aside, [role=navigation], [role=banner], [role=contentinfo]").remove();
+  const mainText = clean($main("body").text());
+  const wordCountMain = mainText ? mainText.split(" ").length : 0;
+  const excerpt = mainText.slice(0, 400);
 
   $("script, style, noscript, template, svg").remove();
   const bodyText = clean($("body").text());
@@ -171,6 +187,12 @@ export function parseSnapshot(
     twitterCard: clean($('meta[name="twitter:card"]').attr("content")) || null,
     schemaTypes: [...schemaTypes].slice(0, 12),
     wordCount,
+    wordCountMain,
+    excerpt,
+    hreflang,
+    xRobots: extras.xRobots ?? null,
+    status: extras.status ?? 200,
+    redirected: Boolean(finalUrl && url && finalUrl !== url),
     imagesTotal,
     imagesWithAlt,
     linksInternal,

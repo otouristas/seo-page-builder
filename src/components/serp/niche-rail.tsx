@@ -7,6 +7,7 @@ import { cn, formatNumber } from "@/lib/utils";
 import { Badge, IntentBadge } from "@/components/ui/badge";
 import { RadialGauge, Sparkline } from "@/components/charts";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/misc";
 import { Tooltip } from "@/components/ui/tooltip";
 
 type Props = {
@@ -68,12 +69,28 @@ export function NicheRail({ niche, scene, gscRow, live, liveStatus, liveError, q
       </div>
 
       <div className="grid gap-3">
+        <div className="rounded-2xl bg-ink-900/60 p-3 ring-hairline">
+          <div className="font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">Why this rank</div>
+          <Meter label="Hygiene" value={scene.breakdown.hygiene} hint="on-page checks" tone="signal" />
+          <Meter label="Relevance" value={scene.breakdown.relevance} hint="query vs page" tone="success" />
+          <Meter label="Contest" value={scene.breakdown.contest} hint="intent + phrase length" tone="peri" />
+          <p className="mt-2 text-[11px] leading-relaxed text-fg-muted">
+            distance {scene.breakdown.base.toFixed(2)} → {scene.breakdown.distance.toFixed(2)} · floor {scene.breakdown.floor.toFixed(2)} ({rankLabel(scene.breakdown.floorRank)}) · modeled {rankLabel(scene.breakdown.rank)}
+          </p>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-[11px] text-fg-subtle">How the model works</summary>
+            <p className="mt-1 text-[11px] leading-relaxed text-fg-muted">
+              Fitness = hygiene × 0.55 + relevance × 0.45. Distance = (1 − fitness/100) × 0.55 + contest/100 × 0.50. Each extra play is × 0.85. Floor = contest/100 × 0.28 — you cannot out-click the field.
+              {scene.applied.length ? ` Applied plays dropped distance by ${scene.breakdown.playDrop.toFixed(2)}.` : ""}
+            </p>
+          </details>
+        </div>
         <div className="flex items-center gap-4 rounded-2xl bg-ink-900/60 p-3 ring-hairline">
           <RadialGauge value={niche.difficulty} size={60} stroke={6} tone="peri" />
           <div className="min-w-0">
             <div className="font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">Difficulty</div>
             <div className="text-[14px] font-medium">{niche.difficulty >= 70 ? "Contested" : niche.difficulty >= 45 ? "Winnable" : "Open"}</div>
-            <div className="text-[11px] text-fg-muted">shorter, commercial phrases score higher</div>
+            <div className="text-[11px] text-fg-muted">intent base + word count, no jitter</div>
           </div>
         </div>
         <div className="flex items-center gap-4 rounded-2xl bg-ink-900/60 p-3 ring-hairline">
@@ -115,6 +132,20 @@ export function NicheRail({ niche, scene, gscRow, live, liveStatus, liveError, q
           {liveStatus === "loading" ? "Pulling live results…" : live ? "Refresh live results" : "Pull live results"}
         </Button>
       </div>
+    </div>
+  );
+}
+
+function Meter({ label, value, hint, tone }: { label: string; value: number; hint: string; tone: "signal" | "peri" | "success" }) {
+  return (
+    <div className="mt-2">
+      <div className="flex justify-between text-[11px]">
+        <span>
+          {label} <span className="text-fg-subtle">· {hint}</span>
+        </span>
+        <span className="font-mono tabular">{Math.round(value)}</span>
+      </div>
+      <Progress value={value} tone={tone} className="mt-1" />
     </div>
   );
 }

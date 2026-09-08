@@ -54,7 +54,13 @@ export function buildPlays(input: PlayInput): Play[] {
     add("schema", title, detail, 0.5, "technical", "mid");
   }
   if (failed.has("canonical")) {
-    add("canonical", "Set the canonical URL", "Point rel=canonical at the preferred URL so duplicates and parameters don't split signals.", 0.35, "technical", "low");
+    add("canonical", s.canonical ? "Point the canonical at this URL" : "Set the canonical URL", s.canonical ? "The canonical points at a different URL. Align it with the preferred version of this page." : "Point rel=canonical at the preferred URL so duplicates and parameters don't split signals.", 0.35, "technical", "low");
+  }
+  if (failed.has("lang")) {
+    add("lang", "Set html lang to the target market", "Search engines use the language tag to confirm the page matches the query language. Match the market you are modeling.", 0.3, "technical", "low");
+  }
+  if (failed.has("hreflang")) {
+    add("hreflang", "Add hreflang for this market", "If this URL is part of a language cluster, declare the market language (or x-default) so the right version is chosen.", 0.3, "technical", "mid");
   }
   if (failed.has("viewport")) {
     add("viewport", "Add the mobile viewport meta tag", "Mobile-first indexing reads the mobile layout. Without a viewport the page fails basic mobile usability.", 0.45, "technical", "low");
@@ -92,4 +98,9 @@ export function buildPlays(input: PlayInput): Play[] {
       return effortRank[a.effort] - effortRank[b.effort];
     })
     .slice(0, 10);
+}
+
+export function playKey(playId: string, nicheId: string): string {
+  const prefix = `${nicheId}-`;
+  return playId.startsWith(prefix) ? playId.slice(prefix.length) : playId;
 }

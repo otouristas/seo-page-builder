@@ -13,10 +13,10 @@ npm run dev              # http://localhost:3000
 | Route | What |
 |---|---|
 | `/` | Marketing site: hero, proof, product, live demo, case studies, pricing, FAQ |
-| `/app` | The lab. `?url=` runs a page, `?demo=1` loads the modeled demo, `?tab=` and `?kw=` deep-link |
+| `/app` | The lab. `?url=` runs a page, `?demo=1` loads the modeled demo, `?tab=`, `?kw=`, `?market=`, `?plays=` deep-link |
 | `/login` | Sign in with Google or X (Better Auth), or continue as a guest |
 | `/pricing`, `/case-studies/:slug`, `/privacy`, `/terms` | Supporting pages |
 
-Scripts: `npm run build` (Vite + Nitro to `.output/`), `npm start`, `npm run typecheck`, `npm run screenshots` (Playwright captures of every route).
+Scripts: `npm run build` (Vite + Nitro to `.output/`), `npm start`, `npm run typecheck`, `npm test`, `npm run screenshots` (Playwright captures of every route).
 
 Deploying: Netlify is configured by `netlify.toml` (publish `dist`); set `DATABASE_URL` and the auth variables in the site's environment. Details in [BUILD.md](./BUILD.md#netlify).

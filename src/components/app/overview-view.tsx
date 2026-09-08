@@ -9,6 +9,7 @@ import { cn, formatNumber, hostOf } from "@/lib/utils";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge, IntentBadge, PILLAR_DOT } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/misc";
 import { RadialGauge, RankChart } from "@/components/charts";
 import { SnippetPreview } from "./snippet-preview";
 
@@ -16,7 +17,7 @@ export function OverviewView({ onTab }: { onTab: (t: AppTab) => void }) {
   const lab = useLab();
   const analysis = lab.analysis!;
   const { snapshot } = analysis;
-  const audit = buildAudit(snapshot);
+  const audit = buildAudit(snapshot, analysis.market);
   const failing = audit.filter((c) => !c.pass);
   const scenes = analysis.niches.map((n) => ({ niche: n, scene: composeScene(n, analysis.score, lab.applied[n.id] ?? [], lab.live[n.id]?.results) }));
   const best = [...scenes].sort((a, b) => (a.scene.rank ?? 12) - (b.scene.rank ?? 12))[0];
@@ -68,6 +69,25 @@ export function OverviewView({ onTab }: { onTab: (t: AppTab) => void }) {
           <div className="font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">Best modeled position</div>
           <div className="mt-1 font-display text-4xl font-semibold tracking-tight tabular">{best ? rankLabel(best.scene.rank) : "—"}</div>
           <div className="mt-1 truncate text-[12px] text-fg-muted">{best ? `“${best.niche.keyword}”` : "no scenes"}</div>
+          {best && (
+            <div className="mt-3 space-y-1.5">
+              <div className="flex justify-between text-[11px] text-fg-muted">
+                <span>Hygiene</span>
+                <span className="font-mono tabular">{Math.round(best.scene.breakdown.hygiene)}</span>
+              </div>
+              <Progress value={best.scene.breakdown.hygiene} className="h-1" />
+              <div className="flex justify-between text-[11px] text-fg-muted">
+                <span>Relevance</span>
+                <span className="font-mono tabular">{Math.round(best.scene.breakdown.relevance)}</span>
+              </div>
+              <Progress value={best.scene.breakdown.relevance} tone="success" className="h-1" />
+              <div className="flex justify-between text-[11px] text-fg-muted">
+                <span>Contest / floor</span>
+                <span className="font-mono tabular">{Math.round(best.scene.breakdown.contest)} · {rankLabel(best.scene.breakdown.floorRank)}</span>
+              </div>
+              <Progress value={best.scene.breakdown.contest} tone="peri" className="h-1" />
+            </div>
+          )}
         </Card>
         <Card className="p-5">
           <div className="font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">Est. clicks / month</div>
@@ -169,7 +189,8 @@ export function OverviewView({ onTab }: { onTab: (t: AppTab) => void }) {
                 ["Title", `${snapshot.titleChars} chars`],
                 ["Description", `${snapshot.descriptionChars} chars`],
                 ["H1 / H2 / H3", `${snapshot.h1.length} / ${snapshot.h2.length} / ${snapshot.h3.length}`],
-                ["Words", formatNumber(snapshot.wordCount)],
+                ["Words (main)", formatNumber(snapshot.wordCountMain || snapshot.wordCount)],
+                ["Hreflang", snapshot.hreflang?.length ? snapshot.hreflang.slice(0, 4).join(", ") : "—"],
                 ["Images with alt", `${snapshot.imagesWithAlt} / ${snapshot.imagesTotal}`],
                 ["Links", `${snapshot.linksInternal} in · ${snapshot.linksExternal} out`],
                 ["Schema", snapshot.schemaTypes.length ? snapshot.schemaTypes.join(", ") : "none"],

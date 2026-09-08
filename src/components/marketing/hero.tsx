@@ -33,7 +33,7 @@ export function Hero() {
             <a href="#demo" className="inline-flex items-center gap-1 hover:text-fg">
               Watch the demo <ArrowDown className="size-3.5" />
             </a>
-            <span className="hidden sm:inline">No card · 12 checks · modeled positions, labeled as such</span>
+            <span className="hidden sm:inline">No card · 14 markets · modeled positions, labeled as such</span>
           </div>
         </div>
         <div className="relative mx-auto w-full min-w-0 max-w-md pb-6 lg:max-w-none">

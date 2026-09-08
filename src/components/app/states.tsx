@@ -3,12 +3,14 @@ import { STEP_LOG } from "@/store/lab";
 import { cn } from "@/lib/utils";
 import { UrlField } from "@/components/ui/url-field";
 import { Button } from "@/components/ui/button";
-import { Aurora, DotGrid } from "@/components/patterns";
 import { Skeleton } from "@/components/ui/misc";
+import { Aurora, DotGrid } from "@/components/patterns";
+import { RecentsList } from "./recents-menu";
+import type { RecentEntry } from "@/lib/seo/recents";
 
 const CHIPS = ["stripe.com/payments", "ahrefs.com/blog", "skroutz.gr"];
 
-export function EmptyState({ onSubmit, onDemo }: { onSubmit: (url: string) => void; onDemo: () => void }) {
+export function EmptyState({ onSubmit, onDemo, onRecent }: { onSubmit: (url: string) => void; onDemo: () => void; onRecent?: (e: RecentEntry) => void }) {
   return (
     <div className="relative grid min-h-full place-items-center overflow-hidden px-5 py-16">
       <DotGrid className="mask-radial opacity-60" />
@@ -18,7 +20,7 @@ export function EmptyState({ onSubmit, onDemo }: { onSubmit: (url: string) => vo
           <Sparkles className="size-3.5 text-signal" /> The lab
         </span>
         <h1 className="mt-5 font-display text-4xl font-semibold tracking-tight text-balance sm:text-5xl">Paste a URL. Watch it land on page one.</h1>
-        <p className="mx-auto mt-4 max-w-lg text-fg-muted">Rankframe reads the live page, runs twelve checks, stages the best keywords as Google-like scenes and hands you the plays.</p>
+        <p className="mx-auto mt-4 max-w-lg text-fg-muted">Rankframe reads the live page, runs weighted checks, stages the best keywords as Google-like scenes and hands you the plays.</p>
         <UrlField className="mt-8 text-left" onSubmit={onSubmit} chips={CHIPS} autoFocus />
         <div className="mt-6 text-[13px] text-fg-muted">
           No URL handy?{" "}
@@ -26,6 +28,9 @@ export function EmptyState({ onSubmit, onDemo }: { onSubmit: (url: string) => vo
             Load the demo scene
           </button>
         </div>
+        {onRecent && (
+          <RecentsList onPick={onRecent} title="Recent on this browser" className="mx-auto mt-10 max-w-lg rounded-2xl bg-ink-800/70 p-3 text-left ring-hairline" />
+        )}
       </div>
     </div>
   );

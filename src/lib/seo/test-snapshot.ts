@@ -1,0 +1,38 @@
+import type { SeoSnapshot } from "./types";
+
+export function snap(over: Partial<SeoSnapshot> = {}): SeoSnapshot {
+  return {
+    url: "https://example.com/page",
+    finalUrl: "https://example.com/page",
+    title: "Payment processing for growing teams",
+    metaDescription: "Accept cards and wallets worldwide with a payments platform built for internet businesses that need to scale checkout.",
+    canonical: "https://example.com/page",
+    robots: null,
+    lang: "en",
+    h1: ["Payment processing that scales"],
+    h2: ["Accept payments everywhere", "Pricing that scales"],
+    h3: ["Cards", "Wallets"],
+    ogTitle: "Payments",
+    ogDescription: "Online payments.",
+    ogImage: "https://example.com/og.png",
+    twitterCard: "summary_large_image",
+    schemaTypes: ["Organization"],
+    wordCount: 900,
+    wordCountMain: 800,
+    excerpt: "Payment processing that scales. Accept payments everywhere with cards and wallets.",
+    hreflang: ["en", "x-default"],
+    xRobots: null,
+    status: 200,
+    redirected: false,
+    imagesTotal: 4,
+    imagesWithAlt: 4,
+    linksInternal: 8,
+    linksExternal: 2,
+    hasViewport: true,
+    titleChars: 42,
+    descriptionChars: 120,
+    fetchedAt: "2026-09-01T00:00:00.000Z",
+    source: "live",
+    ...over,
+  };
+}

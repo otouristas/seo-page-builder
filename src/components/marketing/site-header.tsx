@@ -33,7 +33,7 @@ type Tone = "ink" | "paper";
 
 /**
  * Floating pill header: a glass capsule detached from the top edge with the brand, the nav,
- * a GR · US market switch, and round icon buttons. Sticky, so it stays with the reader.
+ * a market picker, and round icon buttons. Sticky, so it stays with the reader.
  */
 export function SiteHeader({ tone = "ink" }: { tone?: Tone }) {
   const [scrolled, setScrolled] = useState(false);

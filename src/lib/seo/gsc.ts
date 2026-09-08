@@ -18,11 +18,11 @@ export function parseGscExport(text: string): GscRow[] {
   const delim = header.includes("\t") ? "\t" : ",";
   const cols = header.split(delim).map((c) => c.replace(/"/g, "").trim());
 
-  const qi = cols.findIndex((c) => /query|ερώτημα|orisma|keyword/.test(c));
-  const ci = cols.findIndex((c) => /click|κλικ/.test(c));
-  const ii = cols.findIndex((c) => /impression|εμφαν/.test(c));
+  const qi = cols.findIndex((c) => /query|ερώτημα|orisma|keyword|consulta|requête|anfrage|pesquisa|zoekopdracht|consulta|interrogazione/.test(c));
+  const ci = cols.findIndex((c) => /click|κλικ|klick|clics|clic|cliques|klikken/.test(c));
+  const ii = cols.findIndex((c) => /impression|εμφαν|impressionen|impresiones|impressões|vertoningen|impressioni/.test(c));
   const ti = cols.findIndex((c) => /ctr/.test(c));
-  const pi = cols.findIndex((c) => /position|θέση|thesi/.test(c));
+  const pi = cols.findIndex((c) => /position|θέση|thesi|posición|posizione|posição|positie|position/.test(c));
   if (qi < 0) return [];
 
   const rows: GscRow[] = [];

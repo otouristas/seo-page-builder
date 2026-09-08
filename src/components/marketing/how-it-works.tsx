@@ -3,7 +3,7 @@ import { Container } from "@/components/patterns";
 import { Eyebrow } from "@/components/ui/badge";
 
 const STEPS = [
-  { icon: Link2, title: "Paste a URL", body: "Rankframe fetches the live HTML and runs twelve weighted checks: title, meta, headings, depth, schema, links, indexability." },
+  { icon: Link2, title: "Paste a URL", body: "Rankframe fetches the live HTML and runs weighted checks: title, meta, headings, main-content depth, schema, lang, hreflang, links, indexability." },
   { icon: Layers, title: "See the scene", body: "The best keyphrases become scenes: a Google-like page one with the competitors that intent attracts, and your card at its modeled slot." },
   { icon: Play, title: "Run the plays", body: "Each play is a concrete change. Tick it and watch the position move. Pull the real page one when you want to check the field." },
 ];
@@ -16,7 +16,7 @@ export function HowItWorks() {
           <div>
             <Eyebrow tone="paper">How it works</Eyebrow>
             <h2 className="mt-3 font-display text-4xl font-semibold tracking-tight text-ink-900 text-balance">Three steps from URL to a plan you can defend.</h2>
-            <p className="mt-4 text-paper-muted">Positions are modeled from your on-page score and the niche difficulty, and labeled as such everywhere. The point is to see cause and effect, fast.</p>
+            <p className="mt-4 text-paper-muted">Positions are modeled from hygiene, query relevance and contest — with a competition floor — and labeled as such everywhere. The point is to see cause and effect, fast.</p>
           </div>
           <ol className="relative space-y-8">
             <span className="absolute left-5 top-6 bottom-6 w-px border-l border-dashed border-ink-900/20" aria-hidden />

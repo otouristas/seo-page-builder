@@ -1,5 +1,5 @@
 import type { Niche, Play, SerpResult } from "./types";
-import { baselineDistance, distanceAfter, distanceToRank, trajectory } from "./rank-model";
+import { baselineDistance, distanceAfter, distanceToRank, trajectory, rankBreakdown, type RankBreakdown } from "./rank-model";
 
 export type Scene = {
   rank: number | null;
@@ -13,6 +13,7 @@ export type Scene = {
   trajectory: (number | null)[];
   /** Positive = moved up. */
   delta: number | null;
+  breakdown: RankBreakdown;
 };
 
 export function composeScene(
@@ -22,8 +23,9 @@ export function composeScene(
   liveOrganic?: SerpResult[] | null,
 ): Scene {
   const applied = niche.plays.filter((p) => appliedIds.includes(p.id));
-  const base = baselineDistance(score, niche.difficulty);
-  const distance = distanceAfter(base, applied);
+  const relevance = niche.relevance ?? 0;
+  const base = baselineDistance(score, niche.difficulty, relevance);
+  const distance = distanceAfter(base, applied, niche.difficulty);
   const rank = distanceToRank(distance);
   const baseRank = distanceToRank(base);
   const blocks = niche.results.filter((r) => r.kind !== "organic");
@@ -58,7 +60,8 @@ export function composeScene(
     applied,
     results: [...blocks, ...organic],
     you,
-    trajectory: trajectory(base, applied),
+    trajectory: trajectory(base, applied, niche.difficulty),
     delta: baseRank !== null && rank !== null ? baseRank - rank : baseRank === null && rank !== null ? 11 - rank : null,
+    breakdown: rankBreakdown(score, relevance, niche.difficulty, applied),
   };
 }

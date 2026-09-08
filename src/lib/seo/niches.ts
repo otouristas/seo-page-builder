@@ -4,15 +4,8 @@ import { buildSerpScene } from "./serp-model";
 import { buildPlays } from "./plays";
 import type { AuditCheck } from "./audit";
 import { baselineDistance, distanceToRank } from "./rank-model";
-
-const STOP = new Set(
-  `a an and are as at be by for from has have how in is it its of on or that the this to was we what which who will with you your our their new best free online get more all can do does about into over under top vs via per also just than then them they there here when where why yes no not only own same so some such too very s t
-  και το η ο οι τα των με για από στο στη στην στον σε που ως να είναι μια ένα`.split(/\s+/),
-);
-
-const INFO = /\b(what|how|why|guide|tutorial|meaning|definition|examples?|learn|explained|tips|ideas|history|vs)\b/i;
-const COMMERCIAL = /\b(best|top|review|reviews|compare|comparison|alternatives?|tools?|software|platform|services?|agency|solutions?|providers?|companies|rated|ranking)\b/i;
-const TRANSACTIONAL = /\b(buy|price|prices|pricing|cost|cheap|deal|deals|discount|order|book|booking|shop|store|sale|subscribe|download|sign ?up|checkout|coupon|offers?)\b/i;
+import { ALL_STOPWORDS, anyIntent } from "./locale";
+import { scoreRelevance } from "./relevance";
 
 type Candidate = { phrase: string; score: number; grams: number; seen: Set<number> };
 
@@ -38,11 +31,10 @@ function grams(tokens: string[], n: number): string[] {
     const slice = tokens.slice(i, i + n);
     const first = slice[0]!;
     const last = slice[slice.length - 1]!;
-    if (STOP.has(first) || STOP.has(last)) continue;
-    if (slice.every((t) => STOP.has(t))) continue;
-    if (slice.some((t) => t.length < 3 && !STOP.has(t))) continue;
-    // A 3-gram with a stopword in the middle ("shoes for flat") is almost always a cut phrase.
-    if (n === 3 && STOP.has(slice[1]!)) continue;
+    if (ALL_STOPWORDS.has(first) || ALL_STOPWORDS.has(last)) continue;
+    if (slice.every((t) => ALL_STOPWORDS.has(t))) continue;
+    if (slice.some((t) => t.length < 3 && !ALL_STOPWORDS.has(t))) continue;
+    if (n === 3 && ALL_STOPWORDS.has(slice[1]!)) continue;
     out.push(slice.join(" "));
   }
   return out;
@@ -51,7 +43,6 @@ function grams(tokens: string[], n: number): string[] {
 /** Rank keyphrases from the page's headings and metadata. Deterministic for a given snapshot. */
 export function extractKeyphrases(s: SeoSnapshot, limit = 12): Candidate[] {
   const brand = hostOf(s.finalUrl).split(".")[0] ?? "";
-  // Sentences (description) only feed short phrases; headings feed everything.
   const sources: { text: string; weight: number; maxGrams: number }[] = [
     { text: s.title, weight: 3, maxGrams: 5 },
     ...s.h1.map((t) => ({ text: t, weight: 3, maxGrams: 5 })),
@@ -79,14 +70,11 @@ export function extractKeyphrases(s: SeoSnapshot, limit = 12): Candidate[] {
       }
     }
   });
-  // Long phrases must recur across sources, otherwise they are slogans, not queries.
-  // Phrases that only appear in the description are sentence fragments, not queries.
   const descIndex = sources.findIndex((src) => src.text === s.metaDescription && src.maxGrams === 2);
   const list = [...scores.values()]
     .filter((c) => c.grams < 3 || c.seen.size >= 2)
     .filter((c) => !(c.seen.size === 1 && c.seen.has(descIndex)))
     .sort((a, b) => b.score - a.score);
-  // Drop phrases contained in a stronger, longer phrase with a similar score.
   const kept: Candidate[] = [];
   for (const c of list) {
     const shadowed = kept.some(
@@ -100,31 +88,27 @@ export function extractKeyphrases(s: SeoSnapshot, limit = 12): Candidate[] {
   return kept;
 }
 
-/** What the page itself is trying to do, read from its title and H1. */
 export function pageIntentBias(s: SeoSnapshot): SearchIntent {
   const head = `${s.title} ${s.h1.join(" ")}`;
-  if (TRANSACTIONAL.test(head)) return "transactional";
-  if (COMMERCIAL.test(head)) return "commercial";
-  return "informational";
+  return anyIntent(head) ?? "informational";
 }
 
 export function classifyIntent(keyword: string, brand: string, bias: SearchIntent = "informational"): SearchIntent {
   const kw = keyword.toLowerCase();
   if (brand && kw.includes(brand.toLowerCase())) return "navigational";
-  if (TRANSACTIONAL.test(kw)) return "transactional";
-  if (COMMERCIAL.test(kw)) return "commercial";
-  if (INFO.test(kw)) return "informational";
+  const hit = anyIntent(kw);
+  if (hit) return hit;
   const words = kw.split(" ").length;
-  if (words === 1) return "commercial"; // broad head terms behave like category queries
+  if (words === 1) return "commercial";
   return bias;
 }
 
-function difficultyFor(keyword: string, intent: SearchIntent, rnd: () => number): number {
+/** Explainable difficulty: intent base + phrase length. No random jitter. */
+export function difficultyFor(keyword: string, intent: SearchIntent): number {
   const base = { informational: 44, commercial: 62, transactional: 56, navigational: 18 }[intent];
   const words = keyword.split(" ").length;
   const lengthAdj = words === 1 ? 22 : words === 2 ? 4 : -9;
-  const jitter = Math.round((rnd() - 0.5) * 16);
-  return clamp(base + lengthAdj + jitter, 8, 96);
+  return clamp(base + lengthAdj, 8, 96);
 }
 
 function volumeFor(keyword: string, intent: SearchIntent, rnd: () => number): Niche["volumeHint"] {
@@ -166,7 +150,6 @@ export type NicheInput = {
   market: Market;
 };
 
-/** Build one niche (a staged SERP scene) for a keyword. */
 export function buildNiche(
   keyword: string,
   input: NicheInput,
@@ -177,17 +160,20 @@ export function buildNiche(
   const seed = hash32(`${input.snapshot.finalUrl}|${kw}|${input.market}`);
   const rnd = seeded(seed);
   const intent = classifyIntent(kw, brand, pageIntentBias(input.snapshot));
-  const difficulty = difficultyFor(kw, intent, rnd);
+  const difficulty = difficultyFor(kw, intent);
+  const rel = scoreRelevance(kw, input.snapshot, intent, input.market);
   const id = `n-${seed.toString(36)}`;
   const results = buildSerpScene({ keyword: kw, intent, market: input.market, seed, snapshot: input.snapshot });
   const plays = buildPlays({ nicheId: id, keyword: kw, intent, snapshot: input.snapshot, audit: input.audit, results });
-  const currentRank = distanceToRank(baselineDistance(input.score, difficulty));
+  const currentRank = distanceToRank(baselineDistance(input.score, difficulty, rel.score));
   return {
     id,
     keyword: kw,
     intent,
     volumeHint: volumeFor(kw, intent, rnd),
     difficulty,
+    relevance: rel.score,
+    relevanceNotes: rel.notes,
     currentRank,
     why: WHY[intent](kw, whereFound(input.snapshot, kw)),
     results,
@@ -196,14 +182,13 @@ export function buildNiche(
   };
 }
 
-/** The 4–5 niches staged automatically from a snapshot. */
 export function buildNiches(input: NicheInput): Niche[] {
   const phrases = extractKeyphrases(input.snapshot, 10);
   const picked: string[] = [];
   for (const c of phrases) {
     if (picked.length >= 4) break;
-    if (c.grams === 1 && picked.length >= 3) continue; // keep single words rare
-    if (c.grams >= 4 && picked.some((p) => c.phrase.includes(p))) continue; // avoid near-duplicates
+    if (c.grams === 1 && picked.length >= 3) continue;
+    if (c.grams >= 4 && picked.some((p) => c.phrase.includes(p))) continue;
     picked.push(c.phrase);
   }
   const brand = hostOf(input.snapshot.finalUrl).split(".")[0];

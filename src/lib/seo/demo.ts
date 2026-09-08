@@ -1,6 +1,7 @@
 import type { Analysis, Market, SeoSnapshot } from "./types";
 import { buildAnalysis } from "./analysis";
 import { hostOf } from "../utils";
+import { fillSnapshot } from "./snapshot";
 
 export const DEMO_URL = "https://stripe.com/payments";
 
@@ -8,11 +9,13 @@ export const DEMO_URL = "https://stripe.com/payments";
 export function demoSnapshot(url: string = DEMO_URL): SeoSnapshot {
   const host = hostOf(url);
   const brand = (host.split(".")[0] ?? "Your brand").replace(/^\w/, (m) => m.toUpperCase());
-  return {
+  const title = `${brand} Payments | Global Payment Processing Platform`;
+  const meta = `Accept payments online, in person and around the world with ${brand}'s payment platform. Cards, wallets, local methods and optimized checkout in one integration.`;
+  return fillSnapshot({
     url,
     finalUrl: url,
-    title: `${brand} Payments | Global Payment Processing Platform`,
-    metaDescription: `Accept payments online, in person and around the world with ${brand}'s payment platform. Cards, wallets, local methods and optimized checkout in one integration.`,
+    title,
+    metaDescription: meta,
     canonical: url,
     robots: null,
     lang: "en",
@@ -32,16 +35,22 @@ export function demoSnapshot(url: string = DEMO_URL): SeoSnapshot {
     twitterCard: "summary_large_image",
     schemaTypes: ["Organization", "WebPage"],
     wordCount: 1140,
+    wordCountMain: 980,
+    excerpt: "Financial infrastructure to grow your revenue. Accept payments everywhere. Payment processing built for scale.",
+    hreflang: ["en", "x-default"],
+    xRobots: null,
+    status: 200,
+    redirected: false,
     imagesTotal: 18,
     imagesWithAlt: 11,
     linksInternal: 64,
     linksExternal: 6,
     hasViewport: true,
-    titleChars: `${brand} Payments | Global Payment Processing Platform`.length,
-    descriptionChars: 172,
+    titleChars: title.length,
+    descriptionChars: meta.length,
     fetchedAt: "2026-09-01T09:00:00.000Z",
     source: "demo",
-  };
+  });
 }
 
 export function demoAnalysis(market: Market = "us"): Analysis {

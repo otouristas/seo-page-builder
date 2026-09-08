@@ -1,16 +1,18 @@
 import { create } from "zustand";
-import type { Analysis, AppTab, CoachMessage, GscRow, Market, Niche, SerpResult } from "@/lib/seo/types";
+import type { Analysis, AppTab, CoachMessage, Device, GscRow, Market, Niche, SerpResult } from "@/lib/seo/types";
 import { buildAudit, auditScore } from "@/lib/seo/audit";
 import { buildNiche } from "@/lib/seo/niches";
 import { composeScene, type Scene } from "@/lib/seo/scene";
 import { coachReply } from "@/lib/seo/coach";
 import { demoSnapshot } from "@/lib/seo/demo";
 import { buildAnalysis } from "@/lib/seo/analysis";
+import { recentFromAnalysis, writeRecent } from "@/lib/seo/recents";
 import { analyzeUrl } from "@/server/analyze";
+import { hostOf } from "@/lib/utils";
 import type { SessionInfo } from "@/server/session";
 import type { SeoSnapshot } from "@/lib/seo/types";
 
-export type Device = "desktop" | "mobile";
+export type { Device } from "@/lib/seo/types";
 export type Status = "idle" | "loading" | "ready" | "error";
 
 export type LiveScene = { results: SerpResult[]; fetchedAt: string };
@@ -18,7 +20,7 @@ export type LiveScene = { results: SerpResult[]; fetchedAt: string };
 export const TABS: { id: AppTab; label: string; hint: string }[] = [
   { id: "overview", label: "Overview", hint: "Scores, snapshot and quick wins" },
   { id: "serp", label: "SERP Lab", hint: "The stage: plays move your result" },
-  { id: "audit", label: "Audit", hint: "12 checks and a snippet editor" },
+  { id: "audit", label: "Audit", hint: "Weighted checks and a snippet editor" },
   { id: "keywords", label: "Keywords", hint: "Stage any query as a scene" },
   { id: "gsc", label: "Search Console", hint: "Import queries, spot striking distance" },
   { id: "coach", label: "Coach", hint: "Ask about the active scene" },
@@ -28,7 +30,7 @@ export const STEP_LOG = [
   "Resolving the URL…",
   "Fetching HTML…",
   "Parsing headings and metadata…",
-  "Running 12 on-page checks…",
+  "Running weighted on-page checks…",
   "Extracting keyphrases…",
   "Staging SERP scenes…",
   "Modeling positions and plays…",
@@ -72,6 +74,7 @@ type LabState = {
   togglePlay: (nicheId: string, playId: string) => void;
   applyQuickWins: (nicheId: string) => void;
   resetPlays: (nicheId: string) => void;
+  setAppliedFor: (nicheId: string, ids: string[]) => void;
   stageKeyword: (keyword: string, source?: Niche["source"]) => Niche | null;
   removeNiche: (id: string) => void;
   setGscRows: (rows: GscRow[], source: LabState["gscSource"]) => void;
@@ -96,7 +99,7 @@ export const useLab = create<LabState>((set, get) => ({
   applied: {},
   tab: "overview",
   device: "desktop",
-  market: "gr",
+  market: "us",
   compare: false,
   gscRows: [],
   gscSource: "none",
@@ -117,7 +120,7 @@ export const useLab = create<LabState>((set, get) => ({
       snapshot.descriptionChars = snapshot.metaDescription.length;
       const rebuilt = buildAnalysis(snapshot, s.analysis.market);
       // Keep staged niches that the automatic extraction wouldn't recreate.
-      const audit = buildAudit(snapshot);
+      const audit = buildAudit(snapshot, s.analysis.market);
       const score = auditScore(audit);
       const extra = s.analysis.niches
         .filter((n) => n.source && n.source !== "headings" && !rebuilt.niches.some((r) => r.keyword === n.keyword))
@@ -140,6 +143,17 @@ export const useLab = create<LabState>((set, get) => ({
 
   loadAnalysis: (analysis, opts) => {
     const first = opts?.nicheId ?? analysis.niches[0]?.id ?? null;
+    const best = analysis.niches[0];
+    writeRecent(
+      recentFromAnalysis({
+        url: analysis.snapshot.url,
+        market: analysis.market,
+        score: analysis.score,
+        keyword: best?.keyword ?? hostOf(analysis.snapshot.finalUrl),
+        rank: best?.currentRank ?? null,
+        snapshot: analysis.snapshot,
+      }),
+    );
     set({
       analysis,
       status: "ready",
@@ -201,6 +215,7 @@ export const useLab = create<LabState>((set, get) => ({
     }),
 
   resetPlays: (nicheId) => set((s) => ({ applied: { ...s.applied, [nicheId]: [] } })),
+  setAppliedFor: (nicheId, ids) => set((s) => ({ applied: { ...s.applied, [nicheId]: ids } })),
 
   stageKeyword: (keyword, source = "staged") => {
     const s = get();
@@ -212,7 +227,7 @@ export const useLab = create<LabState>((set, get) => ({
       set({ activeNicheId: existing.id });
       return existing;
     }
-    const audit = buildAudit(s.analysis.snapshot);
+    const audit = buildAudit(s.analysis.snapshot, s.analysis.market);
     const niche = buildNiche(kw, { snapshot: s.analysis.snapshot, audit, score: auditScore(audit), market: s.analysis.market }, source);
     set({
       analysis: { ...s.analysis, niches: [...s.analysis.niches, niche] },

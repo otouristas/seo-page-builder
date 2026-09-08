@@ -81,7 +81,7 @@ export function SiteFooter() {
       </Container>
       <Container className="flex flex-wrap items-center justify-between gap-3 border-t border-white/8 py-6 text-[12px] text-fg-subtle">
         <span>© {year} Rankframe. Not affiliated with Google. Google is a trademark of Google LLC.</span>
-        <span>Greece · United States</span>
+        <span>14 markets · modeled positions labeled as such</span>
       </Container>
     </footer>
   );

@@ -2,6 +2,7 @@ import type { Analysis, Market, SeoSnapshot } from "./types";
 import { buildAnalysis } from "./analysis";
 import { auditScore, buildAudit } from "./audit";
 import { buildNiche } from "./niches";
+import { fillSnapshot } from "./snapshot";
 
 export type CaseStudy = {
   slug: string;
@@ -20,34 +21,41 @@ export type CaseStudy = {
   accent: "signal" | "peri" | "success";
 };
 
-const base = (url: string, over: Partial<SeoSnapshot>): SeoSnapshot => ({
-  url,
-  finalUrl: url,
-  title: "",
-  metaDescription: "",
-  canonical: url,
-  robots: null,
-  lang: "en",
-  h1: [],
-  h2: [],
-  h3: [],
-  ogTitle: null,
-  ogDescription: null,
-  ogImage: null,
-  twitterCard: "summary_large_image",
-  schemaTypes: [],
-  wordCount: 0,
-  imagesTotal: 0,
-  imagesWithAlt: 0,
-  linksInternal: 0,
-  linksExternal: 0,
-  hasViewport: true,
-  titleChars: 0,
-  descriptionChars: 0,
-  fetchedAt: "2026-09-01T09:00:00.000Z",
-  source: "demo",
-  ...over,
-});
+const base = (url: string, over: Partial<SeoSnapshot>): SeoSnapshot =>
+  fillSnapshot({
+    url,
+    finalUrl: url,
+    title: "",
+    metaDescription: "",
+    canonical: url,
+    robots: null,
+    lang: "en",
+    h1: [],
+    h2: [],
+    h3: [],
+    ogTitle: null,
+    ogDescription: null,
+    ogImage: null,
+    twitterCard: "summary_large_image",
+    schemaTypes: [],
+    wordCount: 0,
+    wordCountMain: 0,
+    excerpt: "",
+    hreflang: [],
+    xRobots: null,
+    status: 200,
+    redirected: false,
+    imagesTotal: 0,
+    imagesWithAlt: 0,
+    linksInternal: 0,
+    linksExternal: 0,
+    hasViewport: true,
+    titleChars: 0,
+    descriptionChars: 0,
+    fetchedAt: "2026-09-01T09:00:00.000Z",
+    source: "demo",
+    ...over,
+  });
 
 function withCounts(s: SeoSnapshot): SeoSnapshot {
   return { ...s, titleChars: s.title.length, descriptionChars: s.metaDescription.length };
@@ -163,7 +171,7 @@ export function buildCaseStudyView(study: CaseStudy): CaseStudyView {
   let analysis = buildAnalysis(study.snapshot, study.market);
   let niche = analysis.niches.find((n) => n.keyword === study.focus);
   if (!niche) {
-    const audit = buildAudit(study.snapshot);
+    const audit = buildAudit(study.snapshot, study.market);
     niche = buildNiche(study.focus, { snapshot: study.snapshot, audit, score: auditScore(audit), market: study.market }, "staged");
     analysis = { ...analysis, niches: [niche, ...analysis.niches] };
   }

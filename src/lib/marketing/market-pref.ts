@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Market } from "@/lib/seo/types";
-import { isMarket } from "@/lib/seo/markets";
+import { inferMarket, isMarket } from "@/lib/seo/markets";
 
 const KEY = "rf-market";
 const EVENT = "rf-market-change";
 
-/** The market chosen in the site header (GR · US). The lab reads it on boot. */
+/** The market chosen in the site header. The lab reads it on boot. */
 export function readMarketPref(): Market | null {
   try {
     const v = localStorage.getItem(KEY);
@@ -24,11 +24,15 @@ export function writeMarketPref(market: Market) {
   }
 }
 
-export function useMarketPref(fallback: Market = "gr"): [Market, (m: Market) => void] {
-  const [market, setMarket] = useState<Market>(fallback);
+export function useMarketPref(fallback?: Market): [Market, (m: Market) => void] {
+  const [market, setMarket] = useState<Market>(fallback ?? "us");
   useEffect(() => {
     const stored = readMarketPref();
     if (stored) setMarket(stored);
+    else {
+      const inferred = inferMarket(typeof navigator !== "undefined" ? navigator.languages ?? [navigator.language] : ["en-US"]);
+      setMarket(inferred);
+    }
     const onChange = (e: Event) => {
       const detail = (e as CustomEvent<Market>).detail;
       if (isMarket(detail)) setMarket(detail);

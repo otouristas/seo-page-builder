@@ -4,7 +4,11 @@ export type PlayPillar = "on-page" | "content" | "technical" | "authority" | "in
 
 export type Effort = "low" | "mid" | "high";
 
-export type Market = "gr" | "us";
+export type LangPack = "en" | "de" | "fr" | "es" | "it" | "nl" | "el" | "pt";
+
+export type Market = "us" | "uk" | "ca" | "au" | "in" | "de" | "fr" | "es" | "it" | "nl" | "gr" | "br" | "mx" | "ae";
+
+export type MarketRegion = "americas" | "europe" | "apac";
 
 export type SeoSnapshot = {
   url: string;
@@ -23,6 +27,14 @@ export type SeoSnapshot = {
   twitterCard: string | null;
   schemaTypes: string[];
   wordCount: number;
+  /** Word count after stripping header/nav/footer chrome. */
+  wordCountMain: number;
+  /** First ~400 characters of main content. */
+  excerpt: string;
+  hreflang: string[];
+  xRobots: string | null;
+  status: number;
+  redirected: boolean;
   imagesTotal: number;
   imagesWithAlt: number;
   linksInternal: number;
@@ -48,6 +60,8 @@ export type Play = {
 
 export type SerpKind = "ai-overview" | "featured" | "organic" | "paa" | "you";
 
+export type SerpStyle = "guide" | "review" | "marketplace" | "brand" | "forum" | "news" | "tool" | "encyclopedia";
+
 export type SerpResult = {
   id: string;
   kind: SerpKind;
@@ -69,8 +83,11 @@ export type Niche = {
   keyword: string;
   intent: SearchIntent;
   volumeHint: "low" | "mid" | "high";
-  /** 0–100. */
+  /** 0–100. Explainable: intent base + phrase length. No jitter. */
   difficulty: number;
+  /** 0–100. Query vs page: title, H1, H2, excerpt, schema, lang. */
+  relevance: number;
+  relevanceNotes: string[];
   /** Modeled baseline position before any play is applied; null = beyond page 1. */
   currentRank: number | null;
   why: string;
@@ -87,7 +104,7 @@ export type CoachMessage = {
 
 export type Analysis = {
   snapshot: SeoSnapshot;
-  /** Weighted on-page score 0–100 from the 12 checks. */
+  /** Weighted on-page score 0–100 from the hygiene checks. */
   score: number;
   /** Weighted score of the technical subset of checks. */
   technicalScore: number;
@@ -99,6 +116,8 @@ export type Analysis = {
 };
 
 export type AppTab = "overview" | "serp" | "audit" | "keywords" | "gsc" | "coach";
+
+export type Device = "desktop" | "mobile";
 
 export type GscRow = {
   query: string;

@@ -7,7 +7,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { Band } from "@/components/patterns";
 
 export const Route = createFileRoute("/pricing")({
-  head: () => ({ meta: [{ title: "Pricing — Rankframe" }, { name: "description", content: "Free to run the lab. Pro adds live Google results and saved Search Console data. Team adds workspaces." }] }),
+  head: () => ({ meta: [{ title: "Access — Rankframe" }, { name: "description", content: "The lab is free. Sign in to pull live Google results and keep Search Console imports." }] }),
   component: PricingPage,
 });
 

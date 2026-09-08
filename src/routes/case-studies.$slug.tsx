@@ -32,7 +32,7 @@ function CaseStudyPage() {
   const study = getCaseStudy(slug)!;
   const view = buildCaseStudyView(study);
   const niche = view.analysis.niches.find((n) => n.id === view.nicheId)!;
-  const audit = buildAudit(study.snapshot).filter((c) => c.id !== "live");
+  const audit = buildAudit(study.snapshot, study.market).filter((c) => c.id !== "live");
   const before = composeScene(niche, view.analysis.score, []);
   const after = composeScene(niche, view.analysis.score, view.appliedIds);
   const applied = niche.plays.filter((p) => view.appliedIds.includes(p.id));

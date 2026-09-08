@@ -26,7 +26,7 @@ export const analyzeUrl = createServerFn({ method: "POST" })
   .inputValidator((raw: { url: string; market?: string }): AnalyzeInput => {
     const url = normalizeUrl(String(raw?.url ?? ""));
     if (!url) throw new Error("Enter a valid public URL, like https://example.com/page");
-    const market: Market = isMarket(raw.market) ? raw.market : "gr";
+    const market: Market = isMarket(raw.market) ? raw.market : "us";
     return { url, market };
   })
   .handler(async ({ data }): Promise<AnalyzeResult> => {
