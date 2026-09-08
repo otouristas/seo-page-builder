@@ -39,7 +39,7 @@ Updated: 9 September 2026. Domain: **ranksushi.com**. Operator: **Touristas Tech
 - Screenshots, final PDF fixture, Lighthouse JSON and deployed route evidence live in `artifacts/qa/`. Provider configuration status is separately recorded in `artifacts/provider-validation.json`.
 - DataForSEO account authentication passes the no-cost user-data endpoint. Two actual adapter calls returned 9 organic listings, 4 related questions and one keyword-demand record; their provider-reported total cost was **$0.01412**. See `artifacts/qa/dataforseo-live-research.json`. This is provider/adapter verification, not hosted account/job acceptance. The SERP Studio capture adds one actual Google lookup at **$0.002**, returning 9 organic listings and 4 related questions at `2026-09-08T21:32:33.297Z`. The public, credential-free fixture is `src/lib/studio/recorded-scene.json`.
 
-GitHub Actions could not start its runner: GitHub reports that the account is locked due to a billing issue (reconfirmed on SERP Studio run `34282521346`). This is a CI account blocker, not a passing CI run. Local checks and Vercel builds passed; rerun the workflow after the account issue is resolved.
+GitHub Actions could not start its runner: GitHub reports that the account is locked due to a billing issue (reconfirmed on handbook run `34284221545`). This is a CI account blocker, not a passing CI run. Local checks and Vercel builds passed; rerun the workflow after the account issue is resolved.
 
 ## Hosted setup remains required
 
@@ -67,3 +67,9 @@ GitHub exposed a legacy automatic deployment connection during the first follow-
 PR #7: https://github.com/otouristas/seo-page-builder/pull/7. Application commit `2aaafbf562d727cd206999dfc427f910bcd8618d` is deployed as a **Ready Vercel preview** at https://ranksushi-70o4sl5vm-otouristas-projects.vercel.app. All **19 deployed route checks pass**, including the new interactive homepage, the nine actual organic positions and recorded-evidence disclosure in `/demo`, public metadata, discovery resources and private-route denial. See `artifacts/qa/deployed-studio-preview.json`. Preview protection remains enabled. The owner subsequently merged PR #7; this artifact records the verified pre-merge preview.
 
 The current local production server remains available at http://localhost:3100/demo. The studio preview is immediately editable; it cannot publish a website change. Manual scene drafts are exported from the current browser session, while generated Content Studio drafts retain their existing persistent version history. Account-based live research/recheck jobs still require the hosted setup described above.
+
+## Actionable help review deployment
+
+PR #8: https://github.com/otouristas/seo-page-builder/pull/8. Application commit `64395416627ba1e893b7137777a54bb457a1b90d` is deployed as a **Ready Vercel preview** at https://ranksushi-hzsr3dv1t-otouristas-projects.vercel.app. All **21 deployed route checks pass**, including the handbook layout, fix-prompt copy controls, new SERP Studio guide, canonical metadata, Markdown/discovery resources and private-route denial. Evidence: `artifacts/qa/deployed-help-preview.json`. Preview protection remains enabled; the change has not been manually promoted to production.
+
+Review `/help/fix-prompts`, `/demo/audits` and `/demo` on that preview or http://localhost:3100. The production-build local server remains running. No paid provider requests were made for this update; editor instructions, prompt construction, copy controls and docs search work without provider credentials.
