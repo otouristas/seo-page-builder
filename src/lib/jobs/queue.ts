@@ -56,6 +56,7 @@ export const jobInput = z.discriminatedUnion("kind", [
           "Use a plain search phrase; advanced operators are not enabled.",
         ),
       mode: z.enum(["serp", "keywords"]).default("serp"),
+      pageUrl: z.url().max(2048).optional(),
     })
     .refine(
       (v) =>
@@ -76,6 +77,11 @@ export async function enqueueJob(
   input: JobInput,
   idempotencyKey?: string,
 ) {
+  if (input.kind === "serp" && input.pageUrl) {
+    const { url } = await validatePublicUrl(input.pageUrl);
+    if (url.hostname !== new URL(project.url).hostname)
+      throw new AppError("Use a page on this project’s website.");
+  }
   if (input.kind === "serp" && !RESEARCH_LOCATIONS[project.country])
     throw new AppError(
       "Research is not yet available for this project country.",

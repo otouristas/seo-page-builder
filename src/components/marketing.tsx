@@ -32,6 +32,7 @@ import { PAID_PLANS, PLANS } from "@/lib/plans";
 import { UrlForm } from "./url-form";
 import { GUIDES } from "@/lib/learning/content";
 import { SiteHeader } from "./site-header";
+import { SerpTeaser } from "./serp-teaser";
 export { SiteHeader };
 export function SiteFooter() {
   return (
@@ -51,6 +52,7 @@ export function SiteFooter() {
           <div className="footer-links">
             <div>
               <h2>The menu</h2>
+              <Link href="/demo">SERP Studio</Link>
               <Link href="/features/website-audits">Website audits</Link>
               <Link href="/features/search-console">Search Console</Link>
               <Link href="/features/content-studio">Content Studio</Link>
@@ -378,10 +380,10 @@ export function Landing() {
                 More <em>“found you.”</em>
               </h1>
               <p className="hero-description">
-                Your website has potential. Let’s bring it out.
+                Your keyword. Your page. Your next move.
                 <br />
-                Find what matters, know what to fix, and make your next move a
-                good one.
+                Bring real search results into focus, try a clearer page, and
+                see exactly what to work on next.
               </p>
               <UrlForm />
               <div className="form-caption">
@@ -399,7 +401,7 @@ export function Landing() {
                 ✦
               </span>
             </div>
-            <ProductPreview />
+            <SerpTeaser />
           </div>
         </section>
         <div className="integration-strip">

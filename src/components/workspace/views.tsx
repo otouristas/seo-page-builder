@@ -952,6 +952,14 @@ export function SearchConsole(ctx: WorkspaceContext) {
                   <small>
                     {r.page ? new URL(r.page).pathname : "All pages"}
                   </small>
+                  {!data.sample && r.query && r.page && (
+                    <Link
+                      className="text-link"
+                      href={`${ctx.base}?${new URLSearchParams({ query: r.query, url: r.page })}`}
+                    >
+                      Explore in SERP Studio <ArrowUpRight size={12} />
+                    </Link>
+                  )}
                 </td>
                 <td>{r.date}</td>
                 <td>{fmt(r.clicks)}</td>

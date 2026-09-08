@@ -11,7 +11,7 @@ export default async function ProjectPage({
   params: Promise<{ id: string; section?: string[] }>;
 }) {
   const { id, section } = await params;
-  const view = section?.[0] || "overview";
+  const view = section?.[0] || "serp-studio";
   if ((section?.length || 0) > 1 || !NAV.some((n) => n.id === view)) notFound();
   let data;
   try {

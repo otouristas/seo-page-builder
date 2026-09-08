@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/bricolage-grotesque";
 import "@fontsource-variable/inter";
 import "./globals.css";
+import "./studio.css";
 import { CANONICAL_URL } from "@/lib/utils";
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_URL),

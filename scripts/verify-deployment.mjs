@@ -72,6 +72,21 @@ for (let start = 0; start < routes.length; start += 4) {
             `https://ranksushi.com${path === "/" ? "" : path}` &&
           !!result.heading;
       }
+      if (path === "/demo") {
+        result.heading = html("main h1").text().replace(/\s+/g, " ").trim();
+        result.positions = html(".serp-position")
+          .map((_, el) => html(el).text())
+          .get();
+        result.recorded = body.includes("Recorded real results");
+        result.passed =
+          result.passed &&
+          result.heading.includes("See the search") &&
+          result.positions.length > 0 &&
+          result.recorded &&
+          html("[data-testid=studio-preview-title]").length === 1;
+      }
+      if (path === "/")
+        result.passed = result.passed && html(".serp-teaser").length === 1;
       if (path === "/api/health")
         result.passed =
           result.passed && JSON.parse(body).service === "RankSushi";

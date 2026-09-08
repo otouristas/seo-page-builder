@@ -20,6 +20,7 @@ const routes = [
 ];
 const views = [
   "",
+  "/overview",
   "/opportunities",
   "/audits",
   "/search-console",
@@ -109,7 +110,7 @@ test("landing and workspace render accessibly without horizontal overflow", asyn
     });
   }
 });
-test("all eight workspace sections load, including mobile navigation", async ({
+test("all nine workspace sections load, including mobile navigation", async ({
   page,
 }, info) => {
   for (const view of views) {
@@ -117,7 +118,9 @@ test("all eight workspace sections load, including mobile navigation", async ({
     await expect(page.locator("main h1")).toBeVisible();
     await expect(
       page.getByText(
-        "All metrics and findings on this page are illustrative.",
+        view
+          ? "All metrics and findings on this page are illustrative."
+          : "Recorded public Google results and fetched page evidence.",
         { exact: false },
       ),
     ).toBeVisible();
@@ -254,7 +257,7 @@ test("keyboard focus, dialog dismissal and reduced motion work", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/demo");
+  await page.goto("/demo/overview");
   await page.keyboard.press("Tab");
   await expect(
     page.getByRole("link", { name: "Skip to content" }),
