@@ -26,6 +26,8 @@ Updated: 8 September 2026. Domain: **ranksushi.com**. Operator: **Touristas Tech
 - Local production mobile Lighthouse: homepage **95 performance / 100 accessibility / 100 best practices / 100 SEO**. Audit feature page **96 / 98 / 100 / 100** in its recorded run before the footer-heading correction. These are lab measurements, not field data.
 - Screenshots, final PDF fixture, Lighthouse JSON and deployed route evidence live in `artifacts/qa/`. Provider configuration status is separately recorded in `artifacts/provider-validation.json`.
 
+GitHub Actions could not start its runner: GitHub reports that the account is locked due to a billing issue (run `34277194687`). This is a CI account blocker, not a passing CI run. Local checks and Vercel builds passed; rerun the workflow after the account issue is resolved.
+
 ## Hosted setup remains required
 
 The supplied Supabase project `ecfvgnzkysmycxlcyzpg` remains unmodified; its schema migration was applied only to `ranksushi-local`. Hosted service-secret/management access is not configured here. Private provider credentials, Google consent configuration, a verified Resend sender/SMTP, production merchant/legal/tax details and account-specific cost approval are still missing.
@@ -38,4 +40,4 @@ Boundaries remain as agreed: fresh English launch, USD capped subscriptions, one
 
 Work is isolated on `codex/ranksushi-rebuild`. `archive/rankframe-baseline` preserves original commit `c498f40a5db320f427218f748a81c7eca6c0db22`. Main and the existing Netlify deployment remain unchanged. No ranksushi.com DNS change was made.
 
-Vercel project: `otouristas-projects/ranksushi`. The CLI automatically assigned its first build to the default `ranksushi.vercel.app` production alias; the separate reviewed build uses the Preview environment. This was not a custom-domain cutover or a live-sales release. See the latest preview URL and route results in `artifacts/qa/deployed-routes.json`.
+Vercel project: `otouristas-projects/ranksushi`. The CLI automatically assigned its first build to the default `ranksushi.vercel.app` production alias; the separate reviewed build uses the Preview environment. This was not a custom-domain cutover or a live-sales release. Reviewed preview: https://ranksushi-9sgrgondh-otouristas-projects.vercel.app. All eight deployed route checks passed. See `artifacts/qa/deployed-routes.json`. Draft PR: https://github.com/otouristas/seo-page-builder/pull/4.
