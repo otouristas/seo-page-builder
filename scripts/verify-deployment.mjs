@@ -7,6 +7,7 @@ const deployment = process.argv[2];
 const outputPath = process.argv[3] || "artifacts/qa/deployed-routes.json";
 if (!deployment || !new URL(deployment).hostname.endsWith(".vercel.app"))
   throw new Error("Provide the verified Vercel deployment URL.");
+const requestedPaths = new Set(process.argv.slice(4));
 const routes = [
   ["/", 200],
   ["/demo", 200],
@@ -32,7 +33,9 @@ const routes = [
   ["/api/projects", 401],
   ["/app", 307],
   ["/sitemap.xml", 200],
-];
+].filter(([path]) => !requestedPaths.size || requestedPaths.has(path));
+if (!routes.length)
+  throw new Error("No configured routes matched the requested checks.");
 const checks = [];
 for (let start = 0; start < routes.length; start += 4) {
   const results = await Promise.allSettled(
@@ -111,7 +114,17 @@ for (let start = 0; start < routes.length; start += 4) {
       if (path.endsWith(".md"))
         result.passed =
           result.passed &&
-          body.includes("Make your page easier to understand and cite");
+          body.startsWith("# ") &&
+          body.includes(
+            `Source: https://ranksushi.com${path.replace(/\/(index|checklist)\.md$/, "")}`,
+          ) &&
+          body.includes("## Takeaway checklist");
+      if (path === "/learn/seo-evidence-library/index.md")
+        result.passed =
+          result.passed &&
+          body.includes("## Make the reviewed subject unambiguous") &&
+          body.includes("Google guidance") &&
+          !body.includes("docs.google.com");
       if (path === "/feed.xml")
         result.passed =
           result.passed && load(body, { xml: true })("item").length === 3;

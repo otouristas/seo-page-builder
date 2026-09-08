@@ -1,0 +1,12 @@
+{
+  "deployment": "https://ranksushi-2batzws52-otouristas-projects.vercel.app",
+  "checkedAt": "2026-09-08T22:33:15.389Z",
+  "checks": [
+    {
+      "path": "/learn/seo-evidence-library/index.md",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    }
+  ]
+}
