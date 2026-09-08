@@ -53,6 +53,14 @@ await check(
   { Authorization: `Bearer ${env.RESEND_API_KEY}` },
 );
 await check(
+  "Firecrawl account",
+  ["FIRECRAWL_API_KEY"],
+  "https://api.firecrawl.dev/v2/team/credit-usage",
+  { Authorization: `Bearer ${env.FIRECRAWL_API_KEY}` },
+  (data) =>
+    data?.success === true && Number.isFinite(data?.data?.remainingCredits),
+);
+await check(
   "DataForSEO account",
   ["DATAFORSEO_LOGIN", "DATAFORSEO_PASSWORD"],
   "https://api.dataforseo.com/v3/appendix/user_data",
