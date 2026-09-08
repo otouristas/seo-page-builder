@@ -1,0 +1,9 @@
+{
+  "provider": "DataForSEO",
+  "checkedAt": "2026-09-08T21:08:18.846Z",
+  "endpoint": "/v3/appendix/user_data",
+  "status": "account authentication verified",
+  "cost": 0,
+  "credentials": "server-only; no values retained in evidence",
+  "coverage": "Account authentication only. Paid research, background jobs, and workspace persistence require separate validation."
+}

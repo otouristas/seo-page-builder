@@ -1,0 +1,241 @@
+{
+  "checkedAt": "2026-09-08T21:18:23.741Z",
+  "purpose": "Two bounded operator-authorized API checks using the application adapter. These are live external results, not a website performance claim or hosted-workspace certification.",
+  "results": [
+    {
+      "mode": "serp",
+      "keyword": "seo software",
+      "country": "US",
+      "language": "en",
+      "observedAt": "2026-09-08T21:18:23.041Z",
+      "providerTaskId": "09082118-1029-0139-0000-a05e779cc95d",
+      "providerCostUsd": 0.002,
+      "device": "desktop",
+      "source": "DataForSEO Google organic live",
+      "status": "measured",
+      "coverage": "One desktop Google results snapshot, up to 10 organic listings. Features and questions are included only when returned. No extra question-expansion clicks.",
+      "results": [
+        {
+          "url": "https://www.marketermilk.com/blog/best-seo-tools",
+          "title": "24 best SEO tools I'm using in 2026 (free + paid)",
+          "description": "Jun 14, 2026 — 24 best SEO tools I've personally tested in 2026 · 1. Google Search Console · 2. Google Autocomplete · 3. Surfer · 4. Gumloop · 5. Ahrefs · 6. Read more",
+          "rank_absolute": 2,
+          "rank_group": 1
+        },
+        {
+          "url": "https://morningscore.io/best-seo-tools/",
+          "title": "The 20 best SEO tools in 2026? I personally tested all tools",
+          "description": "Jan 9, 2026 — 350 hours of personal test to find 20 best SEO tools: 1. Search Console - 2. Ahrefs - 3. Morningscore - 4. Semrush - 5. Surfer SEO - 6.",
+          "rank_absolute": 4,
+          "rank_group": 2
+        },
+        {
+          "url": "https://technologyadvice.com/blog/sales/best-seo-tools/",
+          "title": "Best SEO Tools for Keyword Research & Site Audits in 2026",
+          "description": "Jun 30, 2026 — The best SEO tools are Semrush for keyword research and site maintenance, Ahrefs for competitor analysis, Ubersuggest for keyword clustering, ...",
+          "rank_absolute": 5,
+          "rank_group": 3
+        },
+        {
+          "url": "https://www.semrush.com/seo/",
+          "title": "Check Website SEO with Analysis Tools",
+          "description": "From research to reporting, take your SEO to the next level with Semrush tools. Keyword research, backlink audit, rank tracking, competitor analysis & more.",
+          "rank_absolute": 6,
+          "rank_group": 4
+        },
+        {
+          "url": "https://zapier.com/blog/best-seo-tools/",
+          "title": "The 11 Best SEO Tools in 2026",
+          "description": "Aug 5, 2026 — BuzzSumo is a keyword research tool that offers better search trend reporting, topic idea generation, and search engine results page (SERP) ... Read more",
+          "rank_absolute": 7,
+          "rank_group": 5
+        },
+        {
+          "url": "https://www.gartner.com/reviews/market/enterprise-seo-platforms",
+          "title": "Best Enterprise SEO Platforms Reviews 2026",
+          "description": "SEO PowerSuite is a comprehensive software toolkit for search engine optimization tailored to meet the needs of businesses of all sizes. It comprises four key ... Read more",
+          "rank_absolute": 8,
+          "rank_group": 6
+        },
+        {
+          "url": "https://www.youtube.com/watch?v=VOLpViuXh5U",
+          "title": "Best Free SEO Tools in 2026 (No Paid Tools Required)",
+          "description": "In this video, I break down five completely free SEO tools that replace expensive platforms for most real world use cases. You will see how to ...",
+          "rank_absolute": 9,
+          "rank_group": 7
+        },
+        {
+          "url": "https://thatmarketingbuddy.com/best/seo-software",
+          "title": "27 Best SEO Software (2026) | TMB",
+          "description": "27 Best SEO Software in 2026 · 1. SE Ranking · 2. Semrush · 3. SurferSEO · 4. Ahrefs · 5. Moz · 6. Screaming Frog · 7. Keysearch · 8. Clearscope ... Read more",
+          "rank_absolute": 10,
+          "rank_group": 8
+        },
+        {
+          "url": "https://www.seoreviewtools.com/",
+          "title": "#1 Free SEO & AI Tools → SEO Review Tools",
+          "description": "SEO Review Tools (SRT ) is a popular cloud-based platform providing a suite of Free SEO, content, and AI tools. It is widely used by SEO professionals, ... Read more",
+          "rank_absolute": 11,
+          "rank_group": 9
+        }
+      ],
+      "questions": [
+        "What is SEO software?",
+        "What is the best SEO software?",
+        "Can I do SEO for free?",
+        "What are the 10 best SEO tools?"
+      ],
+      "features": [
+        "ai_overview",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "available": true
+    },
+    {
+      "mode": "keywords",
+      "keyword": "seo software",
+      "country": "US",
+      "language": "en",
+      "observedAt": "2026-09-08T21:18:23.741Z",
+      "providerTaskId": "09082118-1029-0607-0000-c3b3a5de7585",
+      "providerCostUsd": 0.01212,
+      "device": "database",
+      "source": "DataForSEO Labs Google keyword database",
+      "status": "inferred",
+      "coverage": "Provider database estimates, not your website analytics. Missing values mean unavailable. CPC and competition describe paid search; difficulty is a provider estimate. Clickstream add-ons are disabled.",
+      "available": true,
+      "metrics": {
+        "searchVolume": 3600,
+        "cpc": 18.11,
+        "paidCompetition": 0.05,
+        "paidCompetitionLevel": "LOW",
+        "keywordDifficulty": 42,
+        "intent": "commercial",
+        "updatedAt": "2026-08-28 23:13:26 +00:00",
+        "monthlySearches": [
+          {
+            "year": 2026,
+            "month": 7,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2026,
+            "month": 6,
+            "searchVolume": 2400
+          },
+          {
+            "year": 2026,
+            "month": 5,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2026,
+            "month": 4,
+            "searchVolume": 2400
+          },
+          {
+            "year": 2026,
+            "month": 3,
+            "searchVolume": 3600
+          },
+          {
+            "year": 2026,
+            "month": 2,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2026,
+            "month": 1,
+            "searchVolume": 2400
+          },
+          {
+            "year": 2025,
+            "month": 12,
+            "searchVolume": 1900
+          },
+          {
+            "year": 2025,
+            "month": 11,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2025,
+            "month": 10,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2025,
+            "month": 9,
+            "searchVolume": 8100
+          },
+          {
+            "year": 2025,
+            "month": 8,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2025,
+            "month": 7,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2025,
+            "month": 6,
+            "searchVolume": 4400
+          },
+          {
+            "year": 2025,
+            "month": 5,
+            "searchVolume": 8100
+          },
+          {
+            "year": 2025,
+            "month": 4,
+            "searchVolume": 8100
+          },
+          {
+            "year": 2025,
+            "month": 3,
+            "searchVolume": 9900
+          },
+          {
+            "year": 2025,
+            "month": 2,
+            "searchVolume": 8100
+          },
+          {
+            "year": 2025,
+            "month": 1,
+            "searchVolume": 4400
+          },
+          {
+            "year": 2024,
+            "month": 12,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2024,
+            "month": 11,
+            "searchVolume": 3600
+          },
+          {
+            "year": 2024,
+            "month": 10,
+            "searchVolume": 2900
+          },
+          {
+            "year": 2024,
+            "month": 9,
+            "searchVolume": 2400
+          },
+          {
+            "year": 2024,
+            "month": 8,
+            "searchVolume": 2900
+          }
+        ]
+      }
+    }
+  ]
+}

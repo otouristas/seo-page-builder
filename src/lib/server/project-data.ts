@@ -30,6 +30,7 @@ export type SavedDraft = {
     model?: string;
     evidenceUrls?: string[];
     needsConfirmation?: string[];
+    guidanceSources?: import("../learning/retrieval").GuidanceReference[];
   };
   draft_revisions: {
     id: string;

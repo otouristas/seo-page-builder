@@ -16,6 +16,8 @@ npm run dev
 
 Visit http://localhost:3100. `/demo` is explicitly illustrative and works without provider credentials. `/tools/metadata-preview` and `/tools/structured-data` run locally. Real accounts, the free audit, saved projects and jobs require the Supabase migration and server secret. Missing configuration produces a recovery state rather than invented results.
 
+Explore `/learn` (six guides), `/blog` (three posts) and `/help` (eight articles), with search, filters, primary sources and downloadable checklists. Public discovery includes `/llms.txt`, `/feed.xml`, `/sitemap` and `/sitemap.xml`. The knowledge methods also inform audit links and versioned draft guidance. [KNOWLEDGE.md](docs/KNOWLEDGE.md) documents the source boundary and extension points.
+
 For an isolated complete database/auth/storage/job test:
 
 ```sh
@@ -32,7 +34,7 @@ The local project is `ranksushi-local`, with independent ports 56321–56328. `d
 ## Check
 
 ```sh
-npm run check                # TypeScript, ESLint, 61 meaningful unit/SQL checks
+npm run check                # TypeScript, ESLint, 76 meaningful unit/SQL checks
 npm run build               # Stop dev first; it shares .next
 npm start
 PLAYWRIGHT_BASE_URL=http://localhost:3100 npm run test:e2e

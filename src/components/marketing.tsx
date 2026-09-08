@@ -4,7 +4,6 @@ import {
   ArrowUpRight,
   Globe2,
   ChevronDown,
-  Menu,
   Check,
   Sparkles,
   ScanLine,
@@ -31,43 +30,9 @@ import {
 } from "./ui";
 import { PAID_PLANS, PLANS } from "@/lib/plans";
 import { UrlForm } from "./url-form";
-export function SiteHeader() {
-  return (
-    <header className="container site-header">
-      <Link href="/" aria-label="RankSushi home">
-        <Logo />
-      </Link>
-      <nav className="main-nav" aria-label="Main navigation">
-        <Link href="/features">
-          The menu <ChevronDown size={10} style={{ display: "inline" }} />
-        </Link>
-        <Link href="/#how-it-works">How it works</Link>
-        <Link href="/pricing">Pricing</Link>
-        <Link href="/methodology">Our approach</Link>
-      </nav>
-      <div className="header-actions">
-        <Link className="sign-in" href="/login">
-          Log in
-        </Link>
-        <ButtonLink href="/tools/seo-audit">
-          Get a free taste <ArrowUpRight size={15} />
-        </ButtonLink>
-        <details className="mobile-nav">
-          <summary aria-label="Open navigation">
-            <Menu size={21} />
-          </summary>
-          <nav aria-label="Mobile navigation">
-            <Link href="/features">Features</Link>
-            <Link href="/pricing">Pricing</Link>
-            <Link href="/methodology">Our approach</Link>
-            <Link href="/help">Help center</Link>
-            <Link href="/login">Log in</Link>
-          </nav>
-        </details>
-      </div>
-    </header>
-  );
-}
+import { GUIDES } from "@/lib/learning/content";
+import { SiteHeader } from "./site-header";
+export { SiteHeader };
 export function SiteFooter() {
   return (
     <footer className="site-footer">
@@ -92,7 +57,9 @@ export function SiteFooter() {
               <Link href="/features/ai-visibility">AI Visibility</Link>
             </div>
             <div>
-              <h2>Good to know</h2>
+              <h2>Keep learning</h2>
+              <Link href="/learn">The SEO kitchen</Link>
+              <Link href="/blog">Fresh reads · blog</Link>
               <Link href="/pricing">Pricing</Link>
               <Link href="/methodology">Our approach</Link>
               <Link href="/tools">Free tools</Link>
@@ -103,7 +70,10 @@ export function SiteFooter() {
               <Link href="/privacy">Privacy</Link>
               <Link href="/terms">Terms</Link>
               <Link href="/security">Security</Link>
-              <Link href="/login">Your account</Link>
+              <Link href="/sitemap">Sitemap</Link>
+              <a href="/sitemap.xml">XML sitemap</a>
+              <a href="/llms.txt">llms.txt</a>
+              <a href="/feed.xml">RSS feed</a>
               <a href="mailto:anotherseoguru@gmail.com">Contact support</a>
             </div>
           </div>
@@ -599,6 +569,33 @@ export function Landing() {
               description="Simple monthly plans. Visible limits. No unexpected extras on the bill."
             />
             <PricingCards />
+          </div>
+        </section>
+        <section className="learning-teaser container">
+          <SectionHeading
+            kicker="A little knowledge goes a long way"
+            title="Welcome to the SEO kitchen."
+            description="Understand the why. Take a useful checklist. Put one good idea to work."
+          />
+          <div className="learning-grid">
+            {[GUIDES[1], GUIDES[0], GUIDES[3]].map((g, i) => (
+              <article className={`learning-card ingredient-${i}`} key={g.slug}>
+                <div className="learning-card-meta">
+                  <span>{g.category}</span>
+                  <span>Free guide</span>
+                </div>
+                <h3>
+                  <Link href={`/learn/${g.slug}`}>{g.title}</Link>
+                </h3>
+                <p>{g.summary}</p>
+                <Link className="learning-card-link" href={`/learn/${g.slug}`}>
+                  Take a bite <ArrowUpRight size={17} />
+                </Link>
+              </article>
+            ))}
+          </div>
+          <div className="learning-teaser-link">
+            <TextLink href="/learn">Explore the whole kitchen</TextLink>
           </div>
         </section>
         <section className="faq-section">

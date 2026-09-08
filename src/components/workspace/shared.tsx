@@ -9,6 +9,8 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { Badge } from "../ui";
+import Link from "next/link";
+import { guideForFinding } from "@/lib/learning/guide-links";
 import type { AuditFinding } from "@/lib/types";
 export async function request<T = Record<string, unknown>>(
   url: string,
@@ -84,6 +86,7 @@ export function Notice({ children }: { children: ReactNode }) {
 }
 export function Finding({ finding }: { finding: AuditFinding }) {
   const f = finding;
+  const guide = guideForFinding(f.id);
   const Icon =
     f.status === "pass"
       ? CheckCircle2
@@ -111,6 +114,15 @@ export function Finding({ finding }: { finding: AuditFinding }) {
       </h3>
       <p>{f.detail}</p>
       <p className="recommendation">{f.recommendation}</p>
+      <Link
+        href={`/learn/${guide.slug}`}
+        className="knowledge-link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {guide.label}
+        <ArrowUpRight size={13} aria-hidden="true" />
+      </Link>
       <div className="finding-evidence">
         {f.evidence.source} · {f.evidence.status} ·{" "}
         {new Date(f.evidence.observedAt).toLocaleString("en-US")}

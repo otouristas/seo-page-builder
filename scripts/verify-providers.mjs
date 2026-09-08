@@ -7,16 +7,17 @@ const env = {
   ...process.env,
 };
 const results = [];
-async function check(name, needed, url, headers = {}) {
+async function check(name, needed, url, headers = {}, validate = () => true) {
   if (needed.some((k) => !env[k])) {
     results.push({ provider: name, state: "unconfigured" });
     return;
   }
   try {
     const r = await fetch(url, { headers, signal: AbortSignal.timeout(15000) });
+    const valid = r.ok && validate(await r.json().catch(() => null));
     results.push({
       provider: name,
-      state: r.ok ? "read-only connection verified" : "needs attention",
+      state: valid ? "read-only connection verified" : "needs attention",
       http: r.status,
       checkedAt: new Date().toISOString(),
     });
@@ -51,6 +52,16 @@ await check(
   "https://api.resend.com/domains",
   { Authorization: `Bearer ${env.RESEND_API_KEY}` },
 );
+await check(
+  "DataForSEO account",
+  ["DATAFORSEO_LOGIN", "DATAFORSEO_PASSWORD"],
+  "https://api.dataforseo.com/v3/appendix/user_data",
+  {
+    Authorization: `Basic ${Buffer.from(`${env.DATAFORSEO_LOGIN}:${env.DATAFORSEO_PASSWORD}`).toString("base64")}`,
+  },
+  (data) =>
+    data?.status_code === 20000 && data?.tasks?.[0]?.status_code === 20000,
+);
 // The remaining adapters require a requested real job, account consent or a signed
 // webhook fixture. Do not spend provider credits in a configuration health check.
 for (const name of [
@@ -58,7 +69,7 @@ for (const name of [
   "Google Search Console OAuth/import",
   "OpenAI draft/web answer",
   "Perplexity answer",
-  "DataForSEO SERP",
+  "DataForSEO hosted research jobs",
   "PageSpeed",
   "Inngest durable execution",
   "Stripe lifecycle",

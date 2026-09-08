@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-09-08T21:24:52.643Z",
+  "environment": "Local production build at localhost:3100",
+  "typecheck": "passed",
+  "lint": "passed",
+  "productionBuild": "passed",
+  "unitTests": 76,
+  "unitFiles": 8,
+  "browserTests": {
+    "passed": 22,
+    "skipped": 2,
+    "skips": "Viewport-independent metadata checks run on desktop",
+    "finalFocusedRerun": "7 learning tests passed, 1 viewport-independent skip after accessible-label correction"
+  },
+  "publicHtmlUrls": 36,
+  "markdownArticles": 17,
+  "accessibility": "No violations in tested navigation, learning, article and research demo surfaces for WCAG 2 A/AA and 2.1 A/AA tags",
+  "lighthouse": {
+    "home": {
+      "performance": 96,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100
+    },
+    "learn": {
+      "performance": 96,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100
+    },
+    "scope": "Local mobile lab runs; not field measurements"
+  },
+  "dataforseo": {
+    "account": "verified",
+    "liveAdapterModes": [
+      "serp",
+      "keywords"
+    ],
+    "actualCostUsd": 0.01412,
+    "hostedWorkflow": "Not validated: hosted Supabase service/schema and Inngest setup required"
+  },
+  "credentialsScan": "passed: no supplied credentials in tracked or eligible untracked files"
+}

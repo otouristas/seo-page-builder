@@ -212,6 +212,9 @@ export function Workspace({
         <div className="nav-caption">YOUR WORKSPACE</div>
         {nav()}
         <div className="sidebar-bottom">
+          <Link className="knowledge-link" href="/learn">
+            The SEO kitchen <ArrowUpRight size={13} />
+          </Link>
           <div className="sidebar-tip">
             <Maki pose="wave" />
             <h4>Small bites. Big clarity.</h4>

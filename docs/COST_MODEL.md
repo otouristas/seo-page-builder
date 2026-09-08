@@ -6,17 +6,23 @@ Collect billed usage from an isolated test batch, including a partial crawl, rec
 
 Record the following in an **untracked** `measured-costs.json`, using dollars per action and percentages where specified:
 
-| Field | Meaning |
-|---|---|
-| page | Conservative cost per inspected page, including rendered fetches/recrawls |
-| draft | Conservative bounded drafting action, including input and output |
-| answer | More expensive observed provider + tools for one prompt/provider check |
-| serp | One bounded organic SERP evidence request |
-| workspaceOperations | Allocated database, jobs, storage, email, logs and scheduled work per workspace |
-| paymentPercent | Merchant’s verified percentage payment fee |
-| paymentFixed | Merchant’s verified fixed payment fee in USD |
-| refundReservePercent | Merchant-approved reserve assumption |
+| Field                | Meaning                                                                                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| page                 | Conservative cost per inspected page, including rendered fetches/recrawls                                                             |
+| draft                | Conservative bounded drafting action, including input and output                                                                      |
+| answer               | More expensive observed provider + tools for one prompt/provider check                                                                |
+| serp                 | The more expensive conservative cost of one live SERP request or one keyword-overview request; both use the shared research allowance |
+| workspaceOperations  | Allocated database, jobs, storage, email, logs and scheduled work per workspace                                                       |
+| paymentPercent       | Merchant’s verified percentage payment fee                                                                                            |
+| paymentFixed         | Merchant’s verified fixed payment fee in USD                                                                                          |
+| refundReservePercent | Merchant-approved reserve assumption                                                                                                  |
 
 Run `node scripts/cost-model.mjs measured-costs.json`. It models 100% allowance use for all plans, payment fees and the explicit reserve. Retain the invoice evidence, run date, provider models/prices and rationale for each input privately. Include host/service minimums at plausible customer counts, free-audit abuse budgets (500 global audits/day), currency/tax treatment and support cost in the merchant review.
 
 If a tier does not meet the chosen contribution target under conservative consumption, revise pricing/allowances before sales. Do not enable overages or silently increase caps. The three live-sale gates are independent: cost approval, merchant/tax/legal readiness and the explicit live launch flag.
+
+## Recorded DataForSEO verification
+
+Two single-query calls through the actual adapters returned usable data for `seo software`, US / English: live Google advanced results cost **$0.002**; Labs keyword overview cost **$0.01212**; combined **$0.01412**. The returned task IDs, costs and normalized data are recorded in `artifacts/qa/dataforseo-live-research.json`. Account authentication was separately checked with the no-cost user-data endpoint.
+
+These observations validate the account and two adapter paths, not every market or a conservative full-workload cost. Keyword demand is more expensive in this sample, so modeling every research action as the cheaper SERP request would understate costs. Ordinary phrases only, one keyword, depth 10, no extra question-expansion clicks and no clickstream add-ons are the current boundaries. Keep the billing cost gate disabled pending the complete review above.
