@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-09-08T22:31:21.971Z",
+  "sourceCommit": "e4f618d",
+  "unitChecks": {
+    "passed": 96,
+    "files": 11
+  },
+  "browserChecks": {
+    "passed": 36,
+    "skipped": 4,
+    "skipReasons": [
+      "Two duplicate mobile metadata checks",
+      "Two isolated-service checks; local services stopped"
+    ],
+    "note": "Initial old guide-count expectations were updated from 6 to 8 and the two affected tests rerun successfully. After final method-matching change, the ten desktop/mobile corpus and fix-help checks were rerun successfully."
+  },
+  "build": "passed",
+  "typecheck": "passed",
+  "lint": "passed",
+  "githubActions": {
+    "runId": 34286290802,
+    "url": "https://github.com/otouristas/seo-page-builder/actions/runs/34286290802",
+    "status": "not-started",
+    "reason": "Account locked due to a billing issue"
+  },
+  "paidProviderRequests": 0,
+  "automationChanges": 0
+}

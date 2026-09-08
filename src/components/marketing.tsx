@@ -61,6 +61,7 @@ export function SiteFooter() {
             <div>
               <h2>Keep learning</h2>
               <Link href="/learn">The SEO kitchen</Link>
+              <Link href="/learn/seo-evidence-library">Evidence library</Link>
               <Link href="/blog">Fresh reads · blog</Link>
               <Link href="/pricing">Pricing</Link>
               <Link href="/methodology">Our approach</Link>

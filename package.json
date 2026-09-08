@@ -14,7 +14,8 @@
     "dev:local": "node scripts/dev-local.mjs",
     "verify:providers": "node scripts/verify-providers.mjs",
     "format": "prettier --write src tests scripts *.ts *.mjs *.json",
-    "check": "npm run typecheck && npm run lint && npm test"
+    "check": "npm run typecheck && npm run lint && npm test",
+    "check:seo-launch": "node scripts/check-seo-launch.mjs"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "5.3.0",

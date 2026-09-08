@@ -76,7 +76,7 @@ test("learning search, topic filters, and recovery work accessibly", async ({
     .fill("zzzz-no-match");
   await expect(page.getByText("Nothing on this plate yet.")).toBeVisible();
   await page.getByRole("button", { name: "Show every read" }).click();
-  await expect(page.locator(".learning-card")).toHaveCount(6);
+  await expect(page.locator(".learning-card")).toHaveCount(8);
   for (const path of [
     "/learn",
     "/help",
@@ -155,7 +155,7 @@ test("every public sitemap URL and Markdown export is complete and canonical", a
   const links = [
     ...index.matchAll(/\]\((https:\/\/ranksushi\.com[^)]*\/index\.md)\)/g),
   ];
-  expect(links.length).toBe(19);
+  expect(links.length).toBe(21);
   for (const [, url] of links) {
     expect((await request.get(new URL(url).pathname)).status()).toBe(200);
   }

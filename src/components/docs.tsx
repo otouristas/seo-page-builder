@@ -1,3 +1,4 @@
+import { CorpusExplorer } from "./corpus-explorer";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -265,11 +266,19 @@ export function DocsArticle({
         <>
           <nav className="docs-toc" aria-label="On this page">
             <strong>ON THIS PAGE</strong>
-            {a.sections.map((s) => (
-              <a href={`#${s.id}`} key={s.id}>
-                {s.title}
-              </a>
-            ))}
+            {a.sections
+              .filter(
+                (s) =>
+                  a.slug !== "seo-evidence-library" || s.id === "how-to-use",
+              )
+              .map((s) => (
+                <a href={`#${s.id}`} key={s.id}>
+                  {s.title}
+                </a>
+              ))}
+            {a.slug === "seo-evidence-library" && (
+              <a href="#methods">Browse evidence methods</a>
+            )}
             <a href="#takeaway">Your next steps</a>
           </nav>
           <DocsPlaybook key={path} article={a} collection={collection} />
@@ -316,42 +325,47 @@ export function DocsArticle({
           </span>
           <p>{a.summary}</p>
         </div>
-        {a.sections.map((s) => (
-          <section id={s.id} key={s.id}>
-            <h2>
-              {s.title}
-              <a href={`#${s.id}`} aria-label={`Link to ${s.title}`}>
-                #
-              </a>
-            </h2>
-            {s.paragraphs.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-            {s.items && (
-              <ul>
-                {s.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            )}
-            {s.sourceIds && (
-              <p className="docs-sources">
-                Read the source:{" "}
-                {s.sourceIds.map((id) => (
-                  <a
-                    key={id}
-                    href={SOURCES[id].url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {SOURCES[id].title}
-                    <ArrowUpRight size={11} />
-                  </a>
-                ))}
-              </p>
-            )}
-          </section>
-        ))}
+        {a.sections
+          .filter(
+            (s) => a.slug !== "seo-evidence-library" || s.id === "how-to-use",
+          )
+          .map((s) => (
+            <section id={s.id} key={s.id}>
+              <h2>
+                {s.title}
+                <a href={`#${s.id}`} aria-label={`Link to ${s.title}`}>
+                  #
+                </a>
+              </h2>
+              {s.paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+              {s.items && (
+                <ul>
+                  {s.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              )}
+              {s.sourceIds && (
+                <p className="docs-sources">
+                  Read the source:{" "}
+                  {s.sourceIds.map((id) => (
+                    <a
+                      key={id}
+                      href={SOURCES[id].url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {SOURCES[id].title}
+                      <ArrowUpRight size={11} />
+                    </a>
+                  ))}
+                </p>
+              )}
+            </section>
+          ))}
+        {a.slug === "seo-evidence-library" && <CorpusExplorer />}
         <section className="docs-takeaway" id="takeaway">
           <h2>Your next steps</h2>
           <ol>
