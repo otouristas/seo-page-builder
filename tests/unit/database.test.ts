@@ -1,6 +1,6 @@
 import { beforeAll, afterAll, describe, it, expect } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 const db = new PGlite();
 const ownerA = "10000000-0000-4000-8000-000000000001",
   ownerB = "10000000-0000-4000-8000-000000000002";
@@ -12,16 +12,14 @@ beforeAll(async () => {
   await db.exec(
     `create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create schema storage;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;grant usage on schema auth,public,storage to anon,authenticated,service_role;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid default gen_random_uuid(),bucket_id text,name text);alter table storage.objects enable row level security;grant select on storage.objects to authenticated;grant all on storage.buckets,storage.objects to service_role;`,
   );
-  const migration = await readFile(
-    "supabase/migrations/20260908195431_ranksushi_core.sql",
-    "utf8",
-  );
-  await db.exec(
-    migration.replace(
-      "create extension if not exists pgcrypto;",
-      "-- gen_random_uuid is built into this isolated Postgres runtime.",
-    ),
-  );
+  for (const file of (await readdir("supabase/migrations"))
+    .filter((f) => f.endsWith(".sql"))
+    .sort()) {
+    const migration = await readFile(`supabase/migrations/${file}`, "utf8");
+    await db.exec(
+      migration.replace("create extension if not exists pgcrypto;", ""),
+    );
+  }
   await db.query("insert into auth.users(id) values($1),($2)", [
     ownerA,
     ownerB,
@@ -356,5 +354,81 @@ describe("Actual migration permissions and atomic operations", () => {
       ]),
     ]);
     expect(results[0].rows[0].id).toBe(results[1].rows[0].id);
+  });
+  it("records a trial once, rejects another trial and preserves its original deadline", async () => {
+    const state = {
+      stripe_customer: "cus_trial",
+      stripe_subscription: "sub_trial",
+      plan: "maki",
+      status: "trialing",
+      period_start: "2026-09-09T00:00:00Z",
+      period_end: "2026-09-12T00:00:00Z",
+      trial_start: "2026-09-09T00:00:00Z",
+      trial_end: "2026-09-12T00:00:00Z",
+      trial_invoice: "in_paid",
+      cancel_at_period_end: false,
+    };
+    await db.query("select sync_subscription($1,$2,$3)", [
+      wb,
+      "2026-09-09T00:00:00Z",
+      JSON.stringify(state),
+    ]);
+    await expect(
+      db.query("select checkout_intent($1,$2,true)", [wb, "maki"]),
+    ).rejects.toThrow("not eligible");
+    await db.query("select sync_subscription($1,$2,$3)", [
+      wb,
+      "2026-09-10T00:00:00Z",
+      JSON.stringify({
+        ...state,
+        plan: "omakase",
+        trial_end: "2026-10-01T00:00:00Z",
+      }),
+    ]);
+    const result = await db.query<{ trial_end: Date; trial_used_at: Date }>(
+      "select trial_end,trial_used_at from subscriptions where workspace_id=$1",
+      [wb],
+    );
+    expect(new Date(result.rows[0].trial_end).toISOString()).toBe(
+      "2026-09-12T00:00:00.000Z",
+    );
+    await db.query("select sync_subscription($1,$2,$3)", [
+      wb,
+      "2026-09-13T00:00:00Z",
+      JSON.stringify({ ...state, status: "canceled", trial_invoice: null }),
+    ]);
+    await expect(
+      db.query("select checkout_intent($1,$2,true)", [wb, "nigiri"]),
+    ).rejects.toThrow("not eligible");
+    expect(
+      (
+        await db.query<{ trial_used_at: Date }>(
+          "select trial_used_at from subscriptions where workspace_id=$1",
+          [wb],
+        )
+      ).rows[0].trial_used_at,
+    ).toEqual(result.rows[0].trial_used_at);
+    await asOwner(ownerB, async () => {
+      await expect(
+        db.query(
+          "update subscriptions set trial_used_at=null where workspace_id=$1",
+          [wb],
+        ),
+      ).rejects.toThrow();
+      await expect(
+        db.query("select checkout_intent($1,$2,true)", [wb, "maki"]),
+      ).rejects.toThrow();
+    });
+  });
+  it("atomically caps concurrent trial reservations and keeps unused allowance after failure", async () => {
+    const attempts = await Promise.all(
+      [1, 2].map((n) =>
+        db.query<{ ok: boolean }>(
+          "select reserve_usage($1,'pages','trial:sub_trial',15,20,$2) as ok",
+          [wb, `trial-reservation-${n}`],
+        ),
+      ),
+    );
+    expect(attempts.filter((r) => r.rows[0].ok)).toHaveLength(1);
   });
 });

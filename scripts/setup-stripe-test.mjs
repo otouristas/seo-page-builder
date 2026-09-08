@@ -46,6 +46,38 @@ for (const [id, name, amount] of [
     throw new Error("Existing test price does not match the approved catalog.");
   console.log(`STRIPE_PRICE_${id.toUpperCase()}=${price.id}`);
 }
+const trialLookup = "ranksushi_starter_trial_usd_v1";
+let trial = (await stripe.prices.list({ lookup_keys: [trialLookup], limit: 1 }))
+  .data[0];
+if (!trial) {
+  const product = await stripe.products.create(
+    {
+      name: "RankSushi 3-day starter trial",
+      description:
+        "$1 for three days with limited usage. Your selected monthly plan renews automatically afterwards unless canceled.",
+      metadata: { app: "ranksushi", offer: "starter-trial-v1" },
+    },
+    { idempotencyKey: "ranksushi-trial-product-v1" },
+  );
+  trial = await stripe.prices.create(
+    {
+      product: product.id,
+      currency: "usd",
+      unit_amount: 100,
+      lookup_key: trialLookup,
+    },
+    { idempotencyKey: "ranksushi-trial-price-v1" },
+  );
+}
+if (
+  !trial.active ||
+  trial.currency !== "usd" ||
+  trial.unit_amount !== 100 ||
+  trial.recurring
+)
+  throw new Error("Trial price does not match $1 USD one-time.");
+console.log(`STRIPE_PRICE_TRIAL=${trial.id}`);
+const site = env.NEXT_PUBLIC_SITE_URL || "https://ranksushi.vercel.app";
 const configs = await stripe.billingPortal.configurations.list({
   active: true,
   limit: 100,
@@ -54,8 +86,8 @@ let config = configs.data.find((c) => c.metadata?.app === "ranksushi");
 const settings = {
   business_profile: {
     headline: "RankSushi — Touristas Technologies",
-    privacy_policy_url: "https://ranksushi.com/privacy",
-    terms_of_service_url: "https://ranksushi.com/terms",
+    privacy_policy_url: `${site}/privacy`,
+    terms_of_service_url: `${site}/terms`,
   },
   features: {
     invoice_history: { enabled: true },

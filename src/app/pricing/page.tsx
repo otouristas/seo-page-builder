@@ -8,7 +8,7 @@ import { SectionLabel } from "@/components/ui";
 import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata(
   "Simple pricing for every appetite",
-  "Maki $29, Nigiri $79, Omakase $149 per month. Shared workspace allowances for audits, drafts, AI answer checks and SERP lookups. No automatic overages.",
+  "Try RankSushi for $1 for 3 days with limited usage, then Maki $29, Nigiri $79 or Omakase $149 per month. Shared workspace allowances for audits, drafts, AI answer checks and SERP lookups. No automatic overages.",
   "/pricing",
 );
 export default function Pricing() {
@@ -23,7 +23,8 @@ export default function Pricing() {
             <br />A clearer direction.
           </h1>
           <p>
-            Monthly USD plans. Visible limits. No unexpected extras on the bill.
+            Start with a $1, three-day trial. Choose your monthly plan for what
+            comes next.
           </p>
         </header>
         <h2 className="sr-only">Monthly subscription plans</h2>

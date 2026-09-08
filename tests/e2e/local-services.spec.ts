@@ -172,6 +172,7 @@ test("isolated Supabase: email sign-in, audit adoption, persistence, RLS, quotas
         plan: "maki",
         status: "active",
         period_start: new Date().toISOString(),
+        paid_through: new Date(Date.now() + 30 * 86400000).toISOString(),
         period_end: new Date(Date.now() + 86400000).toISOString(),
       }),
     );

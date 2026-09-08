@@ -962,8 +962,26 @@ export const HELP_ARTICLES: LearningArticle[] = [
     summary:
       "You see the allowance before starting. RankSushi reserves it for the job and reconciles usage when the work settles.",
     updated,
-    tags: ["quota", "billing", "failed", "partial", "cancel", "retry"],
+    tags: [
+      "quota",
+      "billing",
+      "trial",
+      "renewal",
+      "failed",
+      "partial",
+      "cancel",
+      "retry",
+    ],
     sections: [
+      {
+        id: "starter-trial",
+        title: "$1 today, three days to try it",
+        paragraphs: [
+          "The paid starter trial is available once per new workspace. Across all three days you can use 1 project, 20 crawled pages, 3 drafting actions, 3 AI answer checks and 3 SERP lookups. Picking Omakase does not increase the trial limits: the larger monthly allowance starts after your first monthly payment succeeds.",
+          "Select Maki ($29/month), Nigiri ($79/month), or Omakase ($149/month) before Checkout. Pay $1 USD now; the selected monthly subscription renews automatically three days later unless canceled. Stripe Checkout shows the renewal date and amount before payment, and Settings → Plan & billing shows them afterwards. Applicable tax is additional and shown at Checkout.",
+          "To avoid the monthly charge, open Settings → Plan & billing and choose Cancel at period end before the displayed renewal time. Confirm cancellation and check the scheduled cancellation notice. Your remaining trial allowance lasts until the trial ends; saved results then stay available in read-only mode. Changing plans does not extend the trial or refill its allowance.",
+        ],
+      },
       {
         id: "limits",
         title: "Know what consumes an allowance",

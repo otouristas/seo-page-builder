@@ -23,6 +23,7 @@ const groups = {
   billing: [
     "STRIPE_SECRET_KEY",
     "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_PRICE_TRIAL",
     "STRIPE_PRICE_MAKI",
     "STRIPE_PRICE_NIGIRI",
     "STRIPE_PRICE_OMAKASE",

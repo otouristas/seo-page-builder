@@ -5230,3 +5230,55 @@ svg {
   border-bottom: 1px solid var(--line);
   font-size: 12px;
 }
+
+/* Paid trial: the introductory allowance is visually separate from monthly plans. */
+.trial-banner {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 32px;
+  padding: 32px;
+  margin-bottom: 28px;
+  border: 1px solid var(--nori, #193c35);
+  border-radius: 24px;
+  background: #edf1d8;
+  color: #1b372e;
+}
+.trial-banner h2 {
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.12;
+  margin: 12px 0;
+  letter-spacing: -0.04em;
+}
+.trial-banner p {
+  font-size: 14px;
+  line-height: 1.65;
+}
+.trial-allowance {
+  align-self: center;
+  background: #fffdf6;
+  border-radius: 16px;
+  padding: 24px;
+}
+.trial-allowance strong {
+  font-size: 16px;
+}
+.trial-allowance small {
+  font-size: 12px;
+  line-height: 1.6;
+  display: block;
+}
+.trial-renewal {
+  font-size: 12px;
+  line-height: 1.6;
+  min-height: 58px;
+}
+@media (max-width: 700px) {
+  .trial-banner {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 22px;
+  }
+  .trial-allowance {
+    padding: 18px;
+  }
+}

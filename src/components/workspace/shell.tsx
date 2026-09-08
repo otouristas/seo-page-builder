@@ -238,7 +238,9 @@ export function Workspace({
               </strong>
               <br />
               <span>
-                {PLANS[data.plan as keyof typeof PLANS]?.name || "Free"}{" "}
+                {data.phase === "trial"
+                  ? "$1 trial"
+                  : PLANS[data.plan as keyof typeof PLANS]?.name || "Free"}{" "}
                 workspace
               </span>
             </div>
@@ -279,7 +281,9 @@ export function Workspace({
             <Badge tone="green">
               {data.sample
                 ? "Example workspace"
-                : PLANS[data.plan as keyof typeof PLANS]?.name}
+                : data.phase === "trial"
+                  ? "$1 trial · limited usage"
+                  : PLANS[data.plan as keyof typeof PLANS]?.name}
             </Badge>
             <Link
               href={data.sample ? "/login" : "/app/new"}

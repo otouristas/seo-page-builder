@@ -228,7 +228,7 @@ export const ARTICLES: Record<string, PublicArticle> = {
       {
         title: "Billing, email, and exports",
         paragraphs: [
-          "Paid plans use monthly USD subscriptions. Manage payment methods and invoices in the Stripe customer portal. Plan changes and cancellation take effect at the next billing period; existing results remain accessible.",
+          "New workspaces can start a $1 USD, three-day trial with 1 project, 20 crawled pages, 3 drafting actions, 3 AI answer checks and 3 SERP lookups. It renews automatically on the selected monthly plan unless canceled before the displayed renewal date. Trial limits cover all three days; monthly limits start only after payment. Manage payment methods and invoices in the Stripe customer portal. Plan changes and cancellation take effect at the next billing period; existing results remain accessible.",
           "Completion emails are sent when requested. Weekly digests are opt-in and can be switched off in Settings. Reports export as PDF or CSV, and optional sharing links expire after 30 days or can be revoked earlier.",
         ],
       },
@@ -332,7 +332,8 @@ export const ARTICLES: Record<string, PublicArticle> = {
       {
         title: "Subscriptions and allowance",
         paragraphs: [
-          "The proposed monthly USD plans are Maki at $29, Nigiri at $79, and Omakase at $149, with the limits displayed on the pricing page. Workspaces share their allowance across projects. There are no automatic overages or credit packs at launch.",
+          "The monthly USD plans are Maki at $29, Nigiri at $79, and Omakase at $149, with the limits displayed on the pricing page. Workspaces share their allowance across projects. There are no automatic overages or credit packs at launch.",
+          "The optional introductory trial costs $1 USD for three days and is available once per new workspace. It includes 1 project, 20 crawled pages, 3 drafting actions, 3 AI answer checks and 3 SERP lookups across all three days. It automatically renews at the selected plan’s monthly price unless canceled in Billing before the renewal date shown in Checkout and Billing. The $1 charge is paid upfront; this is not a free trial. Applicable taxes are displayed before payment.",
           "Plan changes and cancellation are scheduled for the next billing period. Saved results remain accessible when paid access ends. Checkout displays applicable taxes and the actual subscription terms before payment. Live billing is disabled until the final merchant terms and required setup are approved.",
         ],
       },
