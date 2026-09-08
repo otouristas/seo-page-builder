@@ -1,0 +1,57 @@
+{
+  "checkedAt": "2026-09-08T20:42:07.274Z",
+  "results": [
+    {
+      "provider": "Supabase schema",
+      "state": "unconfigured"
+    },
+    {
+      "provider": "OpenAI model access",
+      "state": "unconfigured"
+    },
+    {
+      "provider": "Stripe account",
+      "state": "unconfigured"
+    },
+    {
+      "provider": "Resend domains",
+      "state": "unconfigured"
+    },
+    {
+      "provider": "Firecrawl crawl",
+      "state": "live workflow validation required"
+    },
+    {
+      "provider": "Google Search Console OAuth/import",
+      "state": "live workflow validation required"
+    },
+    {
+      "provider": "OpenAI draft/web answer",
+      "state": "live workflow validation required"
+    },
+    {
+      "provider": "Perplexity answer",
+      "state": "live workflow validation required"
+    },
+    {
+      "provider": "DataForSEO SERP",
+      "state": "live workflow validation required"
+    },
+    {
+      "provider": "PageSpeed",
+      "state": "live workflow validation required"
+    },
+    {
+      "provider": "Inngest durable execution",
+      "state": "live workflow validation required"
+    },
+    {
+      "provider": "Stripe lifecycle",
+      "state": "live workflow validation required"
+    },
+    {
+      "provider": "Resend delivery",
+      "state": "live workflow validation required"
+    }
+  ]
+}

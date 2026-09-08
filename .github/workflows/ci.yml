@@ -1,0 +1,39 @@
+name: RankSushi checks
+on:
+  push:
+    branches: [main, 'codex/**']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: http://localhost:3100
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_fixture
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run start > /tmp/ranksushi-server.log 2>&1 &
+      - run: npx wait-on http://localhost:3100
+      - run: npm run test:e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3100
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-evidence
+          path: |
+            playwright-report
+            artifacts/qa
+          retention-days: 14
