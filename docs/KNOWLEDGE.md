@@ -4,13 +4,15 @@ RankSushi now has one versioned editorial registry in `src/lib/learning/content.
 
 ## Provenance
 
-The available HowToRankFirst / GoCuba research framework informed the starting structure: search intent, an evidence-backed content map, audit triage, questions, internal links and a 90-day execution plan. The user's exact intended earlier knowledge corpus has not yet been confirmed. This is an original RankSushi adaptation of that operating framework, not an import of a private client workbook or a claim that the entire earlier corpus was recovered.
+The user clarified that the intended earlier concept is the repository's original **Rankframe SERP Lab**: a visual search scene for a keyword and page, with recommended moves and immediate visual feedback. The original source and `BUILD.md` are preserved on `archive/rankframe-baseline` at `c498f40a5db320f427218f748a81c7eca6c0db22`. This resolves the earlier assumption that the request referred primarily to the HowToRankFirst / GoCuba knowledge framework.
+
+SERP Studio restores that visual workflow as the default application view. It replaces the original modeled rank movement with actual DataForSEO search snapshots, fetched page evidence and an editable preview. The guides now support each move inside the scene. The general editorial framework remains useful guidance; no private client workbook was imported.
 
 Current public guidance cites primary documentation and distinguishes editorial methods from observations about a customer's website. No client keywords, budgets, forecasts, contact details or private workbook records were published. Old project pricing, ranking forecasts and platform-visibility claims were not carried over.
 
 ## Use inside the application
 
-Audit findings link to the relevant guide. Draft creation selects at most three guides using the draft type, request and observed findings. The AI input keeps this editorial guidance separate from page evidence; business claims still require the supplied page evidence. Saved drafts retain guide URLs and the knowledge version, so a later editorial change does not silently change the provenance of earlier work.
+SERP Studio ties title, description, heading and answer moves to their relevant guides and visible evidence. Audit findings also link to the relevant guide. Draft creation selects at most three guides using the draft type, request and observed findings. The AI input keeps this editorial guidance separate from page evidence; business claims still require the supplied page evidence. Saved drafts retain guide URLs and the knowledge version, so a later editorial change does not silently change the provenance of earlier work.
 
 The current `KNOWLEDGE_VERSION` is `2026-09-09.1`. Increment it for substantive method changes. Review the related primary sources and update the article date when a claim changes. Adding an article also requires valid related slugs, sources, a summary, a checklist and a useful action; tests check these relationships.
 

@@ -39,6 +39,7 @@ export function isPlan(value: unknown): value is PlanId {
   return typeof value === "string" && Object.hasOwn(PLANS, value);
 }
 export const NAV = [
+  { id: "serp-studio", label: "SERP Studio", icon: "focus" },
   { id: "overview", label: "Overview", icon: "home" },
   { id: "opportunities", label: "Opportunities", icon: "sparkles" },
   { id: "audits", label: "Audits", icon: "scan" },

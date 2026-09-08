@@ -21,7 +21,9 @@ import {
   Info,
   Search,
   Globe2,
+  Focus,
 } from "lucide-react";
+import { SerpStudio } from "./serp-studio";
 import { Logo, Maki } from "../maki";
 import { Badge, Button } from "../ui";
 import { NAV, PLANS, type AppSection } from "@/lib/plans";
@@ -38,6 +40,7 @@ import {
   Settings,
 } from "./views";
 const icons = [
+  Focus,
   House,
   Sparkles,
   ScanLine,
@@ -56,6 +59,7 @@ export type WorkspaceContext = {
   openScan: () => void;
 };
 const titles: Record<AppSection, [string, string]> = {
+  "serp-studio": ["SERP Studio", "See the search. Make your next move."],
   overview: [
     "A fresh perspective",
     "What needs attention, what to do next, and what changed.",
@@ -149,7 +153,7 @@ export function Workspace({
         return (
           <Link
             key={item.id}
-            href={item.id === "overview" ? base : `${base}/${item.id}`}
+            href={item.id === "serp-studio" ? base : `${base}/${item.id}`}
             className={section === item.id ? "active" : ""}
             aria-current={section === item.id ? "page" : undefined}
           >
@@ -169,6 +173,7 @@ export function Workspace({
     </nav>
   );
   const View = {
+    "serp-studio": SerpStudio,
     overview: Overview,
     opportunities: Opportunities,
     audits: Audits,
@@ -197,7 +202,9 @@ export function Workspace({
             >
               {data.projects.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name}
+                  {data.sample && section === "serp-studio"
+                    ? "RankSushi · recorded scene"
+                    : p.name}
                 </option>
               ))}
             </select>
@@ -283,51 +290,57 @@ export function Workspace({
             </Link>
           </div>
         </header>
-        <main id="main" className="app-content">
+        <main
+          id="main"
+          className={`app-content ${section === "serp-studio" ? "studio-content" : ""}`}
+        >
           {data.sample && (
             <div className="sample-notice">
               <Info size={13} />
               <span>
-                You’re exploring a product example. All metrics and findings on
-                this page are illustrative.
+                {section === "serp-studio"
+                  ? "Recorded public Google results and fetched page evidence. Suggested changes are editable proposals."
+                  : "You’re exploring a product example. All metrics and findings on this page are illustrative."}
               </span>
               <Link href="/tools/seo-audit">
                 Try your own website <ArrowUpRight size={12} />
               </Link>
             </div>
           )}
-          <div className="app-page-heading">
-            <div>
-              <div className="eyebrow">
-                <span className="tiny-dot" />
-                {data.project.name} · {data.project.country}
+          {section !== "serp-studio" && (
+            <div className="app-page-heading">
+              <div>
+                <div className="eyebrow">
+                  <span className="tiny-dot" />
+                  {data.project.name} · {data.project.country}
+                </div>
+                <h1>
+                  {titles[section][0]}
+                  {section === "overview" && (
+                    <span className="salmon-star" aria-hidden="true">
+                      {" "}
+                      ✳
+                    </span>
+                  )}
+                </h1>
+                <p>{titles[section][1]}</p>
               </div>
-              <h1>
-                {titles[section][0]}
-                {section === "overview" && (
-                  <span className="salmon-star" aria-hidden="true">
-                    {" "}
-                    ✳
-                  </span>
-                )}
-              </h1>
-              <p>{titles[section][1]}</p>
+              <div className="heading-actions">
+                <Button
+                  variant="secondary"
+                  onClick={refresh}
+                  aria-label="Refresh workspace"
+                >
+                  <RefreshCw size={13} />
+                  <span>Refresh</span>
+                </Button>
+                <Button onClick={() => setScanning(true)}>
+                  <ScanLine size={14} />
+                  Scan website
+                </Button>
+              </div>
             </div>
-            <div className="heading-actions">
-              <Button
-                variant="secondary"
-                onClick={refresh}
-                aria-label="Refresh workspace"
-              >
-                <RefreshCw size={13} />
-                <span>Refresh</span>
-              </Button>
-              <Button onClick={() => setScanning(true)}>
-                <ScanLine size={14} />
-                Scan website
-              </Button>
-            </div>
-          </div>
+          )}
           {active && (
             <div className="active-jobs" aria-live="polite">
               {data.jobs
