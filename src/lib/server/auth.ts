@@ -6,7 +6,7 @@ import {
 } from "../supabase/server";
 import { AppError } from "./errors";
 import { checked } from "./http";
-import { PLANS, isPlan } from "../plans";
+import { billingAccess } from "../billing-access";
 import type { Project } from "../types";
 export async function requireUser() {
   const db = await createClient();
@@ -86,17 +86,9 @@ export async function entitlements(workspaceId: string) {
       .eq("workspace_id", workspaceId)
       .maybeSingle(),
   );
-  const paid =
-    s &&
-    ["active", "trialing"].includes(s.status) &&
-    new Date(s.period_end).getTime() > Date.now();
-  const candidate: unknown = s?.plan;
-  const plan = paid && isPlan(candidate) ? candidate : "free";
   return {
-    plan,
-    limits: PLANS[plan].limits,
+    ...billingAccess(s),
     subscription: s,
-    period: paid ? s.period_start : "free-lifetime",
   };
 }
 

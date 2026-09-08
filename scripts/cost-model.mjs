@@ -20,6 +20,7 @@ for (const k of [
   if (!Number.isFinite(costs[k]) || costs[k] < 0)
     throw new Error(`Missing/nonnegative measured input: ${k}`);
 const plans = [
+  ["3-day $1 trial", 1, 20, 3, 3, 3],
   ["Maki", 29, 200, 20, 40, 20],
   ["Nigiri", 79, 750, 75, 120, 75],
   ["Omakase", 149, 2000, 200, 300, 200],

@@ -1,4 +1,10 @@
 import type { PlanId, PlanEntitlements } from "./types";
+export const STARTER_TRIAL = {
+  price: 1,
+  days: 3,
+  offer: "starter-trial-v1",
+  limits: { projects: 1, pages: 20, drafts: 3, answers: 3, serps: 3 },
+} as const;
 export const PLANS: Record<
   PlanId,
   { name: string; price: number; description: string; limits: PlanEntitlements }

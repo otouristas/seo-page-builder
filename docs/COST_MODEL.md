@@ -26,3 +26,7 @@ If a tier does not meet the chosen contribution target under conservative consum
 Two single-query calls through the actual adapters returned usable data for `seo software`, US / English: live Google advanced results cost **$0.002**; Labs keyword overview cost **$0.01212**; combined **$0.01412**. The returned task IDs, costs and normalized data are recorded in `artifacts/qa/dataforseo-live-research.json`. Account authentication was separately checked with the no-cost user-data endpoint.
 
 These observations validate the account and two adapter paths, not every market or a conservative full-workload cost. Keyword demand is more expensive in this sample, so modeling every research action as the cheaper SERP request would understate costs. Ordinary phrases only, one keyword, depth 10, no extra question-expansion clicks and no clickstream add-ons are the current boundaries. Keep the billing cost gate disabled pending the complete review above.
+
+## Three-day starter trial
+
+The same calculator includes the $1 trial at full consumption: 20 pages, 3 drafts, 3 answer checks, and 3 SERP/research lookups. Include the full fixed payment fee; do not divide it across subscription renewals or assume every trial converts. Apply the conservative workspace-operations input and refund reserve too. The trial is a separate unit-economics row, with no assumed provider cost or claimed positive margin until measured inputs are supplied. Live sales remain gated pending this review.

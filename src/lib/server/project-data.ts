@@ -60,6 +60,8 @@ export type ProjectData = {
   project: Project;
   projects: Project[];
   plan: string;
+  phase?: "free" | "trial" | "paid";
+  trialEligible?: boolean;
   limits: {
     projects: number;
     pages: number;
@@ -70,6 +72,7 @@ export type ProjectData = {
   period: string;
   subscription: {
     status: string;
+    trial_end?: string | null;
     period_end: string | null;
     cancel_at_period_end: boolean;
     plan: string;
@@ -181,11 +184,14 @@ export async function projectData(id: string): Promise<ProjectData> {
     project,
     projects: projects || [],
     plan: access.plan,
+    phase: access.phase,
+    trialEligible: access.trialEligible,
     limits: access.limits,
     period: access.period,
     subscription: access.subscription
       ? {
           status: access.subscription.status,
+          trial_end: access.subscription.trial_end,
           period_end: access.subscription.period_end,
           cancel_at_period_end: access.subscription.cancel_at_period_end,
           plan: access.subscription.plan,

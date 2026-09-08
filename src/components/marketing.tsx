@@ -28,7 +28,7 @@ import {
   TextLink,
   CheckItem,
 } from "./ui";
-import { PAID_PLANS, PLANS } from "@/lib/plans";
+import { PAID_PLANS, PLANS, STARTER_TRIAL } from "@/lib/plans";
 import { UrlForm } from "./url-form";
 import { GUIDES } from "@/lib/learning/content";
 import { SiteHeader } from "./site-header";
@@ -117,6 +117,10 @@ export const FAQS = [
     "No. A website audit works on its own. Connecting Search Console adds your real queries, clicks, impressions, and average positions so you can prioritize opportunities using actual search demand.",
   ],
   [
+    "How does the $1 trial work?",
+    "New workspaces pay $1 USD for three days with one project, 20 crawled pages, three drafting actions, three AI answer checks and three SERP lookups. It automatically renews on your selected Maki ($29), Nigiri ($79) or Omakase ($149) monthly plan. Checkout and Billing show the renewal date and amount. Cancel in Billing before renewal to avoid the monthly charge. Applicable tax is shown at checkout. The $1 trial charge is not a free trial.",
+  ],
+  [
     "What happens when I reach my plan limit?",
     "We show the allowance before a job starts and pause new work when you run out. Existing results stay accessible. There are no surprise overages, and plan changes take effect next billing period.",
   ],
@@ -124,6 +128,30 @@ export const FAQS = [
 export function PricingCards() {
   return (
     <>
+      <section className="trial-banner" aria-labelledby="trial-heading">
+        <div>
+          <SectionLabel>A LITTLE TASTE. A REAL START.</SectionLabel>
+          <h2 id="trial-heading">
+            Three days. One dollar. Your next useful move.
+          </h2>
+          <p>
+            Try RankSushi for <strong>${STARTER_TRIAL.price} USD</strong>. Then
+            automatically renew on your selected monthly plan unless you cancel
+            before the three days end.
+          </p>
+        </div>
+        <div className="trial-allowance">
+          <strong>Your three-day tasting menu</strong>
+          <p>
+            1 project · 20 crawled pages · 3 drafting actions
+            <br />3 AI answer checks · 3 live SERP lookups
+          </p>
+          <small>
+            Shared limits for the whole trial. Once per new workspace. Card
+            required.
+          </small>
+        </div>
+      </section>
       <div className="price-grid">
         {PAID_PLANS.map((id) => {
           const plan = PLANS[id];
@@ -141,8 +169,9 @@ export function PricingCards() {
                 ${plan.price}
                 <span> / month</span>
               </div>
-              <p style={{ fontSize: 10 }}>
-                Monthly billing. Cancel for the next renewal.
+              <p className="trial-renewal">
+                $1 for your first 3 days, then ${plan.price}/month. The full
+                allowances below start after your first monthly payment.
               </p>
               <ul>
                 <CheckItem>
@@ -170,7 +199,7 @@ export function PricingCards() {
                 href={`/login?plan=${id}`}
                 variant={id === "nigiri" ? "primary" : "secondary"}
               >
-                Choose {plan.name}
+                Start $1 trial → {plan.name}
                 <ArrowRight size={15} />
               </ButtonLink>
             </article>

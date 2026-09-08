@@ -39,3 +39,7 @@ Resend uses idempotency keys and a delivery journal. Bounces/complaints/suppress
 ## Launch limits
 
 No CMS publishing, team/agency roles, historical-account migration, unlimited site crawls, automatic overages, consumer-AI tracking or promised rankings. Live costs, OAuth verification, email/domain verification, merchant/tax configuration and signed-provider lifecycle tests are release gates. Configuration presence is never labeled operational validation.
+
+## Paid introductory access
+
+`billingAccess` is the common server decision for project and provider quotas. The new subscription evidence columns and private checkout-intent flag distinguish three-day trial access from the selected renewal plan. A verified initial invoice unlocks the trial; `active` without a verified paid monthly invoice does not unlock full monthly quotas. Trial usage uses `trial:<subscription id>`, so a price/period edit cannot refill it. SQL locks serialize trial eligibility and reconciliation; the first observed trial dates and lifetime use survive retries and cancellation. `STARTER_TRIAL` defines the allowance. After a successful renewal, usage keys switch to the paid billing period.

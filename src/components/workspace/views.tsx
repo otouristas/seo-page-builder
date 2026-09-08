@@ -2271,6 +2271,20 @@ function Billing({ ctx }: { ctx: WorkspaceContext }) {
       plan?: (typeof PAID_PLANS)[number];
     } | null>(null);
   const paid = data.plan !== "free";
+  const trial = data.phase === "trial";
+  const eligible = data.trialEligible === true;
+  const [checkoutPlan, setCheckoutPlan] = useState<
+    (typeof PAID_PLANS)[number] | null
+  >(null);
+  const renewalDate = trial
+    ? data.subscription?.trial_end
+    : data.subscription?.period_end;
+  const renewalLabel = renewalDate
+    ? new Date(renewalDate).toLocaleString("en-US", {
+        dateStyle: "long",
+        timeStyle: "short",
+      })
+    : "the next billing date";
   const run = async (id: string, fn: () => Promise<void>) => {
     if (data.sample) {
       ctx.notify("Billing is disabled in the illustrative workspace.");
@@ -2288,13 +2302,25 @@ function Billing({ ctx }: { ctx: WorkspaceContext }) {
   return (
     <>
       <Panel
-        title={`${PLANS[data.plan as keyof typeof PLANS]?.name || "Free"} workspace`}
+        title={
+          trial
+            ? "$1 tasting menu · 3-day trial"
+            : `${PLANS[data.plan as keyof typeof PLANS]?.name || "Free"} workspace`
+        }
         note={
           data.subscription?.period_end
             ? `Current period ends ${new Date(data.subscription.period_end).toLocaleDateString("en-US")}. Status: ${data.subscription.status}.`
             : "Your saved results stay accessible when paid access ends."
         }
       >
+        {trial && (
+          <Notice>
+            {data.subscription?.cancel_at_period_end
+              ? `Your trial ends ${renewalLabel}. Your monthly subscription will not start.`
+              : `Automatically renews on ${renewalLabel} at $${PLANS[data.plan as keyof typeof PLANS]?.price} USD/month for ${PLANS[data.plan as keyof typeof PLANS]?.name}, plus applicable tax. Cancel before this date to avoid the monthly charge.`}{" "}
+            These limits cover the entire trial, including rechecks.
+          </Notice>
+        )}
         <div className="usage-grid">
           {(["pages", "drafts", "answers", "serps"] as const).map((kind) => {
             const used = data.usage.find((u) => u.kind === kind)?.amount || 0;
@@ -2363,6 +2389,14 @@ function Billing({ ctx }: { ctx: WorkspaceContext }) {
           </Notice>
         )}
       </Panel>
+      {eligible && (
+        <Notice>
+          Your $1 trial includes 1 project, 20 crawled pages, 3 drafting
+          actions, 3 AI answer checks and 3 SERP lookups over three days. Your
+          selected monthly plan begins automatically afterwards. Cancel before
+          renewal in Billing.
+        </Notice>
+      )}
       <div className="section-subheading">
         <h2>Choose your appetite</h2>
         <p>
@@ -2397,20 +2431,16 @@ function Billing({ ctx }: { ctx: WorkspaceContext }) {
               onClick={() =>
                 paid
                   ? setConfirm({ action: "change", plan: p })
-                  : run(p, async () => {
-                      const r = await request<{ url: string }>(
-                        "/api/billing/checkout",
-                        { plan: p },
-                      );
-                      location.assign(r.url);
-                    })
+                  : setCheckoutPlan(p)
               }
             >
               {p === data.plan
                 ? "Current plan"
                 : paid
                   ? `Change to ${PLANS[p].name}`
-                  : `Choose ${PLANS[p].name}`}
+                  : eligible
+                    ? `Start $1 trial → ${PLANS[p].name}`
+                    : `Subscribe to ${PLANS[p].name}`}
             </Button>
           </div>
         ))}
@@ -2421,6 +2451,51 @@ function Billing({ ctx }: { ctx: WorkspaceContext }) {
         provider. Recrawls consume page allowance. Applicable tax is displayed
         at Checkout.
       </Notice>
+      {checkoutPlan && (
+        <Modal
+          title={
+            eligible
+              ? "Your $1 trial, clearly explained"
+              : `Subscribe to ${PLANS[checkoutPlan].name}`
+          }
+          onClose={() => setCheckoutPlan(null)}
+        >
+          <p className="form-intro">
+            {eligible
+              ? `$1 USD today for three days. Then $${PLANS[checkoutPlan].price} USD/month for ${PLANS[checkoutPlan].name}, automatically, until canceled. Your exact renewal date is shown in Stripe Checkout before you pay and in Billing afterwards.`
+              : `$${PLANS[checkoutPlan].price} USD/month for ${PLANS[checkoutPlan].name}, automatically, until canceled.`}
+          </p>
+          {eligible && (
+            <p className="form-intro">
+              Your whole trial: 1 project, 20 crawled pages, 3 drafting actions,
+              3 AI answer checks and 3 SERP lookups. Cancel in Billing before
+              renewal to avoid the monthly charge. Full monthly limits begin
+              after the renewal payment succeeds.
+            </p>
+          )}
+          <p className="form-intro">
+            Applicable tax is shown at checkout. Review the{" "}
+            <Link className="inline-link" href="/terms" target="_blank">
+              subscription terms
+            </Link>
+            .
+          </p>
+          <Button
+            busy={busy === checkoutPlan}
+            onClick={() =>
+              run(checkoutPlan, async () => {
+                const r = await request<{ url: string }>(
+                  "/api/billing/checkout",
+                  { plan: checkoutPlan, offer: eligible ? "trial" : "monthly" },
+                );
+                location.assign(r.url);
+              })
+            }
+          >
+            Continue to secure checkout
+          </Button>
+        </Modal>
+      )}
       {confirm && (
         <Modal
           title={
@@ -2436,7 +2511,7 @@ function Billing({ ctx }: { ctx: WorkspaceContext }) {
             {confirm.action === "cancel"
               ? "Cancellation takes effect at the end of your current billing period. Saved results remain available in read-only mode."
               : confirm.action === "resume"
-                ? "Your subscription will renew at the end of this billing period."
+                ? `Your subscription will renew on ${renewalLabel} at $${PLANS[data.plan as keyof typeof PLANS]?.price} USD/month, plus applicable tax.`
                 : `Your workspace will move to ${PLANS[confirm.plan!].name} at $${PLANS[confirm.plan!].price}/month at the next renewal. Existing results are retained; new work will use that plan’s limits.`}
           </p>
           <Button
