@@ -52,9 +52,9 @@ Verify a domain in Resend and configure SPF/DKIM and the chosen sender, such as 
 
 Set server/client Sentry DSNs. The event scrubber removes personal fields, credentials, URLs with query strings and share tokens. No session replay or content-bearing analytics is enabled. Test a sanitized error and delivery failure.
 
-## 7. Vercel and rollback
+## 7. Vercel-only deployment and rollback
 
-The Vercel project is `ranksushi` under `otouristas-projects`. Public canonicals always use `https://ranksushi.com`; preview callbacks use the deployment origin when `NEXT_PUBLIC_SITE_URL` is unset. Set that variable to `https://ranksushi.com` only for production. Use exact preview origins in Supabase/Google allowlists for auth tests. Never put secret keys under `NEXT_PUBLIC_*`.
+Use **Vercel only** for every hosted RankSushi environment. The project is `ranksushi` under `otouristas-projects`, connected to the GitHub repository. Public canonicals always use `https://ranksushi.com`; preview callbacks use the deployment origin when `NEXT_PUBLIC_SITE_URL` is unset. Production currently uses `NEXT_PUBLIC_SITE_URL=https://ranksushi.vercel.app`. Change it to `https://ranksushi.com` when the custom domain is connected and its callbacks validated. While testing on the default Vercel alias, allow that exact origin's Supabase and Google callbacks; also use exact preview origins in the allowlists. Never put secret keys under `NEXT_PUBLIC_*`.
 
 ```sh
 npm ci
@@ -64,4 +64,4 @@ npx vercel link --project ranksushi --scope otouristas-projects
 npx vercel deploy --scope otouristas-projects
 ```
 
-A preview is not a production cutover. Verify deployed public routes, protected APIs, exports, auth and provider callbacks; use `vercel curl` to retain preview protection. Set the production domain/DNS and deploy production only after the remaining setup is confirmed and validated. Preserve the current Netlify deployment. For rollback, leave DNS on the existing deployment or promote a previously verified Vercel deployment. The source baseline remains at `c498f40a5db320f427218f748a81c7eca6c0db22` on `archive/rankframe-baseline`; create a separate checkout to inspect it instead of resetting this rebuild.
+A successful deployment does not certify live provider flows. Verify deployed public routes, protected APIs, exports, auth and provider callbacks; use `vercel curl` to retain preview protection. Connect the production domain/DNS and enable live sales only after the remaining setup is confirmed and validated. Roll back by promoting a previously verified deployment within this Vercel project. Keep schema changes compatible with the deployment being restored; a deployment rollback does not reverse database migrations. The original source remains at `c498f40a5db320f427218f748a81c7eca6c0db22` on `archive/rankframe-baseline` for reference; create a separate checkout to inspect it instead of resetting this rebuild.

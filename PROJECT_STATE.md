@@ -1,6 +1,6 @@
 # RankSushi implementation state
 
-Updated: 8 September 2026. Domain: **ranksushi.com**. Operator: **Touristas Technologies**. Support: **anotherseoguru@gmail.com**.
+Updated: 9 September 2026. Domain: **ranksushi.com**. Operator: **Touristas Technologies**. Support: **anotherseoguru@gmail.com**.
 
 ## Delivered in code
 
@@ -38,6 +38,8 @@ Boundaries remain as agreed: fresh English launch, USD capped subscriptions, one
 
 ## Repository and deployment
 
-Work is isolated on `codex/ranksushi-rebuild`. `archive/rankframe-baseline` preserves original commit `c498f40a5db320f427218f748a81c7eca6c0db22`. Main and the existing Netlify deployment remain unchanged. No ranksushi.com DNS change was made.
+**Vercel only** is the confirmed hosting requirement for previews, production and rollback. The owner merged [PR #4](https://github.com/otouristas/seo-page-builder/pull/4) into `main` on 8 September 2026 at 20:52 UTC, producing merge commit `8b2b7931ba823d4db13cd6b8e99201e7cf4dadab`. Documentation follow-up remains on `codex/ranksushi-rebuild`. `archive/rankframe-baseline` preserves original source commit `c498f40a5db320f427218f748a81c7eca6c0db22` for reference. No ranksushi.com DNS change was made.
 
-Vercel project: `otouristas-projects/ranksushi`. The CLI automatically assigned its first build to the default `ranksushi.vercel.app` production alias; the separate reviewed build uses the Preview environment. This was not a custom-domain cutover or a live-sales release. Reviewed preview: https://ranksushi-9sgrgondh-otouristas-projects.vercel.app. All eight deployed route checks passed. See `artifacts/qa/deployed-routes.json`. Draft PR: https://github.com/otouristas/seo-page-builder/pull/4.
+Vercel project: `otouristas-projects/ranksushi`, connected to `otouristas/seo-page-builder`. The merged build is deployed at https://ranksushi.vercel.app. The supplied public Supabase variables are configured in Preview and Production; the production callback origin is temporarily `https://ranksushi.vercel.app` until the custom domain is connected and its callbacks validated. Private provider credentials and hosted schema setup remain outstanding. This is not a custom-domain cutover or a live-sales release.
+
+Reviewed preview: https://ranksushi-9sgrgondh-otouristas-projects.vercel.app. All eight preview route checks passed; see `artifacts/qa/deployed-preview-routes.json`. The production rebuild at https://ranksushi-7am4rmxjo-otouristas-projects.vercel.app is Ready and assigned to https://ranksushi.vercel.app. All eight production route checks pass, including API 401 and account-page login redirect after configuring the public Supabase variables. Results are recorded separately in `artifacts/qa/deployed-routes.json`.

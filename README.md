@@ -44,4 +44,6 @@ Read [SETUP.md](docs/SETUP.md) for provider configuration and deployment, [ARCHI
 
 ## Baseline and release
 
-This replaces the TanStack Start / Better Auth application on `codex/ranksushi-rebuild`. The original main commit `c498f40a5db320f427218f748a81c7eca6c0db22` is preserved on `archive/rankframe-baseline`. Keep the existing Netlify deployment available until the Vercel application and all real provider flows have passed acceptance. The feature branch is not a production cutover.
+RankSushi uses **Vercel only** for previews, production deployments and rollback. The Next.js rebuild was merged into `main` through [PR #4](https://github.com/otouristas/seo-page-builder/pull/4). The original TanStack Start / Better Auth source remains on `archive/rankframe-baseline` at `c498f40a5db320f427218f748a81c7eca6c0db22` for reference.
+
+Review the [Vercel preview](https://ranksushi-9sgrgondh-otouristas-projects.vercel.app). Hosted provider setup and acceptance checks remain required before a live-sales release; see `PROJECT_STATE.md`.
