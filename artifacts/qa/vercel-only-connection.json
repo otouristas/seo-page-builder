@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-09-08T21:27:27.451Z",
+  "repository": "otouristas/seo-page-builder",
+  "action": "Unlinked legacy automatic deployment repository through signed-in project controls",
+  "legacyProject": "shimmering-dieffenbachia-1795ee",
+  "verifiedUiText": "Current repository\nNot linked",
+  "vercelProject": "otouristas-projects/ranksushi",
+  "vercelConnection": "Connected; application commit 30fcafd deployed successfully",
+  "scope": "Stop automatic legacy-host builds; no project/deployment deletion, DNS change or production promotion"
+}
