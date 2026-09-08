@@ -22,6 +22,7 @@ import {
   TextCursorInput,
 } from "lucide-react";
 import { Maki } from "../maki";
+import { FixKit } from "../fix-kit";
 import { Button } from "../ui";
 import { download } from "./shared";
 import type { WorkspaceContext } from "./shell";
@@ -735,6 +736,24 @@ function SceneWorkbench({
               Reset draft
             </button>
           </div>
+          <FixKit
+            context={{
+              key: active,
+              title: move.title,
+              url: page.finalUrl,
+              detail: move.observation,
+              recommendation: move.why,
+              proposed: edits[active],
+              query: serp.keyword,
+              evidence: {
+                source: `${page.htmlSource} page HTML + ${serp.source}`,
+                observedAt: page.fetchedAt,
+                market: `${serp.country} / ${serp.language} / ${serp.device}`,
+                status: "inferred",
+                detail: move.observation,
+              },
+            }}
+          />
           <div className="studio-publish-note">
             <span>01 Review</span>
             <ArrowRight size={11} />

@@ -1,4 +1,7 @@
 "use client";
+import { FixKit } from "../fix-kit";
+import { CopyActions } from "../copy-actions";
+import { findingBundle } from "@/lib/fixes/prompts";
 import { COUNTRIES, LANGUAGES } from "@/lib/locales";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -472,6 +475,16 @@ export function Opportunities(ctx: WorkspaceContext) {
                   Recheck live page · 1 page
                 </Button>
               </div>
+              <FixKit
+                context={{
+                  key: o.finding_key || "opportunity",
+                  title: o.title,
+                  url: o.page_url,
+                  detail: o.detail,
+                  evidence: o.evidence,
+                  status: o.status === "verified" ? "pass" : undefined,
+                }}
+              />
               <p className="small-note">
                 “Applied” records your confirmation. “Verified” requires a new
                 live snapshot showing that the observed issue is resolved.
@@ -698,6 +711,31 @@ export function Audits(ctx: WorkspaceContext) {
       </div>
       {page && (
         <>
+          <div className="audit-fix-plan">
+            <div>
+              <strong>A fix plan for this page.</strong>
+              <p>
+                All findings that need review, with evidence and acceptance
+                checks.
+              </p>
+            </div>
+            <CopyActions
+              label="Copy page fix plan"
+              filename="ranksushi-page-fix-plan.md"
+              text={findingBundle(
+                page.findings.map((f) => ({
+                  key: f.id,
+                  title: f.title,
+                  url: page.finalUrl,
+                  detail: f.detail,
+                  recommendation: f.recommendation,
+                  status: f.status,
+                  evidence: f.evidence,
+                })),
+                page.finalUrl,
+              )}
+            />
+          </div>
           <div className="toolbar">
             <div className="tab-pills">
               {[

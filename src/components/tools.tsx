@@ -1,4 +1,6 @@
 "use client";
+import { CopyActions } from "./copy-actions";
+import { findingBundle } from "@/lib/fixes/prompts";
 import { useState } from "react";
 import { ArrowUpRight, Globe2, ScanLine, Download, Code2 } from "lucide-react";
 import { Maki } from "./maki";
@@ -127,6 +129,31 @@ export function FreeAuditTool({ initialUrl = "" }: { initialUrl?: string }) {
               <Download size={14} />
               Export CSV
             </Button>
+          </div>
+          <div className="audit-fix-plan">
+            <div>
+              <strong>Turn this audit into a fix plan.</strong>
+              <p>
+                Copy the evidence, instructions and checks for every finding
+                that needs review.
+              </p>
+            </div>
+            <CopyActions
+              label="Copy page fix plan"
+              filename="ranksushi-page-fix-plan.md"
+              text={findingBundle(
+                snapshot.findings.map((f) => ({
+                  key: f.id,
+                  title: f.title,
+                  url: snapshot.finalUrl,
+                  detail: f.detail,
+                  recommendation: f.recommendation,
+                  status: f.status,
+                  evidence: f.evidence,
+                })),
+                snapshot.finalUrl,
+              )}
+            />
           </div>
           <Notice>
             This inspection uses fetched HTML, not a rendered browser.

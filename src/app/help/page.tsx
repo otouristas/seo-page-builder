@@ -1,4 +1,4 @@
-import { LearningIndex } from "@/components/learning";
+import { DocsHome } from "@/components/docs";
 import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata(
   "RankSushi help center",
@@ -6,5 +6,5 @@ export const metadata = pageMetadata(
   "/help",
 );
 export default function Page() {
-  return <LearningIndex collection="help" />;
+  return <DocsHome />;
 }

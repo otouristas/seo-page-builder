@@ -1,3 +1,6 @@
+import { CopyActions } from "./copy-actions";
+import { articleMarkdown } from "@/lib/learning/exports";
+import { guidePrompt } from "@/lib/learning/doc-prompts";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -249,7 +252,16 @@ export function LearningArticlePage({
             <span>{a.category}</span>
           </nav>
           <SectionLabel>{a.category}</SectionLabel>
-          <h1>{a.title}</h1>
+          <div className="reading-title-actions">
+            <h1>{a.title}</h1>
+            <CopyActions
+              text={articleMarkdown(a, collection)}
+              prompt={guidePrompt(a, collection)}
+              steps={articleMarkdown(a, collection, true)}
+              markdownUrl={`${path}/index.md`}
+              filename={`ranksushi-${a.slug}.md`}
+            />
+          </div>
           <p className="reading-description">{a.description}</p>
           <div className="reading-byline">
             <span>By RankSushi · Touristas Technologies</span>
