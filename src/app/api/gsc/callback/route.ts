@@ -59,7 +59,7 @@ export async function GET(request: Request) {
     const user = await requireUser();
     const projectId = await finishGsc(q.get("code")!, state, user.id);
     return NextResponse.redirect(
-      `${SITE_URL}/app/${projectId}/settings?gsc=connected`,
+      `${SITE_URL}/app/${projectId}/settings?gsc=connected&choose=1`,
     );
   } catch {
     return NextResponse.redirect(`${SITE_URL}/app?gsc=reconnect`);

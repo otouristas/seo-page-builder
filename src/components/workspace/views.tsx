@@ -3,7 +3,7 @@ import { FixKit } from "../fix-kit";
 import { CopyActions } from "../copy-actions";
 import { findingBundle } from "@/lib/fixes/prompts";
 import { COUNTRIES, LANGUAGES } from "@/lib/locales";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -2080,29 +2080,73 @@ function ProjectSettings({ ctx }: { ctx: WorkspaceContext }) {
   );
 }
 function Connections({ ctx }: { ctx: WorkspaceContext }) {
-  const { data } = ctx;
+  const { data, notify } = ctx;
   const [properties, setProperties] = useState<
       { siteUrl: string; permissionLevel: string }[]
     >([]),
     [property, setProperty] = useState(data.project.gsc_property || ""),
     [busy, setBusy] = useState("");
+  const searchParams = useSearchParams();
+  const gscMode = searchParams.get("gsc");
+  const chooseAfterConnect = searchParams.get("choose") === "1";
+  const startedFromOnboarding = useRef(false);
+  const loadedAfterConnect = useRef(false);
   const connected = data.connections.gsc === "connected";
-  const action = async (name: string, fn: () => Promise<void>) => {
-    if (data.sample) {
-      ctx.notify(
-        "Connect providers in your own workspace. The demo contains illustrative data only.",
-      );
+  const action = useCallback(
+    async (name: string, fn: () => Promise<void>) => {
+      if (data.sample) {
+        notify(
+          "Connect providers in your own workspace. The demo contains illustrative data only.",
+        );
+        return;
+      }
+      setBusy(name);
+      try {
+        await fn();
+      } catch (e) {
+        notify((e as Error).message);
+      } finally {
+        setBusy("");
+      }
+    },
+    [notify, data.sample],
+  );
+  useEffect(() => {
+    if (data.sample || connected || gscMode !== "onboarding" || startedFromOnboarding.current)
       return;
-    }
-    setBusy(name);
-    try {
-      await fn();
-    } catch (e) {
-      ctx.notify((e as Error).message);
-    } finally {
-      setBusy("");
-    }
-  };
+    startedFromOnboarding.current = true;
+    void action("connect", async () => {
+      const r = await request<{ url: string }>("/api/gsc/connect", {
+        projectId: data.project.id,
+      });
+      location.assign(r.url);
+    });
+  }, [action, connected, data.project.id, data.sample, gscMode]);
+  useEffect(() => {
+    if (
+      data.sample ||
+      !connected ||
+      !(chooseAfterConnect || gscMode === "onboarding") ||
+      loadedAfterConnect.current
+    )
+      return;
+    loadedAfterConnect.current = true;
+    void action("properties", async () => {
+      const r = await request<{
+        properties: { siteUrl: string; permissionLevel: string }[];
+      }>(`/api/projects/${data.project.id}/gsc`);
+      setProperties(r.properties);
+      if (!property && r.properties.length === 1) setProperty(r.properties[0].siteUrl);
+    });
+  }, [
+    action,
+    chooseAfterConnect,
+    connected,
+    data.project.id,
+    data.sample,
+    gscMode,
+    property,
+  ]);
   return (
     <>
       <Panel
@@ -2122,6 +2166,18 @@ function Connections({ ctx }: { ctx: WorkspaceContext }) {
             {data.connections.gsc}
           </Badge>
         </div>
+        {gscMode === "onboarding" && !connected && (
+          <p className="notice" role="status">
+            Maki is opening Google’s read-only consent screen. After you approve
+            it, choose the verified property that should become this project.
+          </p>
+        )}
+        {gscMode === "connected" && chooseAfterConnect && (
+          <p className="notice" role="status">
+            Google is connected. Choose the verified Search Console property to
+            finish setting up this project.
+          </p>
+        )}
         <div className="toolbar">
           <Button
             busy={busy === "connect"}
