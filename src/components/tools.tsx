@@ -80,7 +80,7 @@ export function FreeAuditTool({ initialUrl = "" }: { initialUrl?: string }) {
       </form>
       {busy && (
         <div className="tool-state" role="status">
-          <Maki pose="thinking" />
+          <Maki pose="thinking" motion="cook" />
           <h2>Taking a closer look…</h2>
           <p>Fetching the public page and inspecting the available evidence.</p>
         </div>

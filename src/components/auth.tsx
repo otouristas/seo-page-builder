@@ -188,7 +188,17 @@ export function Onboarding({
             A little context helps us turn what we find into something useful
             for your business.
           </p>
-          <Maki pose="wave" />
+          <div className="onboarding-mascot">
+            <Maki
+              pose={busy ? "thinking" : "wave"}
+              motion={busy ? "roll" : "idle"}
+            />
+            <span className="onboarding-mascot-note" aria-live="polite">
+              {busy
+                ? "Maki is rolling your first project together…"
+                : "Maki says: bring the URL. We’ll bring the snacks."}
+            </span>
+          </div>
           <ul className="onboarding-checks">
             <li>
               <Check size={16} /> Start with a website audit

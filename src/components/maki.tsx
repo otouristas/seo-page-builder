@@ -2,17 +2,27 @@ import { cn } from "@/lib/utils";
 export function Maki({
   className,
   pose = "happy",
+  motion = "idle",
 }: {
   className?: string;
   pose?: "happy" | "wave" | "thinking" | "sleep";
+  motion?: "static" | "idle" | "roll" | "cook";
 }) {
   return (
     <svg
       className={cn("maki", className)}
+      data-motion={motion}
       viewBox="0 0 160 180"
       role="img"
       aria-label={`Maki, the ${pose === "sleep" ? "resting" : "friendly"} sushi guide`}
     >
+      {motion === "cook" && (
+        <g className="maki-steam" fill="none" stroke="#DCE9C2" strokeWidth="3" strokeLinecap="round">
+          <path d="M62 37c-7-8 7-12 0-21" />
+          <path d="M81 31c-7-8 7-12 0-21" />
+          <path d="M100 37c-7-8 7-12 0-21" />
+        </g>
+      )}
       <ellipse cx="82" cy="165" rx="48" ry="8" fill="#23372F" opacity=".08" />
       <path
         d="M49 143l-7 15m70-15 8 15"
@@ -106,7 +116,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <span className="logo">
       <span className="logo-mark">
-        <Maki />
+        <Maki motion="static" />
       </span>
       {!compact && (
         <span>
