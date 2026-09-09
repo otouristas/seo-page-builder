@@ -6,6 +6,7 @@ import { validateStructuredData } from "@/lib/seo/schema";
 import { toCsv } from "@/lib/utils";
 import {
   propertyMatchesWebsite,
+  propertyWebsite,
   completeDate,
   dateWindow,
 } from "@/lib/integrations/gsc";
@@ -164,6 +165,12 @@ describe("Search Console datasets", () => {
         "https://example.com/blogroll/",
       ),
     ).toBe(false);
+    expect(propertyWebsite("sc-domain:Example.com")).toBe(
+      "https://example.com/",
+    );
+    expect(propertyWebsite("https://example.com/blog/")).toBe(
+      "https://example.com/blog/",
+    );
     expect(completeDate(new Date("2026-09-09T01:00:00Z"))).toBe("2026-09-05");
     expect(dateWindow(90)).toHaveLength(90);
   });

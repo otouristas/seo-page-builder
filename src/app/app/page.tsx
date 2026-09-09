@@ -21,7 +21,7 @@ export default async function AppHome({
     );
     target = projects?.[0]
       ? `/app/${projects[0].id}${params.settings || params.billing || params.gsc ? "/settings" : ""}${params.billing ? "?billing=processing" : params.gsc ? "?gsc=reconnect" : params.settings ? "?tab=billing" : ""}`
-      : "/app/new";
+      : "/app/new?gsc=start";
   } catch {
     return <SetupState />;
   }

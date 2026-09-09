@@ -20,7 +20,7 @@ The normal Supabase confirmation link also works with the PKCE exchange when fol
 
 Create an OAuth web client, enable Search Console API, configure the consent screen and request only `https://www.googleapis.com/auth/webmasters.readonly` for the separate integration. Account login is independent. Register exactly `https://ranksushi.com/api/gsc/callback` plus the preview callback while testing. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` server-side. Google verification and test-user limits apply to the consent configuration.
 
-Connect inside Settings → Connections, select a property that covers the project URL, and run the initial sync. Verify a 90-day import, separate property totals/detail, revoked consent, reconnect, disconnect and daily reconciliation. Grant only read access; no indexing or website edits are performed. CSV import remains labeled and does not count as a verified OAuth connection.
+For a new account, the first signed-in workspace automatically starts this read-only connection and sends the user to a property picker. Each selected verified property becomes one RankSushi project; its URL is derived from the Search Console property, the encrypted refresh credential is attached to that project, and an initial sync is queued when the workspace has the required plan/jobs setup. Existing projects can connect inside Settings → Connections, select a property that covers the project URL, and run the initial sync. Verify a 90-day import, separate property totals/detail, revoked consent, reconnect, disconnect and daily reconciliation. Grant only read access; no indexing or website edits are performed. CSV import remains labeled and does not count as a verified OAuth connection.
 
 ## 3. Jobs, crawling and diagnostics
 
