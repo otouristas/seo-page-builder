@@ -4057,6 +4057,11 @@ svg {
   margin: 15px 0 9px;
   line-height: 1.2;
 }
+.audit-result-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .audit-result-heading p {
   font-size: 12px;
   overflow-wrap: anywhere;

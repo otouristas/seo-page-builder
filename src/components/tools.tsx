@@ -4,6 +4,7 @@ import { findingBundle } from "@/lib/fixes/prompts";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Globe2, ScanLine, Download, Code2 } from "lucide-react";
 import { Maki } from "./maki";
+import { SiteIcon } from "./site-icon";
 import { Button, ButtonLink, Badge } from "./ui";
 import { Finding, Notice, request, download } from "./workspace/shared";
 import {
@@ -115,7 +116,10 @@ export function FreeAuditTool({ initialUrl = "" }: { initialUrl?: string }) {
           <div className="audit-result-heading">
             <div>
               <Badge tone="green">REAL PAGE EVIDENCE</Badge>
-              <h2>{snapshot.title || "Your page audit"}</h2>
+              <h2 className="audit-result-title">
+                <SiteIcon url={snapshot.finalUrl} iconUrl={snapshot.favicon} size="medium" />
+                {snapshot.title || "Your page audit"}
+              </h2>
               <p>{snapshot.finalUrl}</p>
             </div>
             <Button
