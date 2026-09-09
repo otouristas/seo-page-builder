@@ -66,6 +66,7 @@ describe("Bounded DataForSEO research", () => {
           type: "organic",
           url: "https://example.com",
           title: "Result",
+          breadcrumb: ["Example", "Result"],
           rank_group: 1,
         },
         { type: "organic", url: "javascript:alert(1)", title: "unsafe" },
@@ -85,6 +86,7 @@ describe("Bounded DataForSEO research", () => {
     );
     expect(r.results).toHaveLength(1);
     expect(r.results?.[0].url).toBe("https://example.com");
+    expect(r.results?.[0].breadcrumb).toBe("Example › Result");
     expect(r.questions).toEqual(["A returned question?"]);
     expect(r.features).toContain("related_searches");
     expect(r.status).toBe("measured");

@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { Button, ButtonLink, Badge, EmptyState } from "../ui";
 import { Maki } from "../maki";
+import { SiteIcon } from "../site-icon";
 import { PLANS, PAID_PLANS } from "@/lib/plans";
 import { summarizeGsc, type GscRow } from "@/lib/seo/gsc";
 import { displayDate, toCsv, escapeHtml } from "@/lib/utils";
@@ -637,7 +638,17 @@ export function Audits(ctx: WorkspaceContext) {
           </div>
           {page ? (
             <>
-              <h3 style={{ fontSize: 18 }}>{page.title || "Untitled page"}</h3>
+              <h3
+                style={{
+                  fontSize: 18,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 9,
+                }}
+              >
+                <SiteIcon url={page.finalUrl} iconUrl={page.favicon} size="medium" />
+                {page.title || "Untitled page"}
+              </h3>
               <div className="finding-evidence">
                 {data.sample
                   ? "Example snapshot"

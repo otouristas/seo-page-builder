@@ -61,6 +61,13 @@ export function CopyActions({
       setFallback(value);
     }
   };
+  const openAssistant = (url: string, name: string) => {
+    // Open synchronously from the click so popup blockers do not swallow the
+    // handoff. The prompt is copied separately because external apps cannot be
+    // safely or reliably auto-filled by a browser tab.
+    window.open(url, "_blank", "noopener,noreferrer");
+    void copy(prompt, `Prompt copied. ${name} is open — paste to continue.`);
+  };
   const save = () => {
     const url = URL.createObjectURL(
       new Blob([text], { type: "text/markdown;charset=utf-8" }),
@@ -114,33 +121,15 @@ export function CopyActions({
               Copy step-by-step instructions
             </button>
           )}
-          <a
-            href="https://chatgpt.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() =>
-              void copy(
-                prompt,
-                "Prompt copied. Paste it into ChatGPT to continue.",
-              )
-            }
-          >
-            Copy & open ChatGPT <ArrowUpRight size={14} />
-          </a>
-          <a
-            href="https://claude.ai/new"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() =>
-              void copy(
-                prompt,
-                "Prompt copied. Paste it into Claude to continue.",
-              )
-            }
-          >
-            Copy & open Claude <ArrowUpRight size={14} />
-          </a>
-          <p>Opens the assistant. You choose what to paste and submit.</p>
+          <button type="button" onClick={() => openAssistant("https://chatgpt.com/", "ChatGPT")}>
+            <Copy size={15} />
+            Copy prompt & open ChatGPT <ArrowUpRight size={14} />
+          </button>
+          <button type="button" onClick={() => openAssistant("https://claude.ai/new", "Claude")}>
+            <Copy size={15} />
+            Copy prompt & open Claude <ArrowUpRight size={14} />
+          </button>
+          <p>We copy first, then open the assistant. Paste and submit when you are ready.</p>
           <div className="copy-menu-divider" />
           <button type="button" onClick={save}>
             <Download size={15} />
@@ -163,6 +152,42 @@ export function CopyActions({
         <CopyFallback value={fallback} onClose={() => setFallback("")} />
       )}
     </div>
+  );
+}
+export function CopyButton({
+  text,
+  label = "Copy prompt",
+}: {
+  text: string;
+  label?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const [message, setMessage] = useState("");
+  return (
+    <span className="copy-button-wrap">
+      <button
+        type="button"
+        className="copy-inline-button"
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(text);
+            setCopied(true);
+            setMessage("Ready to paste");
+            window.setTimeout(() => setCopied(false), 1800);
+          } catch {
+            setMessage("Select the prompt below to copy it");
+          }
+        }}
+      >
+        {copied ? <Check size={13} /> : <Copy size={13} />}
+        {copied ? "Copied" : label}
+      </button>
+      {message && (
+        <span className="copy-inline-status" role="status">
+          {message}
+        </span>
+      )}
+    </span>
   );
 }
 function CopyFallback({

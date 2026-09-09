@@ -91,6 +91,32 @@
   margin: 8px 0 0;
   max-width: 240px;
 }
+.copy-button-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.copy-inline-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #b9ccb0;
+  border-radius: 6px;
+  padding: 5px 8px;
+  color: #e9f3de;
+  background: #37523d;
+  font-size: 9px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.copy-inline-button:hover {
+  background: #496847;
+}
+.copy-inline-status {
+  color: #d7e7c5;
+  font-size: 8px;
+  white-space: nowrap;
+}
 .copy-fallback {
   max-width: 660px;
   width: calc(100vw - 32px);
@@ -300,12 +326,19 @@
 }
 .fix-prompt-box > div {
   display: flex;
+  justify-content: space-between;
   gap: 7px;
   align-items: center;
   color: #d7e7c5;
   background: #243e2e;
   padding: 11px;
   font-size: 10px;
+}
+.fix-prompt-toolbar > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
 }
 .fix-prompt-box textarea {
   width: 100%;
@@ -906,6 +939,10 @@
   margin-top: 19px;
   border-radius: 9px 9px 0 0;
   border-bottom: 1px solid #48613d;
+}
+.docs-code-header > span:last-child {
+  display: inline-flex;
+  align-items: center;
 }
 .docs-prompt-panel > textarea {
   width: 100%;

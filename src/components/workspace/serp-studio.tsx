@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Maki } from "../maki";
 import { FixKit } from "../fix-kit";
+import { SiteIcon } from "../site-icon";
 import { Button } from "../ui";
 import { download } from "./shared";
 import type { WorkspaceContext } from "./shell";
@@ -40,6 +41,7 @@ import {
   sameSearch,
   sceneExport,
   termCoverage,
+  serpOverview,
   verifyEdits,
   type StudioEdits,
   type StudioField,
@@ -389,6 +391,7 @@ function SceneWorkbench({
   };
   const moves = proposeMoves(before, serp, name),
     move = moves.find((m) => m.id === active)!;
+  const overview = serpOverview(before, serp);
   const peer =
     serp.results?.find((r) => r.url === peerUrl) || serp.results?.[0];
   const target = locatePage(serp, page),
@@ -504,7 +507,10 @@ function SceneWorkbench({
               </span>
               <span>{draft ? "Not published" : page.htmlSource + " HTML"}</span>
             </div>
-            <span className="preview-domain">{hostName(page.finalUrl)}</span>
+            <span className="preview-domain">
+              <SiteIcon url={page.finalUrl} iconUrl={page.favicon} />
+              {hostName(page.finalUrl)}
+            </span>
             <h2 data-testid="studio-preview-title">
               <MarkedText
                 text={shown.title || "No title found"}
@@ -557,7 +563,10 @@ function SceneWorkbench({
             <strong>
               Google <span>organic snapshot</span>
             </strong>
-            <span>{stamp(serp.observedAt)}</span>
+            <span>
+              {stamp(serp.observedAt)} · {serp.results?.length ?? 0} organic ·{" "}
+              {serp.questions?.length ?? 0} related questions
+            </span>
           </div>
           <div
             className="serp-stack"
@@ -593,9 +602,7 @@ function SceneWorkbench({
                       onClick={() => setPeerUrl(r.url)}
                     >
                       <span className="serp-result-domain">
-                        <span className="domain-monogram" aria-hidden="true">
-                          {hostName(r.url)[0]?.toUpperCase()}
-                        </span>
+                        <SiteIcon url={r.url} iconUrl={r.favicon} />
                         {hostName(r.url)}
                         {isTarget && (
                           <b>
@@ -618,6 +625,11 @@ function SceneWorkbench({
                       <p>
                         <MarkedText text={r.description} query={serp.keyword} />
                       </p>
+                      {r.breadcrumb && (
+                        <span className="serp-breadcrumb">
+                          <Globe2 size={10} /> {r.breadcrumb}
+                        </span>
+                      )}
                       <span className="serp-inspect-hint">
                         <MousePointer2 size={10} /> Inspect this result{" "}
                         <ArrowUpRight size={10} />
@@ -653,6 +665,48 @@ function SceneWorkbench({
           </div>
           <h2>{move.title}</h2>
           <p className="studio-move-why">{move.why}</p>
+          <section
+            className="studio-competitor-insights"
+            aria-labelledby="competitor-insights-title"
+          >
+            <div className="studio-insights-heading">
+              <Globe2 size={14} />
+              <span id="competitor-insights-title">
+                WHAT THE RETURNED RESULTS REPEAT
+              </span>
+            </div>
+            <div className="studio-insight-grid">
+              <div>
+                <strong>
+                  {overview.titlesWithQueryTerms}/{overview.resultCount}
+                </strong>
+                <span>titles use a query term</span>
+              </div>
+              <div>
+                <strong>
+                  {overview.descriptionsPresent}/{overview.resultCount}
+                </strong>
+                <span>descriptions are present</span>
+              </div>
+              <div>
+                <strong>
+                  {overview.userTitleTerms}/{overview.queryTermCount}
+                </strong>
+                <span>in your title</span>
+              </div>
+              <div>
+                <strong>{overview.questions}</strong>
+                <span>related questions</span>
+              </div>
+            </div>
+            <p className="studio-insight-tip">
+              <Sparkles size={12} /> <strong>Try this:</strong>{" "}
+              {overview.commonTerms.length
+                ? `make the page’s promise as clear as “${overview.commonTerms.join(", ")}” — only if it is true for your page.`
+                : "state the page’s specific promise in its title and first heading."}
+            </p>
+            <small>Measured clues from this snapshot, not ranking causes.</small>
+          </section>
           {active === "answer" && question && (
             <p className="studio-selected-question">
               <span>Question from this search</span>
@@ -838,7 +892,10 @@ function SceneWorkbench({
           </span>
           {peer ? (
             <>
-              <h2>{hostName(peer.url)}</h2>
+              <h2 className="peer-domain-heading">
+                <SiteIcon url={peer.url} size="medium" />
+                {hostName(peer.url)}
+              </h2>
               <p>
                 {termCoverage(peer.title, serp.keyword).length} of{" "}
                 {queryTerms(serp.keyword).length} query terms appear in its
@@ -866,8 +923,8 @@ function SceneWorkbench({
                 Inspect the source page <ArrowUpRight size={13} />
               </a>
               <small>
-                Returned title/snippet only. This competitor page has not been
-                crawled.
+                Returned title, description, and position only. This competitor
+                page has not been crawled, so do not infer its on-page setup.
               </small>
             </>
           ) : (

@@ -32,6 +32,7 @@ import { sendEmail } from "../integrations/resend";
 import { dispatch, enqueueJob, type JobInput } from "./queue";
 import { entitlements } from "../server/auth";
 import type { Job, Project, PageSnapshot } from "../types";
+import { safeIconUrl } from "../site-icons";
 async function liveJob(id: string) {
   const job = checked(
     await adminClient().from("jobs").select("*").eq("id", id).single(),
@@ -69,13 +70,16 @@ async function saveSnapshot(job: Job, project: Project, doc: CrawlDocument) {
   } catch {
     return null;
   }
-  if (url.hostname !== new URL(project.url).hostname || !doc.html) return null;
-  const snapshot = parseSnapshot(doc.html.slice(0, 1_500_000), url.href, {
+  const html = doc.html || doc.rawHtml;
+  if (url.hostname !== new URL(project.url).hostname || !html) return null;
+  const snapshot = parseSnapshot(html.slice(0, 1_500_000), url.href, {
     source: "rendered",
-    status: doc.metadata?.statusCode || 0,
+    status: doc.metadata?.statusCode ?? 0,
     market: project.country,
-    truncated: doc.html.length > 1_500_000,
+    truncated: html.length > 1_500_000,
   });
+  const providerIcon = safeIconUrl(doc.metadata?.favicon, snapshot.finalUrl);
+  if (providerIcon) snapshot.favicon = providerIcon;
   const db = adminClient();
   checked(
     await db.from("page_snapshots").upsert(

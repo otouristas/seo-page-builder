@@ -10,7 +10,7 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { CopyActions } from "./copy-actions";
+import { CopyActions, CopyButton } from "./copy-actions";
 import { FIX_RECIPES } from "@/lib/fixes/recipes";
 import { fixPrompt } from "@/lib/fixes/prompts";
 import { guidePrompt } from "@/lib/learning/doc-prompts";
@@ -329,7 +329,9 @@ export function DocsPlaybook({
           )}
           <div className="docs-code-header">
             <span>PROMPT · READY TO PASTE</span>
-            <span>AI assistant</span>
+            <span>
+              <CopyButton text={prompt} label="Copy prompt" />
+            </span>
           </div>
           <textarea
             aria-label="Guide prompt preview"

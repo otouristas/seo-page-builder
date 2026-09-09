@@ -6,11 +6,17 @@ export type CrawlDocument = {
   html?: string;
   rawHtml?: string;
   markdown?: string;
+  links?: string[];
   metadata?: {
     sourceURL?: string;
     url?: string;
     statusCode?: number;
     error?: string;
+    title?: string;
+    description?: string;
+    language?: string;
+    favicon?: string;
+    ogImage?: string;
   };
 };
 export type CrawlState = {
@@ -49,7 +55,10 @@ export async function startCrawl(url: string, limit: number) {
             },
           }
         : {}),
-      scrapeOptions: { formats: ["html", "markdown"], onlyMainContent: false },
+      scrapeOptions: {
+        formats: ["html", "rawHtml", "markdown", "links"],
+        onlyMainContent: false,
+      },
       excludePaths: [
         "/wp-admin/.*",
         "/cart.*",
@@ -69,7 +78,7 @@ export async function scrape(url: string) {
       headers: headers(),
       body: JSON.stringify({
         url,
-        formats: ["html", "markdown"],
+        formats: ["html", "rawHtml", "markdown", "links"],
         onlyMainContent: false,
         maxAge: 0,
       }),
