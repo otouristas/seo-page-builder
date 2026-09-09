@@ -1,7 +1,7 @@
 "use client";
 import { CopyActions } from "./copy-actions";
 import { findingBundle } from "@/lib/fixes/prompts";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Globe2, ScanLine, Download, Code2 } from "lucide-react";
 import { Maki } from "./maki";
 import { Button, ButtonLink, Badge } from "./ui";
@@ -19,30 +19,42 @@ export function FreeAuditTool({ initialUrl = "" }: { initialUrl?: string }) {
     [error, setError] = useState(""),
     [snapshot, setSnapshot] = useState<PageSnapshot | null>(null),
     [filter, setFilter] = useState("attention");
+  const autoAuditUrl = useRef("");
+  const runAudit = useCallback(
+    async (targetUrl: string) => {
+      setBusy(true);
+      setError("");
+      setSnapshot(null);
+      try {
+        const data = await request<{
+          snapshot: PageSnapshot;
+          token: string;
+        }>("/api/audit", { url: targetUrl, honey });
+        setSnapshot(data.snapshot);
+        sessionStorage.setItem(
+          "ranksushi-free-audit",
+          JSON.stringify({ url: data.snapshot.url, token: data.token }),
+        );
+      } catch (e) {
+        setError((e as Error).message);
+      } finally {
+        setBusy(false);
+      }
+    },
+    [honey],
+  );
+  useEffect(() => {
+    if (!initialUrl || autoAuditUrl.current === initialUrl) return;
+    autoAuditUrl.current = initialUrl;
+    void runAudit(initialUrl);
+  }, [initialUrl, runAudit]);
   return (
     <>
       <form
         className="audit-tool-form"
         onSubmit={async (e) => {
           e.preventDefault();
-          setBusy(true);
-          setError("");
-          setSnapshot(null);
-          try {
-            const data = await request<{
-              snapshot: PageSnapshot;
-              token: string;
-            }>("/api/audit", { url, honey });
-            setSnapshot(data.snapshot);
-            sessionStorage.setItem(
-              "ranksushi-free-audit",
-              JSON.stringify({ url: data.snapshot.url, token: data.token }),
-            );
-          } catch (e) {
-            setError((e as Error).message);
-          } finally {
-            setBusy(false);
-          }
+          await runAudit(url);
         }}
       >
         <label htmlFor="audit-url">Your website URL</label>
