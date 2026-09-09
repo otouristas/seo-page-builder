@@ -3560,6 +3560,8 @@ svg {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.onboarding-form .input-with-icon {
   padding: 0 13px;
 }
 .input-with-icon input {
