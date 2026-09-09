@@ -10,10 +10,11 @@ import {
   dateWindow,
 } from "@/lib/integrations/gsc";
 const html =
-  '<html lang="en"><head><title>Contact</title><meta name="robots" content="noindex"><link rel="canonical" href="https://example.com/contact"><meta name="viewport" content="width=device-width"></head><body><main><h1>Contact</h1><h1>Visit us</h1><p>Send our team a question.</p><img src="decoration.png" alt=""><a href="/">Home</a></main></body></html>';
+  '<html lang="en"><head><title>Contact</title><meta name="robots" content="noindex"><link rel="canonical" href="https://example.com/contact"><link rel="icon" href="/brand-icon.png"><meta name="viewport" content="width=device-width"></head><body><main><h1>Contact</h1><h1>Visit us</h1><p>Send our team a question.</p><img src="decoration.png" alt=""><a href="/">Home</a></main></body></html>';
 describe("Contextual evidence, rather than synthetic ranking rules", () => {
   it("handles intentional canonicalization, short pages, headings and decoration", () => {
     const s = parseSnapshot(html, "https://example.com/contact?source=search");
+    expect(s.favicon).toBe("https://example.com/brand-icon.png");
     expect(s.findings.find((f) => f.id === "canonical")?.status).toBe("pass");
     expect(s.findings.find((f) => f.id === "headings")?.status).toBe("pass");
     expect(s.findings.find((f) => f.id === "alt")?.status).toBe("pass");

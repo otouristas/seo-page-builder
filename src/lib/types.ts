@@ -34,6 +34,8 @@ export type PageSnapshot = {
   schema: unknown[];
   invalidSchema: number;
   text: string;
+  /** Best available site icon from page metadata, with an origin favicon fallback in the UI. */
+  favicon?: string | null;
   htmlSource: "fetched" | "rendered";
   status: number;
   fetchedAt: string;

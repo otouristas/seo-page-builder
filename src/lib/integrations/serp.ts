@@ -31,6 +31,12 @@ const item = z.object({
   url: z.string().nullable().optional(),
   title: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
+  favicon: z.string().nullable().optional(),
+  favicon_url: z.string().nullable().optional(),
+  breadcrumb: z
+    .union([z.string(), z.array(z.string())])
+    .nullable()
+    .optional(),
   rank_absolute: z.number().nullable().optional(),
   rank_group: z.number().nullable().optional(),
   items: z.array(z.unknown()).nullable().optional(),
@@ -109,6 +115,14 @@ export function normalizeResearch(
         description: x.description ?? "",
         rank_absolute: x.rank_absolute ?? null,
         rank_group: x.rank_group ?? null,
+        breadcrumb:
+          typeof x.breadcrumb === "string"
+            ? x.breadcrumb
+            : Array.isArray(x.breadcrumb)
+              ? x.breadcrumb.join(" › ")
+              : null,
+        resultType: x.type ?? "organic",
+        favicon: x.favicon ?? x.favicon_url ?? null,
       }));
     return {
       ...base,

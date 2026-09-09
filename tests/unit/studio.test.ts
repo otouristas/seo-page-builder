@@ -9,6 +9,7 @@ import {
   observedEdits,
   verifyEdits,
   sceneExport,
+  serpOverview,
 } from "@/lib/studio/scene";
 import { enqueueJob, jobInput } from "@/lib/jobs/queue";
 import { DEMO_DATA } from "@/lib/demo";
@@ -50,6 +51,13 @@ describe("SERP Studio evidence boundaries", () => {
       "software",
     ]);
     expect(termCoverage("Διακοπές στην Ελλάδα", "Ελλάδα")).toEqual(["ελλάδα"]);
+  });
+  it("summarizes returned SERP clues against the inspected page without inventing causes", () => {
+    const summary = serpOverview(page, serp);
+    expect(summary.resultCount).toBe(serp.results?.length);
+    expect(summary.titlesWithQueryTerms).toBeGreaterThan(0);
+    expect(summary.userTitleTerms).toBeLessThanOrEqual(summary.queryTermCount);
+    expect(summary.commonTerms.length).toBeLessThanOrEqual(3);
   });
   it("never reorders or invents positions when producing suggested edits", () => {
     const before = JSON.stringify(serp.results);

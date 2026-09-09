@@ -1,0 +1,207 @@
+{
+  "deployment": "https://ranksushi-nyhzjp8u0-otouristas-projects.vercel.app",
+  "checkedAt": "2026-09-09T10:45:40.719Z",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "RankSushi — SEO audits, clear fixes & content tools",
+      "canonical": "https://ranksushi.com",
+      "heading": "Less SEO overwhelm.More “found you.”"
+    },
+    {
+      "path": "/demo",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "heading": "See the search. Make your next move.",
+      "positions": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "recorded": true
+    },
+    {
+      "path": "/features/website-audits",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Website audits that explain the next step | RankSushi",
+      "canonical": "https://ranksushi.com/features/website-audits",
+      "heading": "Website audits that explain the next step"
+    },
+    {
+      "path": "/tools/metadata-preview",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Search metadata preview | RankSushi",
+      "canonical": "https://ranksushi.com/tools/metadata-preview",
+      "heading": "Search metadata preview"
+    },
+    {
+      "path": "/learn",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "The SEO kitchen: practical SEO, AEO & GEO guides | RankSushi",
+      "canonical": "https://ranksushi.com/learn",
+      "heading": "A little knowledge.A much clearer next move."
+    },
+    {
+      "path": "/learn/seo-evidence-library",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "The SEO evidence library | RankSushi",
+      "canonical": "https://ranksushi.com/learn/seo-evidence-library",
+      "heading": "The SEO evidence library"
+    },
+    {
+      "path": "/learn/seo-evidence-library/index.md",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/learn/original-evidence-content",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Write the page only your business can write | RankSushi",
+      "canonical": "https://ranksushi.com/learn/original-evidence-content",
+      "heading": "Write the page only your business can write"
+    },
+    {
+      "path": "/learn/answer-ready-content",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Make your page easier to understand and cite | RankSushi",
+      "canonical": "https://ranksushi.com/learn/answer-ready-content",
+      "heading": "Make your page easier to understand and cite"
+    },
+    {
+      "path": "/learn/answer-ready-content/index.md",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/learn/answer-ready-content/checklist.md",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/blog",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Fresh reads: the RankSushi blog | RankSushi",
+      "canonical": "https://ranksushi.com/blog",
+      "heading": "Less hot air.More food for thought."
+    },
+    {
+      "path": "/blog/llms-txt-without-the-myths",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "What our llms.txt does—and what it cannot promise | RankSushi",
+      "canonical": "https://ranksushi.com/blog/llms-txt-without-the-myths",
+      "heading": "What our llms.txt does—and what it cannot promise"
+    },
+    {
+      "path": "/help",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "RankSushi help center | RankSushi",
+      "canonical": "https://ranksushi.com/help",
+      "heading": "Let’s get youunstuck.",
+      "docsLayout": true
+    },
+    {
+      "path": "/help/dataforseo-research",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Where DataForSEO research comes from | RankSushi",
+      "canonical": "https://ranksushi.com/help/dataforseo-research",
+      "heading": "Where DataForSEO research comes from"
+    },
+    {
+      "path": "/help/fix-prompts",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Copy a prompt. Make a useful fix. | RankSushi",
+      "canonical": "https://ranksushi.com/help/fix-prompts",
+      "heading": "Copy a prompt. Make a useful fix.",
+      "docsLayout": true
+    },
+    {
+      "path": "/help/serp-studio",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "Work on your page in SERP Studio | RankSushi",
+      "canonical": "https://ranksushi.com/help/serp-studio",
+      "heading": "Work on your page in SERP Studio"
+    },
+    {
+      "path": "/llms.txt",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/feed.xml",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/sitemap",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "title": "A little map of RankSushi | RankSushi",
+      "canonical": "https://ranksushi.com/sitemap",
+      "heading": "A little map.Plenty to explore."
+    },
+    {
+      "path": "/api/health",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/api/projects",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "path": "/app",
+      "status": 307,
+      "expected": 307,
+      "passed": true
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    }
+  ]
+}

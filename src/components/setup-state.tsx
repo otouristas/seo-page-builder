@@ -7,7 +7,7 @@ export function SetupState() {
       <Link href="/">
         <Logo />
       </Link>
-      <Maki pose="thinking" />
+      <Maki pose="thinking" motion="cook" />
       <h1>Your workspace is warming up.</h1>
       <p>
         Your account is signed in, but the workspace database could not be

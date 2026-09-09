@@ -60,6 +60,36 @@ export function termCoverage(text: string, query: string) {
   );
   return queryTerms(query).filter((t) => words.has(t));
 }
+export function serpOverview(page: PageSnapshot, serp: ResearchResult) {
+  const results = serp.results ?? [];
+  const terms = queryTerms(serp.keyword);
+  const termFrequency = new Map<string, number>();
+  for (const result of results) {
+    const covered = new Set(
+      termCoverage(`${result.title} ${result.description}`, serp.keyword),
+    );
+    for (const term of covered)
+      termFrequency.set(term, (termFrequency.get(term) ?? 0) + 1);
+  }
+  const commonTerms = [...termFrequency.entries()]
+    .filter(([, count]) => count >= Math.max(2, Math.ceil(results.length / 3)))
+    .sort((a, b) => b[1] - a[1])
+    .map(([term]) => term)
+    .slice(0, 3);
+  return {
+    resultCount: results.length,
+    queryTermCount: terms.length,
+    titlesWithQueryTerms: results.filter(
+      (r) => termCoverage(r.title, serp.keyword).length > 0,
+    ).length,
+    descriptionsPresent: results.filter((r) => r.description.trim()).length,
+    userTitleTerms: termCoverage(page.title, serp.keyword).length,
+    userDescriptionPresent: !!page.description.trim(),
+    userH1Terms: termCoverage(page.h1[0] ?? "", serp.keyword).length,
+    questions: serp.questions?.length ?? 0,
+    commonTerms,
+  };
+}
 export function locatePage(
   serp: ResearchResult,
   page: Pick<PageSnapshot, "url" | "finalUrl" | "canonical">,

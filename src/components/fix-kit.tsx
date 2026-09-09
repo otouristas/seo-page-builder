@@ -2,7 +2,7 @@
 import { useId, useState } from "react";
 import { ArrowUpRight, Check, ChevronDown, Copy, Wrench } from "lucide-react";
 import Link from "next/link";
-import { CopyActions } from "./copy-actions";
+import { CopyActions, CopyButton } from "./copy-actions";
 import { recipeFor } from "@/lib/fixes/recipes";
 import {
   AUDIENCES,
@@ -85,11 +85,14 @@ export function FixKit({
           </ol>
         ) : (
           <div className="fix-prompt-box">
-            <div>
+            <div className="fix-prompt-toolbar">
+              <span>
               <Copy size={13} />
               {audience === "assistant"
                 ? "Ready for ChatGPT, Claude, Codex or Cursor"
                 : "A handoff your developer can use"}
+              </span>
+              <CopyButton text={prompt} label="Copy prompt" />
             </div>
             <label className="sr-only" htmlFor={id}>
               Fix prompt preview

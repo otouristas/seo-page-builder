@@ -508,6 +508,16 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.serp-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  color: #6a795e;
+  font-size: 8px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
 .serp-studio mark {
   color: inherit;
   background: #e7edce;
@@ -585,6 +595,9 @@
   font-weight: 600;
 }
 .preview-domain {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-size: 10px;
   color: #76604c;
   overflow-wrap: anywhere;
@@ -707,6 +720,70 @@
   color: #59674f;
   line-height: 1.75;
   margin-bottom: 20px;
+}
+.studio-competitor-insights {
+  margin: 0 0 17px;
+  padding: 12px;
+  border: 1px solid #d6e0c8;
+  border-radius: 11px;
+  background: #f2f6e9;
+}
+.studio-insights-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #557040;
+  font-size: 8px;
+  letter-spacing: 1px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+.studio-insight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 11px 0;
+}
+.studio-insight-grid > div {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #dbe5d0;
+  border-radius: 7px;
+  background: #fbfcf6;
+}
+.studio-insight-grid strong,
+.studio-insight-grid span {
+  display: block;
+}
+.studio-insight-grid strong {
+  color: #284936;
+  font-size: 16px;
+  line-height: 1.1;
+}
+.studio-insight-grid span {
+  margin-top: 3px;
+  color: #627157;
+  font-size: 8px;
+  line-height: 1.35;
+}
+.studio-insight-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  color: #40573a;
+  font-size: 9px;
+  line-height: 1.55;
+}
+.studio-insight-tip svg {
+  margin-top: 2px;
+  color: #6f8b4c;
+}
+.studio-competitor-insights > small {
+  display: block;
+  margin-top: 7px;
+  color: #728166;
+  font-size: 8px;
+  line-height: 1.45;
 }
 .studio-editor > label {
   display: block;
@@ -856,6 +933,11 @@
   letter-spacing: -0.55px;
   margin: 13px 0 9px;
   overflow-wrap: anywhere;
+}
+.peer-domain-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .studio-evidence-strip p {
   font-size: 11px;

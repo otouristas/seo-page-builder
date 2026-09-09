@@ -20,7 +20,7 @@ export const POST = api(async (request) => {
       { status: 400 },
     );
   const target = normalizePublicUrl(url);
-  await rateLimit(`audit:ip:${requestIdentity(request)}`, 3, 3600);
+  await rateLimit(`audit:ip:${requestIdentity(request)}`, 10, 3600);
   await rateLimit(`audit:host:${hashToken(target.hostname)}`, 10, 86400);
   await rateLimit("audit:global", 500, 86400);
   return NextResponse.json(await freeAudit(target.href));

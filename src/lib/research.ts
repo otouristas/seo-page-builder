@@ -45,6 +45,9 @@ export type ResearchResult = {
     description: string;
     rank_absolute: number | null;
     rank_group: number | null;
+    breadcrumb?: string | null;
+    resultType?: string;
+    favicon?: string | null;
   }[];
   questions?: string[];
   features?: string[];

@@ -1,6 +1,7 @@
 import { validateStructuredData } from "./schema";
 import * as cheerio from "cheerio";
 import type { AuditFinding, PageSnapshot } from "../types";
+import { safeIconUrl } from "../site-icons";
 export function parseSnapshot(
   html: string,
   url: string,
@@ -20,6 +21,13 @@ export function parseSnapshot(
   const attr = (selector: string, name: string) =>
     $(selector).first().attr(name) || "";
   const finalUrl = options.finalUrl || url;
+  const favicon =
+    safeIconUrl(
+      attr('link[rel~="icon"]', "href") ||
+        attr('link[rel="shortcut icon"]', "href") ||
+        attr('link[rel="apple-touch-icon"]', "href"),
+      finalUrl,
+    ) || safeIconUrl("/favicon.ico", finalUrl);
   const schema: unknown[] = [];
   let invalidSchema = 0;
   $('script[type="application/ld+json"]').each((_, el) => {
@@ -101,6 +109,7 @@ export function parseSnapshot(
     schema,
     invalidSchema,
     text: bodyText.slice(0, 40_000),
+    favicon,
     htmlSource: options.source || "fetched",
     status: options.status ?? 200,
     fetchedAt: options.fetchedAt || new Date().toISOString(),

@@ -63,7 +63,7 @@ beforeEach(() => {
   );
 });
 afterEach(() => vi.unstubAllEnvs());
-it("charges $1 once and starts recurring billing after 3 days, with consent and stable idempotency", async () => {
+it("charges $1 once and starts recurring billing after 3 days with stable idempotency", async () => {
   await checkout(
     { id: "workspace", owner_email: "fixture@example.com" },
     "maki",
@@ -79,7 +79,10 @@ it("charges $1 once and starts recurring billing after 3 days, with consent and 
     session.subscription_data.trial_settings.end_behavior
       .missing_payment_method,
   ).toBe("cancel");
-  expect(session.consent_collection.terms_of_service).toBe("required");
+  // RankSushi links its subscription terms before redirecting. Stripe's
+  // account-level consent field is optional and unavailable until the
+  // business profile is activated in the Stripe Dashboard.
+  expect(session).not.toHaveProperty("consent_collection");
   expect(session.custom_text.submit.message).toContain("$29 USD/month");
   expect(session.custom_text.submit.message).toContain("$1 USD today");
   expect(session.payment_method_collection).toBe("always");
