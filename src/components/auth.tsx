@@ -128,9 +128,9 @@ export function LoginForm({
             </p>
           )}
           <p className="small-note" style={{ marginTop: 22 }}>
-            Google sign-in identifies your account. For a new workspace, we’ll
-            then ask you to choose the Search Console property you want to
-            import. The read-only permission is requested separately by Google.
+            Google sign-in identifies your account. After sign-in, we’ll ask you
+            to choose the Search Console property you want to import. The
+            read-only permission is requested separately by Google.
           </p>
           <p className="small-note" style={{ marginTop: 15 }}>
             By continuing, you agree to the{" "}
