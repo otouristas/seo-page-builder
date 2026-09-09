@@ -65,8 +65,13 @@ export function CopyActions({
     // Open synchronously from the click so popup blockers do not swallow the
     // handoff. The prompt is copied separately because external apps cannot be
     // safely or reliably auto-filled by a browser tab.
-    window.open(url, "_blank", "noopener,noreferrer");
-    void copy(prompt, `Prompt copied. ${name} is open — paste to continue.`);
+    const opened = window.open(url, "_blank", "noopener,noreferrer");
+    void copy(
+      prompt,
+      opened
+        ? `Prompt copied. ${name} is open — paste to continue.`
+        : `Prompt copied. Allow pop-ups to open ${name}, then paste to continue.`,
+    );
   };
   const save = () => {
     const url = URL.createObjectURL(
