@@ -3470,7 +3470,7 @@ svg {
 .onboarding-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 90px;
+  gap: clamp(48px, 7vw, 90px);
   padding-top: 45px;
   padding-bottom: 70px;
   align-items: start;
@@ -3501,36 +3501,102 @@ svg {
   gap: 9px;
 }
 .onboarding-form {
-  padding: 32px;
+  padding: clamp(25px, 3.2vw, 36px);
+  box-shadow: 0 10px 30px rgba(36, 60, 48, 0.04);
 }
 .onboarding-form h2 {
   font-size: 27px;
-  margin-bottom: 9px;
+  margin-bottom: 8px;
 }
 .onboarding-form > p {
   font-size: 12px;
-  margin-bottom: 22px;
+  margin-bottom: 28px;
+}
+.onboarding-form .field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 19px;
+}
+.onboarding-form .field label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.onboarding-form .field > input,
+.onboarding-form .field > select,
+.onboarding-form .field > textarea,
+.onboarding-form .input-with-icon {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--ink);
+  outline: none;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s,
+    background 0.18s;
+}
+.onboarding-form .field > textarea {
+  min-height: 112px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.onboarding-form .field > input::placeholder,
+.onboarding-form .field > textarea::placeholder {
+  color: #899287;
+  opacity: 1;
+}
+.onboarding-form .field > input:focus,
+.onboarding-form .field > select:focus,
+.onboarding-form .field > textarea:focus,
+.onboarding-form .input-with-icon:focus-within {
+  border-color: #7b925e;
+  box-shadow: 0 0 0 3px #dde8cb;
 }
 .input-with-icon {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fffefa;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding-left: 13px;
+  padding: 0 13px;
 }
 .input-with-icon input {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 12px 0;
   border: 0 !important;
   background: none !important;
+  box-shadow: none !important;
+  outline: none;
 }
-.field > input,
-.field > select,
-.field > textarea {
-  width: 100%;
+.onboarding-form .field > p {
+  margin: -2px 0 0;
+  font-size: 10px;
+  line-height: 1.4;
 }
-.field {
-  display: block;
+.onboarding-form .two-col {
+  gap: 16px;
+  margin-bottom: 0;
+}
+.onboarding-form .two-col .field {
+  margin-bottom: 19px;
+}
+.onboarding-form .form-error {
+  margin: 1px 0 19px;
+}
+.onboarding-form > .button.full {
+  min-height: 48px;
+  margin-top: 2px;
+}
+.onboarding-form > .small-note {
+  margin-top: 20px !important;
+  margin-bottom: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  line-height: 1.6;
 }
 .toolbar > select {
   border: 1px solid var(--line);
@@ -3569,6 +3635,9 @@ svg {
   .onboarding-form {
     padding: 25px;
   }
+  .onboarding-form .two-col {
+    gap: 13px;
+  }
 }
 @media (max-width: 600px) {
   .auth-mobile-logo {
@@ -3592,6 +3661,10 @@ svg {
   }
   .onboarding-form {
     padding: 23px;
+  }
+  .onboarding-form .two-col {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
   .onboarding-wrap .site-header > span {
     display: none;
