@@ -2,11 +2,18 @@ import { readTextLimited } from "./body";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { AppError } from "./errors";
-import { SITE_URL } from "../utils";
+import { CANONICAL_URL, SITE_URL } from "../utils";
 import * as Sentry from "@sentry/nextjs";
 export function assertOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  if (!origin || origin !== new URL(SITE_URL).origin)
+  const allowedOrigins = new Set([
+    new URL(SITE_URL).origin,
+    new URL(CANONICAL_URL).origin,
+    "https://ranksushi.vercel.app",
+  ]);
+  if (process.env.NODE_ENV !== "production")
+    allowedOrigins.add("http://localhost:3100");
+  if (!origin || !allowedOrigins.has(origin))
     throw new AppError("The request origin is not allowed.", 403);
 }
 export async function readJson<T>(
