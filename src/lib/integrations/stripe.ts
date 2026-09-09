@@ -289,7 +289,6 @@ export async function checkout(
         ...(trialPrice ? [{ price: trialPrice, quantity: 1 }] : []),
       ],
       payment_method_collection: "always",
-      consent_collection: { terms_of_service: "required" },
       custom_text: {
         submit: {
           message: trial

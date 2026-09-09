@@ -119,7 +119,7 @@ export async function projectData(id: string): Promise<ProjectData> {
       .limit(500),
     db
       .from("drafts")
-      .select("*,draft_revisions(*)")
+      .select("*,draft_revisions!draft_revisions_draft_id_workspace_id_fkey(*)")
       .eq("project_id", id)
       .eq("workspace_id", workspace.id)
       .order("created_at", { ascending: false })
