@@ -4,6 +4,7 @@ import { encrypt, decrypt, verifyHmac, hashToken } from "@/lib/server/crypto";
 import { readTextLimited } from "@/lib/server/body";
 import { scrubEvent } from "@/lib/monitoring";
 import { subscriptionState } from "@/lib/integrations/stripe";
+import { assertOrigin } from "@/lib/server/http";
 import Stripe from "stripe";
 afterEach(() => vi.unstubAllEnvs());
 describe("Credential and request safety", () => {
@@ -58,6 +59,27 @@ describe("Credential and request safety", () => {
     expect(JSON.stringify(r)).not.toContain("private");
     expect(JSON.stringify(r)).not.toContain("secret");
     expect(r.request?.url).toContain("/share/[token]");
+  });
+  it.each(["https://ranksushi.vercel.app", "https://ranksushi.com"])(
+    "accepts the RankSushi production origin %s",
+    (origin) => {
+      expect(() =>
+        assertOrigin(
+          new Request("https://ranksushi.com/api/auth/email", {
+            headers: { origin },
+          }),
+        ),
+      ).not.toThrow();
+    },
+  );
+  it("rejects an unrelated request origin", () => {
+    expect(() =>
+      assertOrigin(
+        new Request("https://ranksushi.com/api/auth/email", {
+          headers: { origin: "https://example.com" },
+        }),
+      ),
+    ).toThrow("The request origin is not allowed.");
   });
 });
 describe("Stripe lifecycle interpretation and signatures", () => {
