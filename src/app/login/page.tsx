@@ -16,6 +16,6 @@ export default async function Login({
       ? `/app/new?website=${encodeURIComponent(p.website)}`
       : p.plan
         ? `/app/new?plan=${encodeURIComponent(p.plan)}`
-        : "/app";
+        : "/app?onboarding=1";
   return <LoginForm next={next} expired={p.error === "expired"} />;
 }

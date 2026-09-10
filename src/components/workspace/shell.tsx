@@ -288,7 +288,8 @@ export function Workspace({
             <Link
               href={data.sample ? "/login" : "/app/new"}
               className="icon-button"
-              aria-label="Add project"
+              aria-label="Create another website project"
+              title="Create another website project"
             >
               <Plus size={17} />
             </Link>

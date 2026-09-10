@@ -779,7 +779,7 @@ export const HELP_ARTICLES: LearningArticle[] = [
     title: "Google sign-in and Search Console are separate",
     category: "Connections",
     description:
-      "Understand account login, optional Search Console authorization, property selection, and reconnecting after revoked consent.",
+      "Understand account login, the read-only Search Console handoff, property selection, and reconnecting after revoked consent.",
     summary:
       "Google sign-in identifies you. A separate read-only permission connects the Search Console data for your website.",
     updated,
@@ -789,7 +789,7 @@ export const HELP_ARTICLES: LearningArticle[] = [
         id: "connect",
         title: "Connect the right property",
         paragraphs: [
-          "Open your project’s Settings → Connections and choose Connect Search Console. Authorize the read-only scope, then select a property that covers the project URL. The Google account must have access to that property.",
+          "For a new account, RankSushi sends you to Connect Search Console during onboarding. Authorize the read-only scope, then select a verified property; each selected property becomes one RankSushi project. Existing projects can start the same flow from Settings → Connections.",
           "The initial import covers up to 90 days. Paid workspaces then synchronize daily. Check the through-date and coverage in the report before comparing complete periods.",
         ],
       },

@@ -5,5 +5,5 @@ export default async function NewProject({
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const p = await searchParams;
-  return <Onboarding website={p.website} plan={p.plan} />;
+  return <Onboarding website={p.website} plan={p.plan} gsc={p.gsc} />;
 }

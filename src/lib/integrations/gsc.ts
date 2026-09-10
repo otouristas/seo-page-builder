@@ -12,11 +12,73 @@ import { providerJson } from "./http";
 import { SITE_URL } from "../utils";
 import type { Project } from "../types";
 const redirectUri = () => `${SITE_URL}/api/gsc/callback`;
-type Credentials = {
+export type GscCredentials = {
   access_token: string;
   refresh_token: string;
   expires_at: number;
 };
+export const GSC_SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
+export const gscRedirectUri = redirectUri;
+export function gscAuthorizationUrl(state: string, verifier: string) {
+  const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  url.search = new URLSearchParams({
+    client_id: required("GOOGLE_CLIENT_ID"),
+    redirect_uri: redirectUri(),
+    response_type: "code",
+    scope: GSC_SCOPE,
+    access_type: "offline",
+    prompt: "consent",
+    state,
+    code_challenge: Buffer.from(hash(verifier), "hex").toString("base64url"),
+    code_challenge_method: "S256",
+  }).toString();
+  return url.href;
+}
+export async function exchangeGscCode(
+  code: string,
+  verifier: string,
+): Promise<GscCredentials> {
+  const tokens = await providerJson<{
+    access_token: string;
+    refresh_token?: string;
+    expires_in: number;
+  }>("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    body: new URLSearchParams({
+      code,
+      client_id: required("GOOGLE_CLIENT_ID"),
+      client_secret: required("GOOGLE_CLIENT_SECRET"),
+      redirect_uri: redirectUri(),
+      grant_type: "authorization_code",
+      code_verifier: verifier,
+    }),
+  });
+  if (!tokens.refresh_token)
+    throw new AppError(
+      "Google did not grant offline access. Reconnect and grant access to Search Console.",
+      409,
+    );
+  return {
+    access_token: tokens.access_token,
+    refresh_token: tokens.refresh_token,
+    expires_at: Date.now() + tokens.expires_in * 1000,
+  };
+}
+export async function listPropertiesForToken(token: string) {
+  const r = await providerJson<{
+    siteEntry?: { siteUrl: string; permissionLevel: string }[];
+  }>("https://www.googleapis.com/webmasters/v3/sites", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return (r.siteEntry || []).filter(
+    (s) => s.permissionLevel !== "siteUnverifiedUser",
+  );
+}
+export function propertyWebsite(property: string) {
+  if (property.startsWith("sc-domain:"))
+    return `https://${property.slice(10).toLowerCase()}/`;
+  return new URL(property).href;
+}
 export async function gscAuthorization(project: Project, userId: string) {
   const state = randomToken(),
     verifier = randomToken();
@@ -31,19 +93,7 @@ export async function gscAuthorization(project: Project, userId: string) {
       expires_at: new Date(Date.now() + 600000).toISOString(),
     }),
   );
-  const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
-  url.search = new URLSearchParams({
-    client_id: required("GOOGLE_CLIENT_ID"),
-    redirect_uri: redirectUri(),
-    response_type: "code",
-    scope: "https://www.googleapis.com/auth/webmasters.readonly",
-    access_type: "offline",
-    prompt: "consent",
-    state,
-    code_challenge: Buffer.from(hash(verifier), "hex").toString("base64url"),
-    code_challenge_method: "S256",
-  }).toString();
-  return { url: url.href, state };
+  return { url: gscAuthorizationUrl(state, verifier), state };
 }
 export async function finishGsc(code: string, state: string, userId: string) {
   const db = adminClient();
@@ -62,38 +112,14 @@ export async function finishGsc(code: string, state: string, userId: string) {
       "This authorization link expired or was already used. Connect again.",
       400,
     );
-  const tokens = await providerJson<{
-    access_token: string;
-    refresh_token?: string;
-    expires_in: number;
-  }>("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    body: new URLSearchParams({
-      code,
-      client_id: required("GOOGLE_CLIENT_ID"),
-      client_secret: required("GOOGLE_CLIENT_SECRET"),
-      redirect_uri: redirectUri(),
-      grant_type: "authorization_code",
-      code_verifier: decrypt<string>(row.verifier),
-    }),
-  });
-  if (!tokens.refresh_token)
-    throw new AppError(
-      "Google did not grant offline access. Reconnect and grant access to Search Console.",
-      409,
-    );
+  const tokens = await exchangeGscCode(code, decrypt<string>(row.verifier));
   checked(
     await db.from("integrations").upsert(
       {
         workspace_id: row.workspace_id,
         project_id: row.project_id,
         provider: "gsc",
-        credentials: encrypt(
-          JSON.stringify({
-            ...tokens,
-            expires_at: Date.now() + tokens.expires_in * 1000,
-          }),
-        ),
+        credentials: encrypt(JSON.stringify(tokens)),
         status: "connected",
         updated_at: new Date().toISOString(),
       },
@@ -121,7 +147,7 @@ export async function gscToken(project: Project) {
     );
   const creds = JSON.parse(
     decrypt<string>(integration.credentials),
-  ) as Credentials;
+  ) as GscCredentials;
   if (creds.expires_at > Date.now() + 120000) return creds.access_token;
   try {
     const t = await providerJson<{
@@ -171,14 +197,7 @@ export async function gscToken(project: Project) {
 }
 export async function listProperties(project: Project) {
   const token = await gscToken(project);
-  const r = await providerJson<{
-    siteEntry?: { siteUrl: string; permissionLevel: string }[];
-  }>("https://www.googleapis.com/webmasters/v3/sites", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return (r.siteEntry || []).filter(
-    (s) => s.permissionLevel !== "siteUnverifiedUser",
-  );
+  return listPropertiesForToken(token);
 }
 export function propertyMatchesWebsite(property: string, website: string) {
   const site = new URL(website);
@@ -205,7 +224,7 @@ export async function disconnectGsc(project: Project) {
       .maybeSingle(),
   );
   if (row) {
-    const c = JSON.parse(decrypt<string>(row.credentials)) as Credentials;
+    const c = JSON.parse(decrypt<string>(row.credentials)) as GscCredentials;
     try {
       await fetch("https://oauth2.googleapis.com/revoke", {
         method: "POST",

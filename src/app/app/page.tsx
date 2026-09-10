@@ -14,14 +14,20 @@ export default async function AppHome({
     const projects = checked(
       await db
         .from("projects")
-        .select("id")
+        .select("id,gsc_property")
         .eq("workspace_id", workspace.id)
         .order("created_at")
         .limit(1),
     );
-    target = projects?.[0]
-      ? `/app/${projects[0].id}${params.settings || params.billing || params.gsc ? "/settings" : ""}${params.billing ? "?billing=processing" : params.gsc ? "?gsc=reconnect" : params.settings ? "?tab=billing" : ""}`
-      : "/app/new";
+    const firstProject = projects?.[0];
+    const needsSearchConsoleOnboarding =
+      Boolean(firstProject && !firstProject.gsc_property) &&
+      !params.gsc &&
+      !params.settings &&
+      !params.billing;
+    target = firstProject
+      ? `/app/${firstProject.id}${params.settings || params.billing || params.gsc || params.onboarding || needsSearchConsoleOnboarding ? "/settings" : ""}${params.billing ? "?billing=processing" : params.gsc ? "?gsc=reconnect" : params.onboarding || needsSearchConsoleOnboarding ? "?gsc=onboarding" : params.settings ? "?tab=billing" : ""}`
+      : "/app/new?gsc=start";
   } catch {
     return <SetupState />;
   }

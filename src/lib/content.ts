@@ -201,13 +201,13 @@ export const ARTICLES: Record<string, PublicArticle> = {
         title: "Start with one page",
         paragraphs: [
           "Open the free page audit, enter a public website URL, and inspect the findings. This first tool uses public HTML. A page blocked by robots.txt, a private address, or an unsupported response cannot be inspected.",
-          "Sign in and create a project to save a recent free audit from the same browser. Enter the website, business description, target country, and content language. Your free audit can be claimed for one hour. Google sign-in and Search Console access are separate.",
+          "Sign in and create a project to save a recent free audit from the same browser. New accounts are guided through Google Search Console property selection first, so each chosen website becomes its own project. You can also start with a URL and connect Search Console later.",
         ],
       },
       {
         title: "Connect Google Search Console",
         paragraphs: [
-          "In Settings → Connections, choose Connect Search Console. Authorize read-only access, then load and choose a verified property covering your project URL. Paid workspaces can import an initial 90 days and synchronize daily.",
+          "During onboarding, choose Connect Search Console, authorize read-only access, and select a verified property. Each property becomes one project. Existing projects can do the same from Settings → Connections; paid workspaces can import an initial 90 days and synchronize daily.",
           "If Google consent is revoked or refresh access expires, reconnect. A dated CSV with Date, Clicks, Impressions, and Position columns can be imported as fallback data. It remains separate from API totals.",
         ],
       },

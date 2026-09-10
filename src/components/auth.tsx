@@ -1,6 +1,6 @@
 "use client";
 import { COUNTRIES, LANGUAGES } from "@/lib/locales";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Mail, ArrowRight, Globe2, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -128,8 +128,10 @@ export function LoginForm({
             </p>
           )}
           <p className="small-note" style={{ marginTop: 22 }}>
-            Google sign-in identifies your account. Search Console access is
-            optional and requested separately inside your workspace.
+            Google sign-in identifies your account. After sign-in, you’ll create
+            a RankSushi project first, then connect Google Search Console inside
+            that project and choose its property. The read-only permission is
+            requested separately by Google.
           </p>
           <p className="small-note" style={{ marginTop: 15 }}>
             By continuing, you agree to the{" "}
@@ -156,9 +158,11 @@ export function LoginForm({
 export function Onboarding({
   website = "",
   plan = "",
+  gsc = "",
 }: {
   website?: string;
   plan?: string;
+  gsc?: string;
 }) {
   const [url, setUrl] = useState(website),
     [name, setName] = useState(""),
@@ -166,8 +170,43 @@ export function Onboarding({
     [country, setCountry] = useState("US"),
     [language, setLanguage] = useState("en"),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
+    [error, setError] = useState(
+      gsc === "error"
+        ? "Google Search Console connection did not finish. Try again to choose a property."
+        : "",
+    ),
+    [properties, setProperties] = useState<
+      { siteUrl: string; permissionLevel: string }[]
+    >([]),
+    [property, setProperty] = useState("");
   const router = useRouter();
+  const loaded = useRef(false);
+  const chooseProperty = gsc === "choose";
+  const projectFirst = gsc === "start";
+  const propertyWebsite = (value: string) =>
+    value.startsWith("sc-domain:")
+      ? `https://${value.slice(10).toLowerCase()}/`
+      : value;
+  useEffect(() => {
+    if (gsc !== "choose" || loaded.current) return;
+    loaded.current = true;
+    setBusy(true);
+    request<{
+      properties: { siteUrl: string; permissionLevel: string }[];
+    }>("/api/gsc/onboarding/properties")
+      .then((result) => {
+        setProperties(result.properties);
+        if (result.properties.length === 1) {
+          setProperty(result.properties[0].siteUrl);
+          setUrl(propertyWebsite(result.properties[0].siteUrl));
+          setName(
+            new URL(propertyWebsite(result.properties[0].siteUrl)).hostname,
+          );
+        }
+      })
+      .catch((e) => setError((e as Error).message))
+      .finally(() => setBusy(false));
+  }, [gsc]);
   return (
     <div className="onboarding-wrap">
       <header className="container site-header">
@@ -178,15 +217,32 @@ export function Onboarding({
       </header>
       <main id="main" className="onboarding-grid container">
         <div className="onboarding-copy">
-          <SectionLabel>Make yourself at home</SectionLabel>
+          <SectionLabel>
+            {chooseProperty
+              ? "Pick your first plate"
+              : projectFirst
+                ? "Set the table first"
+                : "Make yourself at home"}
+          </SectionLabel>
           <h1>
-            Bring your website.
+            {chooseProperty
+              ? "Choose your website."
+              : projectFirst
+                ? "Create your project."
+                : "Bring your website."}
             <br />
-            We’ll bring a fresh perspective.
+            {chooseProperty
+              ? "We’ll bring the evidence."
+              : projectFirst
+                ? "Then connect its search evidence."
+                : "We’ll bring a fresh perspective."}
           </h1>
           <p>
-            A little context helps us turn what we find into something useful
-            for your business.
+            {chooseProperty
+              ? "Select one verified Search Console property. Each property becomes its own RankSushi project."
+              : projectFirst
+                ? "Start with a clear home for this website. Once it exists, connect Google Search Console from that project’s Connections panel."
+                : "A little context helps us turn what we find into something useful for your business."}
           </p>
           <div className="onboarding-mascot">
             <Maki
@@ -195,146 +251,235 @@ export function Onboarding({
             />
             <span className="onboarding-mascot-note" aria-live="polite">
               {busy
-                ? "Maki is rolling your first project together…"
-                : "Maki says: bring the URL. We’ll bring the snacks."}
+                ? chooseProperty
+                  ? "Maki is checking Google’s property tray…"
+                  : projectFirst
+                    ? "Maki is rolling your project together…"
+                    : "Maki is rolling your first project together…"
+                : chooseProperty
+                  ? "Maki says: one property, one project, zero spreadsheet archaeology."
+                  : projectFirst
+                    ? "Maki says: project first, property second. Nice and tidy."
+                    : "Maki says: bring the URL. We’ll bring the snacks."}
             </span>
           </div>
           <ul className="onboarding-checks">
             <li>
-              <Check size={16} /> Start with a website audit
+              <Check size={16} />
+              {chooseProperty
+                ? "Choose a verified Search Console property"
+                : projectFirst
+                  ? "Create a dedicated project for this website"
+                  : "Start with a website audit"}
             </li>
             <li>
-              <Check size={16} /> Connect Search Console when you’re ready
+              <Check size={16} />
+              {chooseProperty
+                ? "Create one project for that website"
+                : projectFirst
+                  ? "Connect Search Console inside that project"
+                  : "Connect Search Console when you’re ready"}
             </li>
             <li>
-              <Check size={16} /> Review every change before you publish
+              <Check size={16} />
+              {chooseProperty
+                ? "Import search evidence after setup"
+                : projectFirst
+                  ? "Choose its verified property and import evidence"
+                  : "Review every change before you publish"}
             </li>
           </ul>
         </div>
         <form
-          className="onboarding-form panel"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setBusy(true);
-            setError("");
-            try {
-              let auditToken: string | undefined;
+            className="onboarding-form panel"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setBusy(true);
+              setError("");
               try {
-                const saved = JSON.parse(
-                  sessionStorage.getItem("ranksushi-free-audit") || "null",
+                if (chooseProperty) {
+                  const result = await request<{ project: { id: string } }>(
+                    "/api/gsc/onboarding/properties",
+                    { property, name, description, country, language },
+                  );
+                  router.push(`/app/${result.project.id}`);
+                  return;
+                }
+                let auditToken: string | undefined;
+                try {
+                  const saved = JSON.parse(
+                    sessionStorage.getItem("ranksushi-free-audit") || "null",
+                  );
+                  const normalized = new URL(
+                    /^https?:\/\//i.test(url) ? url : `https://${url}`,
+                  ).href;
+                  if (saved?.url === normalized) auditToken = saved.token;
+                } catch {}
+                const result = await request<{ project: { id: string } }>(
+                  "/api/projects",
+                  { name, url, description, country, language, auditToken },
                 );
-                const normalized = new URL(
-                  /^https?:\/\//i.test(url) ? url : `https://${url}`,
-                ).href;
-                if (saved?.url === normalized) auditToken = saved.token;
-              } catch {}
-              const result = await request<{ project: { id: string } }>(
-                "/api/projects",
-                { name, url, description, country, language, auditToken },
-              );
-              if (auditToken) sessionStorage.removeItem("ranksushi-free-audit");
-              router.push(
-                `/app/${result.project.id}${plan ? `/settings?plan=${encodeURIComponent(plan)}` : ""}`,
-              );
-            } catch (e) {
-              setError((e as Error).message);
-            } finally {
-              setBusy(false);
-            }
-          }}
-        >
-          <h2>Your first ingredients</h2>
-          <p>Tell us about one website you own or manage.</p>
-          <div className="field">
-            <label htmlFor="website">Website URL</label>
-            <div className="input-with-icon">
-              <Globe2 size={17} />
+                if (auditToken)
+                  sessionStorage.removeItem("ranksushi-free-audit");
+                router.push(
+                  projectFirst
+                    ? `/app/${result.project.id}/settings?gsc=onboarding${plan ? `&plan=${encodeURIComponent(plan)}` : ""}`
+                    : `/app/${result.project.id}${plan ? `/settings?plan=${encodeURIComponent(plan)}` : ""}`,
+                );
+              } catch (e) {
+                setError((e as Error).message);
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            <h2>
+              {chooseProperty
+                ? "Your first RankSushi project"
+                : projectFirst
+                  ? "Create your first project"
+                  : "Your first ingredients"}
+            </h2>
+            <p>
+              {chooseProperty
+                ? "Google found these verified properties. Choose the website you want to work on first."
+                : projectFirst
+                  ? "This project will be the home for one website. We’ll connect its Google Search Console property next."
+                  : "Tell us about one website you own or manage."}
+            </p>
+            {chooseProperty && (
+              <div className="field">
+                <label htmlFor="gsc-property">
+                  Google Search Console property
+                </label>
+                <select
+                  id="gsc-property"
+                  value={property}
+                  onChange={(e) => {
+                    const nextProperty = e.target.value;
+                    setProperty(nextProperty);
+                    if (!nextProperty) return;
+                    const nextUrl = propertyWebsite(nextProperty);
+                    setUrl(nextUrl);
+                    setName((current) => current || new URL(nextUrl).hostname);
+                  }}
+                  required
+                  disabled={busy || !properties.length}
+                >
+                  <option value="">
+                    {busy ? "Loading verified properties…" : "Choose a website"}
+                  </option>
+                  {properties.map((item) => (
+                    <option key={item.siteUrl} value={item.siteUrl}>
+                      {item.siteUrl} ·{" "}
+                      {item.permissionLevel.replaceAll("_", " ")}
+                    </option>
+                  ))}
+                </select>
+                {!busy && !properties.length && !error && (
+                  <p>No verified properties were returned by Google.</p>
+                )}
+              </div>
+            )}
+            <div className="field">
+              <label htmlFor="website">Website URL</label>
+              <div className="input-with-icon">
+                <Globe2 size={17} />
+                <input
+                  id="website"
+                  type="text"
+                  inputMode="url"
+                  autoComplete="url"
+                  placeholder="https://yourwebsite.com"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  maxLength={2048}
+                  required
+                  readOnly={chooseProperty}
+                />
+              </div>
+            </div>
+            <div className="field">
+              <label htmlFor="business-name">Business / project name</label>
               <input
-                id="website"
-                type="text"
-                inputMode="url"
-                autoComplete="url"
-                placeholder="https://yourwebsite.com"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                maxLength={2048}
+                id="business-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="What should we call your project?"
+                minLength={2}
+                maxLength={80}
                 required
               />
             </div>
-          </div>
-          <div className="field">
-            <label htmlFor="business-name">Business / project name</label>
-            <input
-              id="business-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="What should we call your project?"
-              minLength={2}
-              maxLength={80}
-              required
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="business-description">
-              What do you do, and who is it for?
-            </label>
-            <textarea
-              id="business-description"
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              minLength={10}
-              maxLength={2000}
-              required
-              placeholder="We help… with… in…"
-            />
-          </div>
-          <div className="two-col">
             <div className="field">
-              <label htmlFor="country">Target country</label>
-              <select
-                id="country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
+              <label htmlFor="business-description">
+                What do you do, and who is it for?
+              </label>
+              <textarea
+                id="business-description"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                minLength={10}
+                maxLength={2000}
                 required
-              >
-                {COUNTRIES.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
+                placeholder="We help… with… in…"
+              />
             </div>
-            <div className="field">
-              <label htmlFor="language">Content language</label>
-              <select
-                id="language"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                required
-              >
-                {LANGUAGES.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
-              <p>Language code: en, el, de…</p>
+            <div className="two-col">
+              <div className="field">
+                <label htmlFor="country">Target country</label>
+                <select
+                  id="country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  required
+                >
+                  {COUNTRIES.map((option) => (
+                    <option key={option.code} value={option.code}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor="language">Content language</label>
+                <select
+                  id="language"
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  required
+                >
+                  {LANGUAGES.map((option) => (
+                    <option key={option.code} value={option.code}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+                <p>Language code: en, el, de…</p>
+              </div>
             </div>
-          </div>
-          {error && (
-            <p className="form-error" role="alert">
-              {error}
+            {error && (
+              <p className="form-error" role="alert">
+                {error}
+              </p>
+            )}
+            <Button className="full" busy={busy}>
+              {chooseProperty
+                ? "Create project & import Search Console"
+                : projectFirst
+                  ? "Create project & connect Search Console"
+                  : "Create my project"}{" "}
+              <ArrowUpRight size={16} />
+            </Button>
+            <p className="small-note" style={{ marginTop: 15 }}>
+              {chooseProperty
+                ? "Your property stays read-only. We save the connection on this project and never publish website changes."
+                : projectFirst
+                  ? "Next, we’ll open this project’s Connections panel so you can authorize Google and choose its verified property."
+                  : "No Search Console connection required. A recent free audit from this browser is saved with your project when available."}
             </p>
-          )}
-          <Button className="full" busy={busy}>
-            Create my project <ArrowUpRight size={16} />
-          </Button>
-          <p className="small-note" style={{ marginTop: 15 }}>
-            No Search Console connection required. A recent free audit from this
-            browser is saved with your project when available.
-          </p>
-        </form>
+          </form>
       </main>
     </div>
   );
