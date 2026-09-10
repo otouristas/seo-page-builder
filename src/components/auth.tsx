@@ -128,9 +128,10 @@ export function LoginForm({
             </p>
           )}
           <p className="small-note" style={{ marginTop: 22 }}>
-            Google sign-in identifies your account. After sign-in, we’ll ask you
-            to choose the Search Console property you want to import. The
-            read-only permission is requested separately by Google.
+            Google sign-in identifies your account. After sign-in, you’ll create
+            a RankSushi project first, then connect Google Search Console inside
+            that project and choose its property. The read-only permission is
+            requested separately by Google.
           </p>
           <p className="small-note" style={{ marginTop: 15 }}>
             By continuing, you agree to the{" "}
@@ -179,31 +180,13 @@ export function Onboarding({
     >([]),
     [property, setProperty] = useState("");
   const router = useRouter();
-  const started = useRef(false);
   const loaded = useRef(false);
   const chooseProperty = gsc === "choose";
+  const projectFirst = gsc === "start";
   const propertyWebsite = (value: string) =>
     value.startsWith("sc-domain:")
       ? `https://${value.slice(10).toLowerCase()}/`
       : value;
-  const startGoogleConnection = async () => {
-    setBusy(true);
-    setError("");
-    try {
-      const result = await request<{ url: string }>(
-        "/api/gsc/onboarding/connect",
-      );
-      location.assign(result.url);
-    } catch (e) {
-      setError((e as Error).message);
-      setBusy(false);
-    }
-  };
-  useEffect(() => {
-    if (gsc !== "start" || started.current) return;
-    started.current = true;
-    void startGoogleConnection();
-  }, [gsc]);
   useEffect(() => {
     if (gsc !== "choose" || loaded.current) return;
     loaded.current = true;
@@ -235,19 +218,31 @@ export function Onboarding({
       <main id="main" className="onboarding-grid container">
         <div className="onboarding-copy">
           <SectionLabel>
-            {chooseProperty ? "Pick your first plate" : "Make yourself at home"}
+            {chooseProperty
+              ? "Pick your first plate"
+              : projectFirst
+                ? "Set the table first"
+                : "Make yourself at home"}
           </SectionLabel>
           <h1>
-            {chooseProperty ? "Choose your website." : "Bring your website."}
+            {chooseProperty
+              ? "Choose your website."
+              : projectFirst
+                ? "Create your project."
+                : "Bring your website."}
             <br />
             {chooseProperty
               ? "We’ll bring the evidence."
-              : "We’ll bring a fresh perspective."}
+              : projectFirst
+                ? "Then connect its search evidence."
+                : "We’ll bring a fresh perspective."}
           </h1>
           <p>
             {chooseProperty
               ? "Select one verified Search Console property. Each property becomes its own RankSushi project."
-              : "A little context helps us turn what we find into something useful for your business."}
+              : projectFirst
+                ? "Start with a clear home for this website. Once it exists, connect Google Search Console from that project’s Connections panel."
+                : "A little context helps us turn what we find into something useful for your business."}
           </p>
           <div className="onboarding-mascot">
             <Maki
@@ -258,10 +253,14 @@ export function Onboarding({
               {busy
                 ? chooseProperty
                   ? "Maki is checking Google’s property tray…"
-                  : "Maki is rolling your first project together…"
+                  : projectFirst
+                    ? "Maki is rolling your project together…"
+                    : "Maki is rolling your first project together…"
                 : chooseProperty
                   ? "Maki says: one property, one project, zero spreadsheet archaeology."
-                  : "Maki says: bring the URL. We’ll bring the snacks."}
+                  : projectFirst
+                    ? "Maki says: project first, property second. Nice and tidy."
+                    : "Maki says: bring the URL. We’ll bring the snacks."}
             </span>
           </div>
           <ul className="onboarding-checks">
@@ -269,48 +268,29 @@ export function Onboarding({
               <Check size={16} />
               {chooseProperty
                 ? "Choose a verified Search Console property"
-                : "Start with a website audit"}
+                : projectFirst
+                  ? "Create a dedicated project for this website"
+                  : "Start with a website audit"}
             </li>
             <li>
               <Check size={16} />
               {chooseProperty
                 ? "Create one project for that website"
-                : "Connect Search Console when you’re ready"}
+                : projectFirst
+                  ? "Connect Search Console inside that project"
+                  : "Connect Search Console when you’re ready"}
             </li>
             <li>
               <Check size={16} />
               {chooseProperty
                 ? "Import search evidence after setup"
-                : "Review every change before you publish"}
+                : projectFirst
+                  ? "Choose its verified property and import evidence"
+                  : "Review every change before you publish"}
             </li>
           </ul>
         </div>
-        {gsc === "start" ? (
-          <section className="onboarding-form panel">
-            <h2>Connect Google Search Console</h2>
-            <p>
-              We’re taking you to Google’s read-only consent screen. After you
-              approve it, you’ll choose the verified property to import.
-            </p>
-            {error && (
-              <p className="form-error" role="alert">
-                {error}
-              </p>
-            )}
-            <Button
-              className="full"
-              busy={busy}
-              onClick={startGoogleConnection}
-            >
-              Continue to Google <ArrowUpRight size={16} />
-            </Button>
-            <p className="small-note" style={{ marginTop: 15 }}>
-              Google account login and Search Console permission are two
-              separate steps. We only request read-only Search Console data.
-            </p>
-          </section>
-        ) : (
-          <form
+        <form
             className="onboarding-form panel"
             onSubmit={async (e) => {
               e.preventDefault();
@@ -342,7 +322,9 @@ export function Onboarding({
                 if (auditToken)
                   sessionStorage.removeItem("ranksushi-free-audit");
                 router.push(
-                  `/app/${result.project.id}${plan ? `/settings?plan=${encodeURIComponent(plan)}` : ""}`,
+                  projectFirst
+                    ? `/app/${result.project.id}/settings?gsc=onboarding${plan ? `&plan=${encodeURIComponent(plan)}` : ""}`
+                    : `/app/${result.project.id}${plan ? `/settings?plan=${encodeURIComponent(plan)}` : ""}`,
                 );
               } catch (e) {
                 setError((e as Error).message);
@@ -354,12 +336,16 @@ export function Onboarding({
             <h2>
               {chooseProperty
                 ? "Your first RankSushi project"
-                : "Your first ingredients"}
+                : projectFirst
+                  ? "Create your first project"
+                  : "Your first ingredients"}
             </h2>
             <p>
               {chooseProperty
                 ? "Google found these verified properties. Choose the website you want to work on first."
-                : "Tell us about one website you own or manage."}
+                : projectFirst
+                  ? "This project will be the home for one website. We’ll connect its Google Search Console property next."
+                  : "Tell us about one website you own or manage."}
             </p>
             {chooseProperty && (
               <div className="field">
@@ -481,16 +467,19 @@ export function Onboarding({
             <Button className="full" busy={busy}>
               {chooseProperty
                 ? "Create project & import Search Console"
-                : "Create my project"}{" "}
+                : projectFirst
+                  ? "Create project & connect Search Console"
+                  : "Create my project"}{" "}
               <ArrowUpRight size={16} />
             </Button>
             <p className="small-note" style={{ marginTop: 15 }}>
               {chooseProperty
                 ? "Your property stays read-only. We save the connection on this project and never publish website changes."
-                : "No Search Console connection required. A recent free audit from this browser is saved with your project when available."}
+                : projectFirst
+                  ? "Next, we’ll open this project’s Connections panel so you can authorize Google and choose its verified property."
+                  : "No Search Console connection required. A recent free audit from this browser is saved with your project when available."}
             </p>
           </form>
-        )}
       </main>
     </div>
   );

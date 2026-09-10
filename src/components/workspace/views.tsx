@@ -246,7 +246,10 @@ export function Overview(ctx: WorkspaceContext) {
             <EmptyState
               title="Let’s connect the dots"
               action={
-                <ButtonLink href={`${base}/settings`} variant="secondary">
+                <ButtonLink
+                  href={`${base}/settings?gsc=onboarding`}
+                  variant="secondary"
+                >
                   Connect Search Console
                 </ButtonLink>
               }
@@ -925,7 +928,7 @@ export function SearchConsole(ctx: WorkspaceContext) {
           <EmptyState
             title="Your real search story starts here"
             action={
-              <ButtonLink href={`${base}/settings`}>
+              <ButtonLink href={`${base}/settings?gsc=onboarding`}>
                 Connect Search Console <ArrowUpRight size={14} />
               </ButtonLink>
             }
