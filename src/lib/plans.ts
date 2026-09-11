@@ -41,6 +41,19 @@ export const PLANS: Record<
   },
 };
 export const PAID_PLANS = ["maki", "nigiri", "omakase"] as const;
+/** The plan name people recognise from pricing, including the paid trial. */
+export function planLabel(plan: string, phase?: string) {
+  if (phase === "trial") return "$1 trial";
+  return plan === "free" || !isPlan(plan) ? "Free" : PLANS[plan].name;
+}
+/** One explanation of a reached project allowance, shared by API and UI. */
+export function projectLimitMessage(
+  plan: string,
+  limit: number,
+  phase?: string,
+) {
+  return `Your ${planLabel(plan, phase)} plan includes ${limit} project${limit === 1 ? "" : "s"}, and this workspace already uses ${limit === 1 ? "it" : "them"}. Open the project you already have, or upgrade your plan to add another website.`;
+}
 export function isPlan(value: unknown): value is PlanId {
   return typeof value === "string" && Object.hasOwn(PLANS, value);
 }

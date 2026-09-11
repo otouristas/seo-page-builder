@@ -7,10 +7,15 @@ import {
   ArrowUpRight,
   BookOpen,
   Check,
+  LayoutDashboard,
+  LogOut,
   Menu,
   X,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Logo, Maki } from "./maki";
+import { useAccount } from "@/lib/supabase/use-account";
+import { createClient } from "@/lib/supabase/client";
 
 const navigation = [
   { href: "/features", label: "Features", note: "Find it. Fix it. Follow it." },
@@ -28,7 +33,19 @@ export function SiteHeader() {
   const dialog = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
+  const email = useAccount();
+  const accountName = email.split("@")[0];
+  const router = useRouter();
   const close = () => dialog.current?.close();
+  const signOut = async () => {
+    close();
+    try {
+      await createClient().auth.signOut();
+    } catch {
+      /* An already-expired session is simply gone. */
+    }
+    router.refresh();
+  };
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
@@ -58,11 +75,31 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="pill-actions">
-          <Link href="/login" className="pill-login">
-            Log in
-          </Link>
-          <Link href="/tools/seo-audit" className="button primary pill-cta">
-            Free audit <ArrowUpRight size={15} aria-hidden="true" />
+          {email ? (
+            <Link
+              href="/app"
+              className="pill-account"
+              title={`Signed in as ${email}`}
+            >
+              <span className="account-avatar" aria-hidden="true">
+                {accountName[0]?.toUpperCase()}
+              </span>
+              <span>
+                <strong>{accountName}</strong>
+                <small>Signed in</small>
+              </span>
+            </Link>
+          ) : (
+            <Link href="/login" className="pill-login">
+              Log in
+            </Link>
+          )}
+          <Link
+            href={email ? "/app" : "/tools/seo-audit"}
+            className="button primary pill-cta"
+          >
+            {email ? "My workspace" : "Free audit"}{" "}
+            <ArrowUpRight size={15} aria-hidden="true" />
           </Link>
           <button
             className="menu-toggle"
@@ -151,30 +188,65 @@ export function SiteHeader() {
             <Maki pose="wave" />
           </div>
           <div className="mobile-menu-bottom">
-            <div className="menu-benefits">
-              <span>
-                <Check size={14} aria-hidden="true" /> Free page audit
-              </span>
-              <span>
-                <Check size={14} aria-hidden="true" /> No card required
-              </span>
-              <span>
-                <Check size={14} aria-hidden="true" /> You approve every change
-              </span>
-            </div>
-            <Link
-              href="/tools/seo-audit"
-              onClick={close}
-              className="button primary full"
-            >
-              Find my next bite <ArrowUpRight size={17} aria-hidden="true" />
-            </Link>
-            <p>
-              Already at the table?{" "}
-              <Link href="/login" onClick={close}>
-                Log in
-              </Link>
-            </p>
+            {email ? (
+              <>
+                <div className="menu-account">
+                  <span className="account-avatar" aria-hidden="true">
+                    {accountName[0]?.toUpperCase()}
+                  </span>
+                  <span>
+                    <strong>{accountName}</strong>
+                    <small>{email}</small>
+                  </span>
+                </div>
+                <Link
+                  href="/app"
+                  onClick={close}
+                  className="button primary full"
+                >
+                  Open my workspace{" "}
+                  <LayoutDashboard size={17} aria-hidden="true" />
+                </Link>
+                <p>
+                  <button
+                    type="button"
+                    className="menu-signout"
+                    onClick={signOut}
+                  >
+                    <LogOut size={14} aria-hidden="true" /> Sign out
+                  </button>
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="menu-benefits">
+                  <span>
+                    <Check size={14} aria-hidden="true" /> Free page audit
+                  </span>
+                  <span>
+                    <Check size={14} aria-hidden="true" /> No card required
+                  </span>
+                  <span>
+                    <Check size={14} aria-hidden="true" /> You approve every
+                    change
+                  </span>
+                </div>
+                <Link
+                  href="/tools/seo-audit"
+                  onClick={close}
+                  className="button primary full"
+                >
+                  Find my next bite{" "}
+                  <ArrowUpRight size={17} aria-hidden="true" />
+                </Link>
+                <p>
+                  Already at the table?{" "}
+                  <Link href="/login" onClick={close}>
+                    Log in
+                  </Link>
+                </p>
+              </>
+            )}
           </div>
         </div>
       </dialog>

@@ -781,7 +781,7 @@
 .studio-competitor-insights > small {
   display: block;
   margin-top: 7px;
-  color: #728166;
+  color: var(--muted);
   font-size: 8px;
   line-height: 1.45;
 }

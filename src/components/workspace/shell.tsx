@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -22,11 +22,15 @@ import {
   Search,
   Globe2,
   Focus,
+  X,
+  UserRound,
+  CreditCard,
 } from "lucide-react";
 import { SerpStudio } from "./serp-studio";
 import { Logo, Maki } from "../maki";
+import { SiteMark } from "../site-mark";
 import { Badge, Button } from "../ui";
-import { NAV, PLANS, type AppSection } from "@/lib/plans";
+import { NAV, PLANS, planLabel, type AppSection } from "@/lib/plans";
 import type { ProjectData } from "@/lib/server/project-data";
 import { Modal, Notice, request } from "./shared";
 import {
@@ -102,8 +106,11 @@ export function Workspace({
 }) {
   const [data, setData] = useState(initial),
     [message, setMessage] = useState(""),
-    [scanning, setScanning] = useState(false);
+    [scanning, setScanning] = useState(false),
+    [drawer, setDrawer] = useState(false);
   const router = useRouter();
+  const drawerRef = useRef<HTMLDialogElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const base = data.sample ? "/demo" : `/app/${data.project.id}`;
   const refresh = useCallback(() => {
     if (!data.sample)
@@ -124,6 +131,21 @@ export function Workspace({
     const t = setTimeout(() => setMessage(""), 6500);
     return () => clearTimeout(t);
   }, [message]);
+  /* The drawer is a real panel: modal, escapable, and closed by navigation. */
+  useEffect(() => {
+    const dialog = drawerRef.current;
+    if (!dialog) return;
+    if (drawer && !dialog.open) dialog.showModal();
+    if (!drawer && dialog.open) dialog.close();
+  }, [drawer]);
+  useEffect(() => setDrawer(false), [section, data.project.id]);
+  useEffect(() => {
+    if (!drawer) return;
+    const wide = window.matchMedia("(min-width: 861px)");
+    const onChange = () => wide.matches && setDrawer(false);
+    wide.addEventListener("change", onChange);
+    return () => wide.removeEventListener("change", onChange);
+  }, [drawer]);
   const run = async (body: Record<string, unknown>) => {
     if (data.sample) {
       setMessage(
@@ -143,9 +165,24 @@ export function Workspace({
     run,
     openScan: () => setScanning(true),
   };
+  const planName = data.sample
+    ? "Example workspace"
+    : data.phase === "trial"
+      ? "$1 trial"
+      : `${planLabel(data.plan, data.phase)} plan`;
+  const accountName = data.sample
+    ? "Alex · example"
+    : data.email.split("@")[0] || "Your account";
+  const atProjectLimit =
+    !data.sample && data.projects.length >= data.limits.projects;
+  const signOut = async () => {
+    await request("/api/auth/signout", {});
+    router.push("/login");
+    router.refresh();
+  };
   const nav = (mobile = false) => (
     <nav
-      className={mobile ? "" : "app-nav"}
+      className="app-nav"
       aria-label={mobile ? "Mobile workspace" : "Workspace"}
     >
       {NAV.map((item, i) => {
@@ -156,6 +193,7 @@ export function Workspace({
             href={item.id === "serp-studio" ? base : `${base}/${item.id}`}
             className={section === item.id ? "active" : ""}
             aria-current={section === item.id ? "page" : undefined}
+            onClick={() => mobile && setDrawer(false)}
           >
             <Icon size={16} />
             {item.label}
@@ -171,6 +209,95 @@ export function Workspace({
         );
       })}
     </nav>
+  );
+  const projectSwitch = (id: string) => (
+    <div className="workspace-switch">
+      <SiteMark name={data.project.name} logo={data.project.logo} />
+      <div>
+        <label className="sr-only" htmlFor={id}>
+          Current project
+        </label>
+        <select
+          id={id}
+          value={data.project.id}
+          onChange={(e) => router.push(`/app/${e.target.value}`)}
+        >
+          {data.projects.map((p) => (
+            <option key={p.id} value={p.id}>
+              {data.sample && section === "serp-studio"
+                ? "RankSushi · recorded scene"
+                : p.name}
+            </option>
+          ))}
+        </select>
+        <small>
+          {data.sample
+            ? "Example workspace"
+            : new URL(data.project.url).hostname}
+        </small>
+      </div>
+      <ChevronDown size={12} />
+    </div>
+  );
+  /** Who is signed in, on which plan, with the ways out of both. */
+  const account = (mobile = false) => (
+    <div className="sidebar-account">
+      <div className="account-identity">
+        <span className="account-avatar" aria-hidden="true">
+          {accountName[0]?.toUpperCase()}
+        </span>
+        <div>
+          <strong>{accountName}</strong>
+          <small title={data.sample ? undefined : data.email}>
+            {data.sample ? "example@ranksushi.com" : data.email}
+          </small>
+        </div>
+        {!data.sample && (
+          <button
+            className="icon-button"
+            title="Sign out"
+            aria-label="Sign out"
+            onClick={signOut}
+          >
+            <LogOut size={14} />
+          </button>
+        )}
+      </div>
+      <div className="account-plan">
+        <Badge
+          tone={data.phase === "free" || data.sample ? "neutral" : "green"}
+        >
+          {planName}
+        </Badge>
+        <Link href={`${base}/settings?tab=billing`} className="text-link">
+          {data.phase === "free" && !data.sample ? "Upgrade" : "Manage"}
+        </Link>
+      </div>
+      {mobile && (
+        <div className="account-links">
+          <Link href={`${base}/settings`} onClick={() => setDrawer(false)}>
+            <UserRound size={15} /> Profile &amp; project settings
+          </Link>
+          <Link
+            href={`${base}/settings?tab=billing`}
+            onClick={() => setDrawer(false)}
+          >
+            <CreditCard size={15} /> Plan, usage &amp; billing
+          </Link>
+          <Link
+            href={atProjectLimit ? `${base}/settings?tab=billing` : "/app/new"}
+            onClick={() => setDrawer(false)}
+          >
+            <Plus size={15} /> Add another website
+          </Link>
+          {!data.sample && (
+            <button type="button" onClick={signOut}>
+              <LogOut size={15} /> Sign out
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   );
   const View = {
     "serp-studio": SerpStudio,
@@ -189,33 +316,7 @@ export function Workspace({
         <Link href="/" aria-label="RankSushi home">
           <Logo />
         </Link>
-        <div className="workspace-switch">
-          <span className="project-avatar">{data.project.name[0]}</span>
-          <div>
-            <label className="sr-only" htmlFor="project-switch">
-              Current project
-            </label>
-            <select
-              id="project-switch"
-              value={data.project.id}
-              onChange={(e) => router.push(`/app/${e.target.value}`)}
-            >
-              {data.projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {data.sample && section === "serp-studio"
-                    ? "RankSushi · recorded scene"
-                    : p.name}
-                </option>
-              ))}
-            </select>
-            <small>
-              {data.sample
-                ? "Example workspace"
-                : new URL(data.project.url).hostname}
-            </small>
-          </div>
-          <ChevronDown size={12} />
-        </div>
+        {projectSwitch("project-switch")}
         <div className="nav-caption">YOUR WORKSPACE</div>
         {nav()}
         <div className="sidebar-bottom">
@@ -230,45 +331,62 @@ export function Workspace({
               Find your next bite <ArrowUpRight size={12} />
             </Link>
           </div>
-          <div className="sidebar-account">
-            <span>{data.sample ? "A" : data.email[0]?.toUpperCase()}</span>
-            <div>
-              <strong>
-                {data.sample ? "Alex · example" : data.email.split("@")[0]}
-              </strong>
-              <br />
-              <span>
-                {data.phase === "trial"
-                  ? "$1 trial"
-                  : PLANS[data.plan as keyof typeof PLANS]?.name || "Free"}{" "}
-                workspace
-              </span>
-            </div>
-            {!data.sample && (
-              <button
-                className="icon-button"
-                title="Sign out"
-                aria-label="Sign out"
-                onClick={async () => {
-                  await request("/api/auth/signout", {});
-                  router.push("/login");
-                  router.refresh();
-                }}
-              >
-                <LogOut size={14} />
-              </button>
-            )}
-          </div>
+          {account()}
         </div>
       </aside>
+      <dialog
+        className="app-drawer"
+        ref={drawerRef}
+        aria-label="Workspace menu"
+        onClose={() => {
+          setDrawer(false);
+          menuButton.current?.focus();
+        }}
+        onCancel={() => setDrawer(false)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) setDrawer(false);
+        }}
+      >
+        <div className="app-drawer-panel">
+          <div className="app-drawer-top">
+            <Link href="/" aria-label="RankSushi home">
+              <Logo />
+            </Link>
+            <button
+              className="icon-button"
+              aria-label="Close workspace navigation"
+              onClick={() => setDrawer(false)}
+            >
+              <X size={21} />
+            </button>
+          </div>
+          <div className="app-drawer-body">
+            {projectSwitch("project-switch-mobile")}
+            <div className="nav-caption">YOUR WORKSPACE</div>
+            {nav(true)}
+            <Link
+              className="knowledge-link"
+              href="/learn"
+              onClick={() => setDrawer(false)}
+            >
+              The SEO kitchen <ArrowUpRight size={13} />
+            </Link>
+          </div>
+          <div className="app-drawer-foot">{account(true)}</div>
+        </div>
+      </dialog>
       <div className="app-main">
         <header className="app-topbar">
-          <details className="app-mobile-menu">
-            <summary aria-label="Open workspace navigation">
-              <Menu size={20} />
-            </summary>
-            {nav(true)}
-          </details>
+          <button
+            className="app-menu-button"
+            aria-label="Open workspace navigation"
+            aria-expanded={drawer}
+            aria-haspopup="dialog"
+            ref={menuButton}
+            onClick={() => setDrawer(true)}
+          >
+            <Menu size={20} />
+          </button>
           <div className="breadcrumbs">
             <span className="crumb-workspace">Workspace</span>
             <ChevronRight size={13} />
@@ -286,10 +404,41 @@ export function Workspace({
                   : PLANS[data.plan as keyof typeof PLANS]?.name}
             </Badge>
             <Link
-              href={data.sample ? "/login" : "/app/new"}
+              href={data.sample ? "/login" : `${base}/settings`}
+              className="topbar-account"
+              title={
+                data.sample
+                  ? "Sign in to your own workspace"
+                  : `Signed in as ${data.email}`
+              }
+            >
+              <span className="account-avatar" aria-hidden="true">
+                {accountName[0]?.toUpperCase()}
+              </span>
+              <span>
+                <strong>{accountName}</strong>
+                <small>{planName}</small>
+              </span>
+            </Link>
+            <Link
+              href={
+                data.sample
+                  ? "/login"
+                  : atProjectLimit
+                    ? `${base}/settings?tab=billing`
+                    : "/app/new"
+              }
               className="icon-button"
-              aria-label="Create another website project"
-              title="Create another website project"
+              aria-label={
+                atProjectLimit
+                  ? "Add another website project (plan upgrade required)"
+                  : "Create another website project"
+              }
+              title={
+                atProjectLimit
+                  ? `Your ${planLabel(data.plan, data.phase)} plan includes ${data.limits.projects} project${data.limits.projects === 1 ? "" : "s"}. See plans to add another website.`
+                  : "Create another website project"
+              }
             >
               <Plus size={17} />
             </Link>

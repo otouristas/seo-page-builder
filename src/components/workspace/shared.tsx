@@ -13,6 +13,17 @@ import { FixKit } from "../fix-kit";
 import Link from "next/link";
 import { guideForFinding } from "@/lib/learning/guide-links";
 import type { AuditFinding } from "@/lib/types";
+/** An API failure that keeps the server's code, so the UI can offer a way out. */
+export class RequestError extends Error {
+  constructor(
+    message: string,
+    public code = "request_failed",
+    public status = 0,
+  ) {
+    super(message);
+    this.name = "RequestError";
+  }
+}
 export async function request<T = Record<string, unknown>>(
   url: string,
   body?: unknown,
@@ -30,7 +41,11 @@ export async function request<T = Record<string, unknown>>(
     .json()
     .catch(() => ({ error: "The request could not be completed." }));
   if (!response.ok)
-    throw new Error(data.error || "The request could not be completed.");
+    throw new RequestError(
+      data.error || "The request could not be completed.",
+      data.code || "request_failed",
+      response.status,
+    );
   return data as T;
 }
 export function download(name: string, content: string, type = "text/plain") {

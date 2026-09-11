@@ -3,8 +3,10 @@ import { z } from "zod";
 import { api, readJson, checked } from "@/lib/server/http";
 import { requireWorkspace, entitlements } from "@/lib/server/auth";
 import { validatePublicUrl } from "@/lib/seo/safe-fetch";
+import { safeIconUrl } from "@/lib/site-icons";
 import { AppError } from "@/lib/server/errors";
 import { rateLimit } from "@/lib/server/rate-limit";
+import { projectLimitMessage } from "@/lib/plans";
 export const GET = api(async () => {
   const { db, workspace } = await requireWorkspace();
   return NextResponse.json({
@@ -29,6 +31,7 @@ export const POST = api(async (request) => {
       country: z.string().regex(/^[A-Z]{2}$/),
       language: z.string().regex(/^[a-z]{2,3}(-[A-Z]{2})?$/),
       auditToken: z.string().max(100).optional(),
+      logo: z.string().max(2048).optional(),
     }),
   );
   const { url } = await validatePublicUrl(body.url);
@@ -36,11 +39,15 @@ export const POST = api(async (request) => {
   const result = await db.rpc("create_project", {
     p_workspace: workspace.id,
     p_limit: access.limits.projects,
-    p_data: { ...body, url: url.href },
+    p_data: {
+      ...body,
+      url: url.href,
+      logo: safeIconUrl(body.logo, url.href) || "",
+    },
   });
   if (result.error?.message.includes("project_limit"))
     throw new AppError(
-      "Your workspace has reached its project allowance.",
+      projectLimitMessage(access.plan, access.limits.projects, access.phase),
       402,
       "project_limit",
     );

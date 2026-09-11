@@ -15,6 +15,7 @@ import {
   GSC_ONBOARDING_CREDENTIALS_COOKIE,
 } from "@/lib/server/gsc-onboarding";
 import { enqueueJob } from "@/lib/jobs/queue";
+import { projectLimitMessage } from "@/lib/plans";
 import type { Project } from "@/lib/types";
 
 async function onboardingSession() {
@@ -85,7 +86,7 @@ export const POST = api(async (request) => {
   });
   if (result.error?.message.includes("project_limit"))
     throw new AppError(
-      "Your workspace has reached its project allowance.",
+      projectLimitMessage(access.plan, access.limits.projects, access.phase),
       402,
       "project_limit",
     );

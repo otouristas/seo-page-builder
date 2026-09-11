@@ -210,6 +210,25 @@ describe("Actual migration permissions and atomic operations", () => {
       ),
     ).rejects.toThrow(/project_limit/);
   });
+  it("stores a fetched logo, and leaves it null when the website has none", async () => {
+    await db.query(
+      'select create_project($1,5,\'{"name":"Logo","url":"https://logo.example/","description":"description","country":"US","language":"en","logo":"https://logo.example/mark.svg"}\')',
+      [wa],
+    );
+    await db.query(
+      'select create_project($1,5,\'{"name":"Plain","url":"https://plain.example/","description":"description","country":"US","language":"en","logo":""}\')',
+      [wa],
+    );
+    const rows = (
+      await db.query<{ name: string; logo: string | null }>(
+        "select name,logo from projects where workspace_id=$1 and name in ('Logo','Plain') order by name",
+        [wa],
+      )
+    ).rows;
+    expect(rows[0].logo).toBe("https://logo.example/mark.svg");
+    expect(rows[1].logo).toBeNull();
+    await db.query("delete from projects where name in ('Logo','Plain')");
+  });
   it("keeps property totals separate and atomically replaces a reconciled day", async () => {
     await db.query(
       "update projects set gsc_property='sc-domain:a.example.com' where id=$1",

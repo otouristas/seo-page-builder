@@ -1446,21 +1446,84 @@ svg {
   margin-top: 9px;
 }
 .sidebar-account {
-  display: flex;
-  gap: 9px;
-  align-items: center;
+  display: grid;
+  gap: 10px;
   border-top: 1px solid var(--line);
-  padding: 16px 5px 0;
+  padding: 15px 4px 0;
   font-size: 10px;
 }
-.sidebar-account > span {
-  width: 29px;
-  height: 29px;
+.account-avatar {
+  width: 30px;
+  height: 30px;
   background: #e8dccd;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: #4b3b2c;
+  flex-shrink: 0;
+}
+.account-identity {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.account-identity > div {
+  min-width: 0;
+}
+.account-identity strong {
+  display: block;
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+.account-identity small {
+  display: block;
+  color: var(--muted);
+  font-size: 9.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-identity .icon-button {
+  margin-left: auto;
+}
+.account-plan {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.account-plan .badge {
+  font-size: 8.5px;
+}
+.account-plan .text-link {
+  margin-left: auto;
+  font-size: 10px;
+}
+.account-links {
+  display: grid;
+  gap: 2px;
+  margin-top: 3px;
+}
+.account-links a,
+.account-links button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  font-size: 12px;
+  color: #53634d;
+  background: none;
+  border: 0;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.account-links a:hover,
+.account-links button:hover {
+  background: #e2e9d3;
 }
 .app-main {
   min-width: 0;
@@ -1491,6 +1554,37 @@ svg {
   align-items: center;
   gap: 17px;
   font-size: 10px;
+}
+.topbar-account {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+  max-width: 190px;
+}
+.topbar-account .account-avatar {
+  width: 29px;
+  height: 29px;
+  font-size: 11px;
+}
+.topbar-account span:last-child {
+  min-width: 0;
+}
+.topbar-account strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.topbar-account small {
+  display: block;
+  font-size: 9px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .topbar-search {
   border: 1px solid #e2e7d8;
@@ -2088,8 +2182,84 @@ svg {
   font-size: 13px;
   color: #505050;
 }
-.app-mobile-menu {
+.app-menu-button {
   display: none;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 8px;
+  color: var(--ink);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.app-menu-button:hover {
+  background: #eef2e4;
+}
+/* The small-screen sidebar: a real panel, not a dropdown. */
+.app-drawer {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  background: transparent;
+  overflow: hidden;
+}
+.app-drawer::backdrop {
+  background: #1d3324a6;
+}
+.app-drawer-panel {
+  width: min(332px, 88vw);
+  height: 100%;
+  background: #f0f3e7;
+  border-right: 1px solid #dfe5d4;
+  display: flex;
+  flex-direction: column;
+  animation: drawer-in 0.22s ease-out;
+}
+@keyframes drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+.app-drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 16px;
+  border-bottom: 1px solid #dfe5d4;
+}
+.app-drawer-top .logo {
+  font-size: 24px;
+}
+.app-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 14px 20px;
+}
+.app-drawer-body .workspace-switch {
+  margin: 15px 0 4px;
+}
+.app-drawer-body .app-nav a {
+  font-size: 13px;
+  padding: 11px 12px;
+}
+.app-drawer-body .knowledge-link {
+  margin-top: 18px;
+}
+.app-drawer-foot {
+  border-top: 1px solid #dfe5d4;
+  background: #e9efdb;
+  padding: 13px 15px 16px;
+}
+.app-drawer-foot .sidebar-account {
+  border-top: 0;
+  padding-top: 0;
 }
 .report-body {
   max-width: 850px;
@@ -2735,42 +2905,15 @@ svg {
   .article .lead {
     font-size: 15px;
   }
-  .app-shell {
-    display: block;
-  }
-  .app-sidebar {
-    display: none;
-  }
   .app-topbar {
     padding: 0 17px;
     height: 60px;
   }
-  .app-mobile-menu {
-    display: block;
-    position: relative;
+  .topbar-account {
+    max-width: 150px;
   }
-  .app-mobile-menu summary {
-    list-style: none;
-    cursor: pointer;
-    padding: 4px;
-  }
-  .app-mobile-menu nav {
-    position: absolute;
-    top: 38px;
-    left: 0;
-    z-index: 40;
-    min-width: 210px;
-    background: #fffdf8;
-    border: 1px solid var(--line);
-    border-radius: 9px;
-    padding: 14px;
-    box-shadow: 0 10px 30px #23402324;
-    display: grid;
-    gap: 3px;
-  }
-  .app-mobile-menu nav a {
-    padding: 8px;
-    font-size: 12px;
+  .breadcrumbs > svg {
+    display: none;
   }
   .breadcrumbs {
     font-size: 10px;
@@ -2916,6 +3059,42 @@ svg {
     font-size: 37px;
   }
 }
+/* Tablets and phones get the drawer instead of a cramped fixed sidebar. */
+@media (max-width: 860px) {
+  .app-shell {
+    display: block;
+  }
+  .app-sidebar {
+    display: none;
+  }
+  .app-menu-button {
+    display: flex;
+  }
+  .topbar-actions > .badge {
+    display: none;
+  }
+  .breadcrumbs {
+    margin-right: auto;
+  }
+}
+@media (min-width: 861px) {
+  .app-drawer {
+    display: none;
+  }
+  .topbar-account {
+    display: none;
+  }
+}
+/* On the narrowest phones the avatar alone carries the account. */
+@media (max-width: 430px) {
+  .topbar-account {
+    max-width: none;
+  }
+  .topbar-account strong,
+  .topbar-account small {
+    display: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -2935,6 +3114,8 @@ svg {
   .site-header,
   .site-footer,
   .app-sidebar,
+  .app-drawer,
+  .app-menu-button,
   .app-topbar,
   .button,
   .no-print {
@@ -3628,6 +3809,139 @@ svg {
 .onboarding-form {
   padding: clamp(25px, 3.2vw, 36px);
   box-shadow: 0 10px 30px rgba(36, 60, 48, 0.04);
+}
+/* What we read from the website, shown before anything is saved. */
+.site-lookup {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  margin: -6px 0 19px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #f4f7ec;
+}
+.site-lookup.done {
+  border-color: #cfdeb0;
+  background: #f1f6e3;
+}
+.site-lookup.failed {
+  border-color: #e5d7ba;
+  background: #f8f1e3;
+}
+.site-lookup > span {
+  min-width: 0;
+  flex: 1;
+}
+.site-lookup strong {
+  display: block;
+  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.site-lookup small {
+  display: block;
+  font-size: 10.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.site-lookup .icon-button,
+.site-lookup > .button {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.site-lookup > .button {
+  font-size: 10px;
+  padding: 8px 11px;
+}
+.panel .site-lookup {
+  margin: 0 0 19px;
+}
+@media (max-width: 600px) {
+  .site-lookup {
+    flex-wrap: wrap;
+  }
+  .site-lookup > .button {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
+.site-lookup-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  object-fit: contain;
+  padding: 3px;
+}
+.field-hint {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.site-mark-image {
+  object-fit: contain;
+  background: var(--white);
+}
+/* Choosing between the projects a workspace already has. */
+.project-choice-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: grid;
+  gap: 8px;
+}
+.project-choice-list a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--white);
+  color: var(--ink);
+}
+.project-choice-list a:hover {
+  border-color: #cfdeb0;
+  background: #f5f8ec;
+}
+.project-choice-list strong {
+  display: block;
+  font-size: 13px;
+}
+.project-choice-list small {
+  display: block;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.project-choice-list svg:last-child {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.plan-upsell {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: 11px;
+  background: #f1f6e3;
+  border: 1px solid #cfdeb0;
+  margin-bottom: 18px;
+}
+.plan-upsell strong {
+  font-size: 12.5px;
+}
+.plan-upsell p {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 2px 0 0;
 }
 .onboarding-form h2 {
   font-size: 27px;
@@ -4345,6 +4659,74 @@ svg {
   border-radius: 100px;
   padding: 14px 20px;
 }
+/* Evidence of a signed-in account, on every public page. */
+.pill-account {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+  max-width: 190px;
+}
+.pill-account .account-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+}
+.pill-account > span:last-child {
+  min-width: 0;
+}
+.pill-account strong {
+  display: block;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pill-account small {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.menu-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+  margin-bottom: 14px;
+}
+.menu-account .account-avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 15px;
+}
+.menu-account strong {
+  display: block;
+  font-size: 15px;
+}
+.menu-account small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.menu-signout {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
 .menu-toggle,
 .menu-close {
   align-items: center;
@@ -4514,7 +4896,8 @@ svg {
 }
 @media (max-width: 1050px) {
   .pill-navigation,
-  .pill-login {
+  .pill-login,
+  .pill-account > span:last-child {
     display: none;
   }
   .menu-toggle {

@@ -12,6 +12,7 @@ const project: Project = {
   country: "US",
   language: "en",
   gsc_property: "sc-domain:oliveandearth.example",
+  logo: null,
   weekly_scan: false,
   scan_limit: 20,
   email_digest: false,

@@ -32,6 +32,7 @@ export const config = {
     "/app/:path*",
     "/auth/:path*",
     "/api/projects/:path*",
+    "/api/site-profile/:path*",
     "/api/jobs/:path*",
     "/api/account/:path*",
     "/api/billing/:path*",

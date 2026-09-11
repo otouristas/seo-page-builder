@@ -91,6 +91,7 @@ export type Project = {
   country: string;
   language: string;
   gsc_property: string | null;
+  logo: string | null;
   weekly_scan: boolean;
   scan_limit: number;
   email_digest: boolean;

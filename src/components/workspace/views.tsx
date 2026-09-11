@@ -28,6 +28,7 @@ import {
 import { Button, ButtonLink, Badge, EmptyState } from "../ui";
 import { Maki } from "../maki";
 import { SiteIcon } from "../site-icon";
+import { SiteMark } from "../site-mark";
 import { PLANS, PAID_PLANS } from "@/lib/plans";
 import { summarizeGsc, type GscRow } from "@/lib/seo/gsc";
 import { displayDate, toCsv, escapeHtml } from "@/lib/utils";
@@ -649,7 +650,11 @@ export function Audits(ctx: WorkspaceContext) {
                   gap: 9,
                 }}
               >
-                <SiteIcon url={page.finalUrl} iconUrl={page.favicon} size="medium" />
+                <SiteIcon
+                  url={page.finalUrl}
+                  iconUrl={page.favicon}
+                  size="medium"
+                />
                 {page.title || "Untitled page"}
               </h3>
               <div className="finding-evidence">
@@ -1925,7 +1930,40 @@ function ProjectSettings({ ctx }: { ctx: WorkspaceContext }) {
     [weekly, setWeekly] = useState(data.project.weekly_scan),
     [limit, setLimit] = useState(data.project.scan_limit),
     [digest, setDigest] = useState(data.project.email_digest),
+    [logo, setLogo] = useState(data.project.logo),
+    [reading, setReading] = useState(false),
     [busy, setBusy] = useState(false);
+  /* Read the website again when its name, description or logo has changed. */
+  const readWebsite = async () => {
+    if (data.sample) {
+      ctx.notify("The example workspace does not fetch live websites.");
+      return;
+    }
+    setReading(true);
+    try {
+      const result = await request<{
+        profile: {
+          name: string;
+          description: string;
+          logo: string | null;
+        } | null;
+        reason?: string;
+      }>("/api/site-profile", { url: data.project.url });
+      if (!result.profile) {
+        ctx.notify(result.reason || "That website could not be read.");
+        return;
+      }
+      if (result.profile.name) setName(result.profile.name.slice(0, 80));
+      if (result.profile.description)
+        setDescription(result.profile.description.slice(0, 2000));
+      setLogo(result.profile.logo);
+      ctx.notify("Details read from your website. Save to keep them.");
+    } catch (e) {
+      ctx.notify((e as Error).message);
+    } finally {
+      setReading(false);
+    }
+  };
   return (
     <div className="two-col">
       <Panel
@@ -1948,6 +1986,7 @@ function ProjectSettings({ ctx }: { ctx: WorkspaceContext }) {
                     weekly_scan: weekly,
                     scan_limit: limit,
                     email_digest: digest,
+                    logo,
                   },
                   "PATCH",
                 );
@@ -1964,6 +2003,30 @@ function ProjectSettings({ ctx }: { ctx: WorkspaceContext }) {
             }
           }}
         >
+          <div className="site-lookup done">
+            <SiteMark
+              name={name || data.project.url}
+              logo={logo}
+              size={34}
+              className="site-lookup-mark"
+            />
+            <span>
+              <strong>{name}</strong>
+              <small>
+                {logo
+                  ? "Logo read from your website."
+                  : "No logo saved yet for this website."}
+              </small>
+            </span>
+            <Button
+              type="button"
+              variant="secondary"
+              busy={reading}
+              onClick={readWebsite}
+            >
+              <RefreshCw size={13} /> Read website
+            </Button>
+          </div>
           <div className="field">
             <label htmlFor="project-name">Business / project name</label>
             <input
@@ -2115,7 +2178,12 @@ function Connections({ ctx }: { ctx: WorkspaceContext }) {
     [notify, data.sample],
   );
   useEffect(() => {
-    if (data.sample || connected || gscMode !== "onboarding" || startedFromOnboarding.current)
+    if (
+      data.sample ||
+      connected ||
+      gscMode !== "onboarding" ||
+      startedFromOnboarding.current
+    )
       return;
     startedFromOnboarding.current = true;
     void action("connect", async () => {
@@ -2139,7 +2207,8 @@ function Connections({ ctx }: { ctx: WorkspaceContext }) {
         properties: { siteUrl: string; permissionLevel: string }[];
       }>(`/api/projects/${data.project.id}/gsc`);
       setProperties(r.properties);
-      if (!property && r.properties.length === 1) setProperty(r.properties[0].siteUrl);
+      if (!property && r.properties.length === 1)
+        setProperty(r.properties[0].siteUrl);
     });
   }, [
     action,
